@@ -10,8 +10,8 @@ import {
 } from "~lib/clip-types"
 import { requestClipFromTab } from "~lib/request-clip"
 
-const DOWNLOAD_SELECTION_CONTEXT_MENU_ID = "markdown-clipper-download-selection"
-const COPY_SELECTION_CONTEXT_MENU_ID = "markdown-clipper-copy-selection"
+const DOWNLOAD_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-download-selection"
+const COPY_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-copy-selection"
 const OFFSCREEN_DOCUMENT_PATH = "tabs/offscreen.html"
 
 let creatingOffscreenDocument: Promise<void> | null = null
@@ -20,13 +20,13 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: DOWNLOAD_SELECTION_CONTEXT_MENU_ID,
-      title: "Download as Markdown",
+      title: "OSBE: Download as Markdown",
       contexts: ["selection"]
     })
 
     chrome.contextMenus.create({
       id: COPY_SELECTION_CONTEXT_MENU_ID,
-      title: "Copy as Markdown",
+      title: "OSBE: Copy as Markdown",
       contexts: ["selection"]
     })
   })
@@ -39,7 +39,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
   if (info.menuItemId === DOWNLOAD_SELECTION_CONTEXT_MENU_ID) {
     clipSelection(tab.id).catch((error) => {
-      console.error("Markdown Clipper selection download failed", error)
+      console.error("OSBE Markdown Clipper selection download failed", error)
     })
   }
 
@@ -48,7 +48,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       const message =
         error instanceof Error ? error.message : "Could not copy Markdown."
 
-      console.error("Markdown Clipper selection copy failed", error)
+      console.error("OSBE Markdown Clipper selection copy failed", error)
       showNotice(tab.id!, `Could not copy Markdown: ${message}`, "error")
     })
   }

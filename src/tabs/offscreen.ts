@@ -65,7 +65,7 @@ async function createDownloadUrl(payload: ClipPayload) {
           zip.file(image.filename, blob)
         } catch (error) {
           failures.push(`${image.filename}: ${image.url}`)
-          console.warn("Markdown Clipper image download failed", error)
+          console.warn("OSBE Markdown Clipper image download failed", error)
         }
       })
     )

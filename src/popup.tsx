@@ -72,7 +72,9 @@ function IndexPopup() {
           <FileText className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-base font-semibold leading-5">Markdown Clipper</h1>
+          <h1 className="text-base font-semibold leading-5">
+            OSBE Markdown Clipper
+          </h1>
           <p className="text-xs text-muted-foreground">
             Save the active page as Markdown.
           </p>

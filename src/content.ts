@@ -144,11 +144,11 @@ async function copyMarkdownToClipboard(markdown: string) {
 }
 
 function showNotice(message: string, level: "success" | "error") {
-  const existing = document.getElementById("markdown-clipper-notice")
+  const existing = document.getElementById("osbe-markdown-clipper-notice")
   existing?.remove()
 
   const notice = document.createElement("div")
-  notice.id = "markdown-clipper-notice"
+  notice.id = "osbe-markdown-clipper-notice"
   notice.textContent = message
   notice.style.position = "fixed"
   notice.style.right = "16px"

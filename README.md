@@ -1,6 +1,6 @@
-# Markdown Clipper
+# OSBE Markdown Clipper
 
-A Chrome MV3 extension built with [Plasmo](https://docs.plasmo.com/), Tailwind CSS, and shadcn/ui conventions.
+An Open Source Browser Extension Chrome MV3 extension built with [Plasmo](https://docs.plasmo.com/), Tailwind CSS, and shadcn/ui conventions.
 
 ## Features
 

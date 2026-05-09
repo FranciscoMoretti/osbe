@@ -1,9 +1,9 @@
-export const CLIP_MESSAGE = "markdown-clipper:clip"
-export const COPY_MARKDOWN_MESSAGE = "markdown-clipper:copy-markdown"
-export const DOWNLOAD_MESSAGE = "markdown-clipper:download"
-export const NOTICE_MESSAGE = "markdown-clipper:notice"
-export const OFFSCREEN_DOWNLOAD_MESSAGE = "markdown-clipper:offscreen-download"
-export const OFFSCREEN_REVOKE_MESSAGE = "markdown-clipper:offscreen-revoke"
+export const CLIP_MESSAGE = "osbe/markdown-clipper:clip"
+export const COPY_MARKDOWN_MESSAGE = "osbe/markdown-clipper:copy-markdown"
+export const DOWNLOAD_MESSAGE = "osbe/markdown-clipper:download"
+export const NOTICE_MESSAGE = "osbe/markdown-clipper:notice"
+export const OFFSCREEN_DOWNLOAD_MESSAGE = "osbe/markdown-clipper:offscreen-download"
+export const OFFSCREEN_REVOKE_MESSAGE = "osbe/markdown-clipper:offscreen-revoke"
 
 export type ClipMode = "page" | "selection"
 
