@@ -1,14 +1,16 @@
 import {
-  COPY_MARKDOWN_MESSAGE,
   DOWNLOAD_MESSAGE,
-  NOTICE_MESSAGE,
   OFFSCREEN_DOWNLOAD_MESSAGE,
   OFFSCREEN_REVOKE_MESSAGE,
   type ClipPayload,
   type DownloadRequest,
   type ExtensionResponse
 } from "~lib/clip-types"
-import { requestClipFromTab } from "~lib/request-clip"
+import {
+  copyMarkdownToTab,
+  requestClipFromTab,
+  showNoticeInTab
+} from "~lib/request-clip"
 
 const DOWNLOAD_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-download-selection"
 const COPY_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-copy-selection"
@@ -49,7 +51,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         error instanceof Error ? error.message : "Could not copy Markdown."
 
       console.error("OSBE Markdown Clipper selection copy failed", error)
-      showNotice(tab.id!, `Could not copy Markdown: ${message}`, "error")
+      showNoticeInTab(tab.id!, `Could not copy Markdown: ${message}`, "error")
     })
   }
 })
@@ -95,23 +97,9 @@ async function copySelection(tabId: number) {
 }
 
 async function copyMarkdown(tabId: number, markdown: string, imageCount = 0) {
-  const response = await chrome.tabs.sendMessage<
-    { type: typeof COPY_MARKDOWN_MESSAGE; markdown: string },
-    ExtensionResponse<{ copied: true }>
-  >(tabId, {
-    type: COPY_MARKDOWN_MESSAGE,
-    markdown
-  })
+  await copyMarkdownToTab(tabId, markdown)
 
-  if (!response) {
-    throw new Error("The page did not respond to the copy request.")
-  }
-
-  if (response.ok === false) {
-    throw new Error(response.error)
-  }
-
-  await showNotice(
+  await showNoticeInTab(
     tabId,
     imageCount > 0
       ? `Copied selection as Markdown with ${imageCount} image link${imageCount === 1 ? "" : "s"}.`
@@ -183,18 +171,4 @@ async function ensureOffscreenDocument() {
   } finally {
     creatingOffscreenDocument = null
   }
-}
-
-async function showNotice(
-  tabId: number,
-  message: string,
-  level: "success" | "error"
-) {
-  await chrome.tabs
-    .sendMessage(tabId, {
-      type: NOTICE_MESSAGE,
-      level,
-      message
-    })
-    .catch(() => undefined)
 }

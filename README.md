@@ -35,10 +35,51 @@ Load or package the production extension from:
 build/chrome-mv3-prod
 ```
 
+## Chrome Web Store Submission
+
+The GitHub Actions workflow in `.github/workflows/submit.yml` uses `PlasmoHQ/bpp@v3` and expects a GitHub Actions secret named `SUBMIT_KEYS`.
+
+For Chrome, that secret must include the Chrome Web Store extension ID:
+
+```json
+{
+  "$schema": "https://github.com/PlasmoHQ/bpp/raw/main/keys.schema.json",
+  "chrome": {
+    "clientId": "YOUR_GOOGLE_OAUTH_CLIENT_ID",
+    "clientSecret": "YOUR_GOOGLE_OAUTH_CLIENT_SECRET",
+    "refreshToken": "YOUR_GOOGLE_OAUTH_REFRESH_TOKEN",
+    "extId": "YOUR_CHROME_WEB_STORE_EXTENSION_ID"
+  }
+}
+```
+
+The `extId` is the ID from the extension's Chrome Web Store dashboard URL. The first upload usually needs to be created in the Chrome Web Store dashboard so the listing has an ID; after that, BPP can update the existing listing.
+
+`submit-keys.example.json` is a non-secret template. Do not commit the real key file.
+
+The extension uses user-invoked access through `activeTab` and does not declare broad host permissions. Use these Chrome Web Store privacy justifications:
+
+```text
+activeTab:
+Temporarily accesses the current tab only after the user clicks the extension or selects an extension context menu action, so the page can be converted to Markdown.
+
+contextMenus:
+Adds right-click actions so users can clip selected webpage content as Markdown.
+
+downloads:
+Saves user-requested Markdown files or ZIP files containing Markdown and local image assets.
+
+offscreen:
+Creates Blob URLs for Markdown and ZIP downloads because Manifest V3 service workers cannot create DOM Blob object URLs.
+
+scripting:
+Runs the Markdown clipping script only after the user invokes the extension on the current tab.
+```
+
 ## Project Layout
 
 - `src/popup.tsx` - whole-page clipping UI.
-- `src/content.ts` - page and selection serialization to Markdown.
+- `src/lib/request-clip.ts` - user-invoked page and selection serialization to Markdown.
 - `src/background.ts` - context menu setup, popup/context orchestration, and Chrome downloads.
 - `src/tabs/offscreen.ts` - ZIP/Markdown Blob URL creation for MV3.
 - `src/components/ui/button.tsx` - shadcn/ui button component.
