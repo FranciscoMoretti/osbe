@@ -20,7 +20,9 @@ import { requestClipFromTab } from "~lib/request-clip"
 
 function IndexPopup() {
   const [includeImages, setIncludeImages] = useState(true)
-  const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">(
+    "idle"
+  )
   const [message, setMessage] = useState("Ready to clip the active tab.")
 
   const clipWholePage = async () => {
@@ -61,7 +63,11 @@ function IndexPopup() {
       setMessage(`Downloaded ${downloadResponse.data.filename}.`)
     } catch (error) {
       setStatus("error")
-      setMessage(error instanceof Error ? error.message : "The page could not be clipped.")
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "The page could not be clipped."
+      )
     }
   }
 
@@ -99,7 +105,10 @@ function IndexPopup() {
         </p>
       </div>
 
-      <Button className="w-full" disabled={status === "busy"} onClick={clipWholePage}>
+      <Button
+        className="w-full"
+        disabled={status === "busy"}
+        onClick={clipWholePage}>
         {status === "busy" ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

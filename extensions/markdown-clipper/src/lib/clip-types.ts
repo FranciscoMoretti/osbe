@@ -1,5 +1,6 @@
 export const DOWNLOAD_MESSAGE = "osbe/markdown-clipper:download"
-export const OFFSCREEN_DOWNLOAD_MESSAGE = "osbe/markdown-clipper:offscreen-download"
+export const OFFSCREEN_DOWNLOAD_MESSAGE =
+  "osbe/markdown-clipper:offscreen-download"
 export const OFFSCREEN_REVOKE_MESSAGE = "osbe/markdown-clipper:offscreen-revoke"
 
 export type ClipMode = "page" | "selection"

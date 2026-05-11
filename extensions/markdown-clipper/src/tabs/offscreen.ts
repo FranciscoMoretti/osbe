@@ -45,7 +45,9 @@ chrome.runtime.onMessage.addListener(
   }
 )
 
-function isOffscreenDownloadRequest(message: OffscreenMessage): message is OffscreenDownloadRequest {
+function isOffscreenDownloadRequest(
+  message: OffscreenMessage
+): message is OffscreenDownloadRequest {
   return message?.type === OFFSCREEN_DOWNLOAD_MESSAGE && "payload" in message
 }
 
@@ -111,7 +113,8 @@ async function fetchImage(url: string) {
 
 function dataUrlToBlob(dataUrl: string) {
   const [metadata, data] = dataUrl.split(",", 2)
-  const mimeType = metadata.match(/^data:([^;]+)/)?.[1] || "application/octet-stream"
+  const mimeType =
+    metadata.match(/^data:([^;]+)/)?.[1] || "application/octet-stream"
   const binary = atob(data)
   const bytes = new Uint8Array(binary.length)
 

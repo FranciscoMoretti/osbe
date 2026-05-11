@@ -116,7 +116,9 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
   }
 
   function cleanup(rootElement: HTMLElement) {
-    rootElement.querySelectorAll(blockedSelector).forEach((node) => node.remove())
+    rootElement
+      .querySelectorAll(blockedSelector)
+      .forEach((node) => node.remove())
 
     rootElement.querySelectorAll("*").forEach((node) => {
       for (const attribute of Array.from(node.attributes)) {
@@ -226,8 +228,12 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
       .split(",")
       .map((candidate) => {
         const [url, descriptor = ""] = candidate.trim().split(/\s+/, 2)
-        const width = descriptor.endsWith("w") ? Number.parseInt(descriptor, 10) : 0
-        const density = descriptor.endsWith("x") ? Number.parseFloat(descriptor) : 0
+        const width = descriptor.endsWith("w")
+          ? Number.parseInt(descriptor, 10)
+          : 0
+        const density = descriptor.endsWith("x")
+          ? Number.parseFloat(descriptor)
+          : 0
 
         return { url, score: width || density || 1 }
       })
@@ -267,7 +273,9 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
   }
 
   function normalizeExtension(extension?: string) {
-    const normalized = extension?.replace("jpeg", "jpg").replace("svg+xml", "svg")
+    const normalized = extension
+      ?.replace("jpeg", "jpg")
+      .replace("svg+xml", "svg")
 
     return normalized && imageExtensions.has(normalized) ? normalized : "png"
   }
@@ -374,7 +382,8 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
 
   function listItems(list: HTMLElement, ordered: boolean) {
     const items = Array.from(list.children).filter(
-      (child) => child instanceof HTMLElement && child.tagName.toLowerCase() === "li"
+      (child) =>
+        child instanceof HTMLElement && child.tagName.toLowerCase() === "li"
     )
 
     return block(
@@ -466,7 +475,9 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
 
   function inlineCode(value: string) {
     const ticks = value.match(/`+/g)
-    const delimiter = "`".repeat(Math.max(1, ...(ticks || []).map((tick) => tick.length)) + 1)
+    const delimiter = "`".repeat(
+      Math.max(1, ...(ticks || []).map((tick) => tick.length)) + 1
+    )
 
     return `${delimiter}${value}${delimiter}`
   }
@@ -538,7 +549,9 @@ async function copyMarkdownInPage(markdown: string) {
         )
       : []
   const activeElement =
-    document.activeElement instanceof HTMLElement ? document.activeElement : null
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null
   const textarea = document.createElement("textarea")
 
   textarea.value = markdown

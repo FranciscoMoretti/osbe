@@ -1,0 +1,12 @@
+packages:
+  - "apps/*"
+  - "extensions/*"
+  - "packages/*"
+
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - "@swc/core"
+  - "esbuild"
+  - "lmdb"
+  - "msgpackr-extract"
+  - "sharp"

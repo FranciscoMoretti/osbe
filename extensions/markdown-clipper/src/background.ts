@@ -12,7 +12,8 @@ import {
   showNoticeInTab
 } from "~lib/request-clip"
 
-const DOWNLOAD_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-download-selection"
+const DOWNLOAD_SELECTION_CONTEXT_MENU_ID =
+  "osbe-markdown-clipper-download-selection"
 const COPY_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-copy-selection"
 const OFFSCREEN_DOCUMENT_PATH = "tabs/offscreen.html"
 
