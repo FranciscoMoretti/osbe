@@ -1,8 +1,8 @@
 {
   "name": "@osbe/markdown-clipper",
   "displayName": "OSBE Markdown Clipper",
-  "version": "0.0.1",
-  "description": "Open Source Browser Extension for clipping pages and selections into portable Markdown files.",
+  "version": "0.0.2",
+  "description": "One-click Markdown clipper. Save pages and selections as clean Markdown with images, frontmatter, preview, copy, and download.",
   "author": "Fran",
   "scripts": {
     "dev": "plasmo dev",

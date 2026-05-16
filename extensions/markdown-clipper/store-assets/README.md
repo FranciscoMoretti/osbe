@@ -2,6 +2,11 @@
 
 Upload these files in the Chrome Web Store Developer Dashboard.
 
+## Listing copy
+
+- Summary from package: `../package.json` `description`
+- Dashboard Description: `chrome-web-store-listing.md`
+
 ## Graphic assets
 
 - Store icon: `store-icon-128.png`

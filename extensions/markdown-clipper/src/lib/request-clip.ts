@@ -3,13 +3,14 @@ import type { ClipImage, ClipMode, ClipPayload } from "~lib/clip-types"
 export async function requestClipFromTab(
   tabId: number,
   mode: ClipMode,
-  includeImages: boolean
+  includeImages: boolean,
+  includeTemplate = true
 ) {
   try {
     const [injection] = await chrome.scripting.executeScript({
       target: { tabId },
       func: createClipInPage,
-      args: [mode, includeImages]
+      args: [mode, includeImages, includeTemplate]
     })
 
     if (!injection?.result) {
@@ -52,7 +53,11 @@ export async function showNoticeInTab(
     .catch(() => undefined)
 }
 
-function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
+function createClipInPage(
+  mode: ClipMode,
+  includeImages: boolean,
+  includeTemplate: boolean
+): ClipPayload {
   type MarkdownImage = ClipImage & { originalUrl: string }
 
   const blockedSelector =
@@ -75,11 +80,14 @@ function createClipInPage(mode: ClipMode, includeImages: boolean): ClipPayload {
   const title = normalizeWhitespace(document.title) || "Untitled page"
   const sourceUrl = window.location.href
   const createdAt = new Date().toISOString()
-  const markdown = withFrontMatter(markdownForChildren(root).trim(), {
-    title,
-    sourceUrl,
-    createdAt
-  })
+  const markdownBody = markdownForChildren(root).trim()
+  const markdown = includeTemplate
+    ? withFrontMatter(markdownBody, {
+        title,
+        sourceUrl,
+        createdAt
+      })
+    : markdownBody
 
   return {
     title,

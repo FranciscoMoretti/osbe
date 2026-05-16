@@ -2,6 +2,8 @@
 
 Open Source Browser Extensions is a monorepo for OSBE browser extensions and the future OSBE website.
 
+OSBE builds small, transparent browser extensions that users can inspect, reason about, clone, and adapt. See [docs/brand.md](docs/brand.md) for the brand brief, messaging, and trust principles.
+
 ## Workspaces
 
 - `extensions/markdown-clipper` - the first OSBE extension, built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
