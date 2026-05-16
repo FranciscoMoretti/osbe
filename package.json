@@ -10,6 +10,7 @@
     "dev:markdown-clipper": "pnpm --filter @osbe/markdown-clipper dev",
     "build:markdown-clipper": "pnpm --filter @osbe/markdown-clipper build",
     "package:markdown-clipper": "pnpm --filter @osbe/markdown-clipper package",
+    "publish:markdown-clipper": "gh workflow run submit.yml --ref main",
     "new:extension": "node scripts/create-extension.mjs"
   },
   "pnpm": {
