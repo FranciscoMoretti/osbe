@@ -1,7 +1,7 @@
 {
   "name": "@osbe/markdown-clipper",
   "displayName": "OSBE Markdown Clipper",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "One-click Markdown clipper. Save pages and selections as clean Markdown with images, frontmatter, preview, copy, and download.",
   "author": "Fran",
   "scripts": {

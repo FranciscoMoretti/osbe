@@ -240,7 +240,7 @@ function IndexPopup() {
             <span className="clipper-label">Markdown</span>
             <div className="clipper-panel-actions">
               <span className="clipper-count">
-                {markdown.length.toLocaleString()} chars
+                {compactCount(markdown.length)}
               </span>
               <button
                 aria-label={
@@ -251,16 +251,20 @@ function IndexPopup() {
                 title={previewVisible ? "Show Markdown" : "Preview rich text"}
                 type="button">
                 {previewVisible ? <EyeOff /> : <Eye />}
-                <span>{previewVisible ? "Markdown" : "Preview"}</span>
+                <span className="sr-only">
+                  {previewVisible ? "Show Markdown" : "Preview rich text"}
+                </span>
               </button>
               <Button
+                aria-label="Copy Markdown"
                 className="clipper-copy-button"
                 disabled={!markdown || status === "busy"}
                 onClick={copyMarkdown}
+                title="Copy Markdown"
                 type="button"
                 variant="outline">
                 <Clipboard className="h-4 w-4" />
-                Copy
+                <span className="sr-only">Copy Markdown</span>
               </Button>
             </div>
           </div>
@@ -322,6 +326,30 @@ function preferredTheme(): Theme {
   return window.matchMedia?.("(prefers-color-scheme: light)").matches
     ? "light"
     : "dark"
+}
+
+function compactCount(count: number) {
+  const suffix = " Characters"
+
+  if (count < 1000) {
+    return `${count}${suffix}`
+  }
+
+  if (count < 1_000_000) {
+    return `${formatCompactUnit(count, 1_000, "K")}${suffix}`
+  }
+
+  return `${formatCompactUnit(count, 1_000_000, "M")}${suffix}`
+}
+
+function formatCompactUnit(count: number, divisor: number, unit: "K" | "M") {
+  const value = count / divisor
+
+  if (value < 10) {
+    return `${Number(value.toFixed(1)).toString()}${unit}`
+  }
+
+  return `${Math.min(Math.round(value), 999)}${unit}`
 }
 
 function SwitchControl({

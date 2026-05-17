@@ -227,23 +227,23 @@
   }
 
   .clipper-panel-header {
-    @apply flex items-center justify-between gap-3 border-b px-3 py-2;
+    @apply flex min-w-0 items-center justify-between gap-2 border-b px-3 py-2;
     border-color: var(--border-soft);
     background: var(--surface-elevated);
   }
 
   .clipper-panel-actions {
-    @apply flex shrink-0 items-center gap-2;
+    @apply flex min-w-0 shrink-0 items-center gap-1.5;
   }
 
   .clipper-count {
-    @apply rounded-full px-2 py-1 text-[11px] font-semibold leading-3;
+    @apply shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-semibold leading-3;
     background: var(--surface-muted);
     color: var(--text-muted);
   }
 
   .clipper-view-toggle {
-    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md border px-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2;
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border p-0 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2;
     background: var(--surface-panel);
     border-color: var(--border-soft);
     color: var(--text);
@@ -258,7 +258,7 @@
   }
 
   .clipper-copy-button {
-    @apply h-8 rounded-md px-2 text-xs font-semibold;
+    @apply h-8 w-8 shrink-0 rounded-md p-0 text-xs font-semibold;
     background: transparent !important;
     border-color: var(--border-soft) !important;
     color: var(--text) !important;
