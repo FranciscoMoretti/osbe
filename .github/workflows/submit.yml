@@ -43,3 +43,5 @@ jobs:
         with:
           keys: ${{ secrets.SUBMIT_KEYS }}
           artifact: extensions/markdown-clipper/build/chrome-mv3-prod.zip
+          version-file: extensions/markdown-clipper/package.json
+          verbose: true
