@@ -20,6 +20,11 @@ import "~style.css"
 
 import { Button } from "~components/ui/button"
 import {
+  DEFAULT_CLIP_OPTIONS,
+  getStoredClipOptions,
+  saveStoredClipOptions
+} from "~lib/clip-settings"
+import {
   DOWNLOAD_MESSAGE,
   type ClipPayload,
   type ExtensionResponse
@@ -30,8 +35,13 @@ type Status = "idle" | "busy" | "done" | "error"
 type Theme = "dark" | "light"
 
 function IndexPopup() {
-  const [includeImages, setIncludeImages] = useState(true)
-  const [includeTemplate, setIncludeTemplate] = useState(true)
+  const [includeImages, setIncludeImages] = useState(
+    DEFAULT_CLIP_OPTIONS.includeImages
+  )
+  const [includeTemplate, setIncludeTemplate] = useState(
+    DEFAULT_CLIP_OPTIONS.includeTemplate
+  )
+  const [clipOptionsLoaded, setClipOptionsLoaded] = useState(false)
   const [previewVisible, setPreviewVisible] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => preferredTheme())
   const [status, setStatus] = useState<Status>("idle")
@@ -50,6 +60,10 @@ function IndexPopup() {
   )
 
   const loadClip = useCallback(async () => {
+    if (!clipOptionsLoaded) {
+      return
+    }
+
     setStatus("busy")
     setMessage("Reading the current tab...")
 
@@ -86,11 +100,44 @@ function IndexPopup() {
           : "The page could not be clipped."
       )
     }
-  }, [includeImages, includeTemplate])
+  }, [clipOptionsLoaded, includeImages, includeTemplate])
 
   useEffect(() => {
     void loadClip()
   }, [loadClip])
+
+  useEffect(() => {
+    let cancelled = false
+
+    getStoredClipOptions()
+      .then((options) => {
+        if (cancelled) {
+          return
+        }
+
+        setIncludeImages(options.includeImages)
+        setIncludeTemplate(options.includeTemplate)
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setClipOptionsLoaded(true)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!clipOptionsLoaded) {
+      return
+    }
+
+    void saveStoredClipOptions({ includeImages, includeTemplate }).catch(
+      () => undefined
+    )
+  }, [clipOptionsLoaded, includeImages, includeTemplate])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme

@@ -38,7 +38,8 @@
       "contextMenus",
       "downloads",
       "offscreen",
-      "scripting"
+      "scripting",
+      "storage"
     ]
   }
 }

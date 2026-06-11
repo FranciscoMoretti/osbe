@@ -1,3 +1,4 @@
+import { getStoredClipOptions } from "~lib/clip-settings"
 import {
   DOWNLOAD_MESSAGE,
   OFFSCREEN_DOWNLOAD_MESSAGE,
@@ -86,13 +87,25 @@ chrome.runtime.onMessage.addListener(
 )
 
 async function clipSelection(tabId: number) {
-  const clip = await requestClipFromTab(tabId, "selection", true)
+  const options = await getStoredClipOptions()
+  const clip = await requestClipFromTab(
+    tabId,
+    "selection",
+    options.includeImages,
+    options.includeTemplate
+  )
 
   await downloadClip(clip)
 }
 
 async function copySelection(tabId: number) {
-  const clip = await requestClipFromTab(tabId, "selection", false)
+  const options = await getStoredClipOptions()
+  const clip = await requestClipFromTab(
+    tabId,
+    "selection",
+    options.includeImages,
+    options.includeTemplate
+  )
 
   await copyMarkdown(tabId, clip.markdown, clip.images.length)
 }

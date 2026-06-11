@@ -1,6 +1,6 @@
 # Create A New Extension
 
-OSBE extensions live in `extensions/*` as independent Plasmo packages. The first extension is `extensions/markdown-clipper`.
+OSBE extensions live in `extensions/*` as independent packages. Markdown Clipper uses Plasmo; Site Blocker uses React + Vite with a hand-authored MV3 manifest.
 
 Use this document as the full extension checklist, not just the code scaffold. A publishable extension needs package metadata, an installable icon, Chrome Web Store assets, permission justifications, and a submission workflow.
 
@@ -12,7 +12,7 @@ From the repository root:
 pnpm new:extension my-extension "OSBE My Extension"
 ```
 
-The script creates:
+The script currently creates a Plasmo-based package:
 
 - `extensions/my-extension/package.json`
 - Plasmo TypeScript config and shadcn/ui config

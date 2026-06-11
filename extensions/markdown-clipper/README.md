@@ -74,6 +74,9 @@ Creates Blob URLs for Markdown and ZIP downloads because Manifest V3 service wor
 
 scripting:
 Runs the Markdown clipping script only after the user invokes the extension on the current tab.
+
+storage:
+Stores the user's Images and Template clipping preferences so popup and context menu actions use the same options.
 ```
 
 ## Project Layout
