@@ -1,6 +1,23 @@
 name: "Submit to Web Store"
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/submit.yml"
+      - "extensions/markdown-clipper/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "packages/**"
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: submit-markdown-clipper
+  cancel-in-progress: false
 
 jobs:
   markdown-clipper:
