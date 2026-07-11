@@ -1,6 +1,6 @@
 # Create A New Extension
 
-OSBE extensions live in `extensions/*` as independent packages. Markdown Clipper uses Plasmo; Site Blocker uses React + Vite with a hand-authored MV3 manifest.
+OSBE extensions live in `extensions/*` as independent packages. Extension packages use Plasmo, Tailwind CSS, and shadcn/ui conventions so build, packaging, styling, aliases, and Chrome Web Store submission stay consistent across the repo.
 
 Use this document as the full extension checklist, not just the code scaffold. A publishable extension needs package metadata, an installable icon, Chrome Web Store assets, permission justifications, and a submission workflow.
 
@@ -258,15 +258,15 @@ Check the popup, context menus, download flow, permissions, and icon. Then uploa
 extensions/my-extension/build/chrome-mv3-prod.zip
 ```
 
-## Automated Submission With BPP
+## Automated Chrome Submission
 
-The repository can use [Plasmo Browser Platform Publisher](https://github.com/PlasmoHQ/bpp) to submit packaged extension ZIPs from GitHub Actions. BPP can automate uploading the package to supported browser stores, but it does not replace the store listing content, screenshots, privacy answers, or permission justifications.
+The repository uses `.github/scripts/submit-chrome-webstore.sh` to submit packaged extension ZIPs from GitHub Actions. The script exchanges the stored Google OAuth refresh token for an access token, uploads the ZIP to the Chrome Web Store API, and requests publish. It does not replace store listing content, screenshots, privacy answers, or permission justifications.
 
 For Chrome, create a non-secret template in the extension directory:
 
 ```json
 {
-  "$schema": "https://github.com/PlasmoHQ/bpp/raw/main/keys.schema.json",
+  "$schema": "https://raw.githubusercontent.com/PlasmoHQ/bpp/v3/keys.schema.json",
   "chrome": {
     "clientId": "YOUR_GOOGLE_OAUTH_CLIENT_ID",
     "clientSecret": "YOUR_GOOGLE_OAUTH_CLIENT_SECRET",
@@ -284,14 +284,14 @@ extensions/my-extension/submit-keys.example.json
 
 Store the real JSON in a GitHub Actions secret such as `SUBMIT_KEYS`.
 
-The current Markdown Clipper workflow is `.github/workflows/submit.yml`. A new extension needs either a new workflow job or a parameterized workflow that builds that package and passes the produced ZIP to BPP:
+The current Markdown Clipper workflow is `.github/workflows/submit.yml`. Site Blocker uses `.github/workflows/submit-site-blocker.yml`. A new extension needs either a new workflow job or a parameterized workflow that builds that package and passes the produced ZIP to the shared script:
 
 ```yaml
-- name: Browser Platform Publish
-  uses: PlasmoHQ/bpp@v3
-  with:
-    keys: ${{ secrets.SUBMIT_KEYS }}
-    artifact: extensions/my-extension/build/chrome-mv3-prod.zip
+- name: Upload and submit My Extension
+  env:
+    SUBMIT_KEYS: ${{ secrets.MY_EXTENSION_SUBMIT_KEYS }}
+    ZIP_PATH: extensions/my-extension/build/chrome-mv3-prod.zip
+  run: .github/scripts/submit-chrome-webstore.sh
 ```
 
 Use one secret per target listing if multiple extensions are submitted from the same repository.
@@ -301,6 +301,8 @@ Use one secret per target listing if multiple extensions are submitted from the 
 - `package.json` has final `displayName`, `description`, `version`, and `manifest.permissions`.
 - `package.json` `description` is the short summary from package and is 132 characters or less.
 - `package.json` `version` is greater than the currently published Chrome Web Store version.
+- `apps/website/src/extension-verification.ts` contains the official Chrome Web Store ID after the first listing is created.
+- The extension manifest has `externally_connectable` limited to OSBE website origins, and the background service worker handles `osbe/extension:verify`.
 - `assets/icon.png` is a final product icon and the production build shows it in `chrome://extensions`.
 - `store-assets/` contains the listing icon, screenshots, and promotional image.
 - `store-assets/chrome-web-store-listing.md` contains the long dashboard description copy.
@@ -309,4 +311,4 @@ Use one secret per target listing if multiple extensions are submitted from the 
 - `pnpm --filter @osbe/my-extension package` produces `build/chrome-mv3-prod.zip`.
 - The generated production `manifest.json` has the expected version and summary length.
 - The production build has been loaded locally and checked before submission.
-- BPP keys are stored only in GitHub Secrets, never committed.
+- Chrome submission keys are stored only in GitHub Secrets, never committed.

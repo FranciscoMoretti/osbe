@@ -8,9 +8,13 @@
     "build": "pnpm -r --if-present build",
     "dev": "pnpm --filter @osbe/markdown-clipper dev",
     "dev:markdown-clipper": "pnpm --filter @osbe/markdown-clipper dev",
+    "dev:site-blocker": "pnpm --filter @osbe/site-blocker dev",
     "build:markdown-clipper": "pnpm --filter @osbe/markdown-clipper build",
+    "build:site-blocker": "pnpm --filter @osbe/site-blocker build",
     "package:markdown-clipper": "pnpm --filter @osbe/markdown-clipper package",
+    "package:site-blocker": "pnpm --filter @osbe/site-blocker package",
     "publish:markdown-clipper": "gh workflow run submit.yml --ref main",
+    "publish:site-blocker": "gh workflow run submit-site-blocker.yml --ref main",
     "new:extension": "node scripts/create-extension.mjs"
   },
   "pnpm": {

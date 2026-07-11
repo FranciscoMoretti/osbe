@@ -6,7 +6,8 @@ OSBE builds small, transparent browser extensions that users can inspect, reason
 
 ## Workspaces
 
-- `extensions/markdown-clipper` - the first OSBE extension, built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
+- `extensions/markdown-clipper` - OSBE Markdown clipper built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
+- `extensions/site-blocker` - OSBE site blocker built with the same Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `apps/website` - placeholder package for the future OSBE website.
 - `packages/*` - reserved for shared packages when an extension or the website needs shared code.
 
@@ -36,6 +37,18 @@ Load the generated development extension from:
 extensions/markdown-clipper/build/chrome-mv3-dev
 ```
 
+Run Site Blocker:
+
+```bash
+pnpm dev:site-blocker
+```
+
+Load the generated extension from:
+
+```text
+extensions/site-blocker/build/chrome-mv3-dev
+```
+
 ## Build
 
 Build every workspace that has a `build` script:
@@ -44,11 +57,13 @@ Build every workspace that has a `build` script:
 pnpm build
 ```
 
-Build or package Markdown Clipper only:
+Build or package an extension directly:
 
 ```bash
 pnpm build:markdown-clipper
 pnpm package:markdown-clipper
+pnpm build:site-blocker
+pnpm package:site-blocker
 ```
 
 ## Create A New Extension
@@ -62,3 +77,9 @@ pnpm --filter @osbe/my-extension dev
 ```
 
 See `docs/create-extension.md` for the full checklist.
+
+## Official Install Verification
+
+OSBE extensions include a `Verify official build` popup action. The extension opens an OSBE verification link with a short-lived challenge, and the OSBE website checks that challenge against the official Chrome Web Store extension ID.
+
+See [docs/extension-verification.md](docs/extension-verification.md) for the protocol and launch checklist.

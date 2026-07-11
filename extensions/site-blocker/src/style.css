@@ -1,0 +1,522 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 215 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 94% 94%;
+    --secondary-foreground: 215 100% 35%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 204 100% 94%;
+    --accent-foreground: 215 100% 35%;
+    --destructive: 5 100% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 95% 90%;
+    --input: 214 95% 90%;
+    --ring: 215 100% 45%;
+    --radius: 0.5rem;
+
+    --brand-ink: 222 47% 11%;
+    --brand-paper: 210 40% 98%;
+    --brand-blue: 215 100% 45%;
+    --brand-cyan: 199 89% 48%;
+    --brand-red: 5 100% 62%;
+    --brand-green: 142 71% 45%;
+    --brand-amber: 32 95% 44%;
+    --brand-glass: 199 94% 94%;
+    --brand-glass-border: 214 95% 90%;
+    --brand-glow: 199 89% 72%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply bg-background text-foreground;
+  }
+
+  body {
+    @apply m-0 bg-background text-foreground;
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .osbe-shell {
+    min-height: 100vh;
+    background: hsl(var(--background));
+  }
+
+  .osbe-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--card) / 0.92);
+    backdrop-filter: blur(14px);
+  }
+
+  .osbe-app-header::before {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: hsl(var(--primary));
+    content: "";
+  }
+
+  .osbe-app-header-inner {
+    display: flex;
+    width: min(calc(100% - 3rem), 1040px);
+    min-height: 72px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .osbe-brand {
+    @apply flex min-w-0 items-center gap-3 px-1 py-2;
+  }
+
+  .osbe-app-header .osbe-brand {
+    @apply p-0;
+  }
+
+  .osbe-brand-icon {
+    @apply flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-card;
+    border-color: hsl(var(--brand-glass-border));
+    box-shadow: 0 16px 38px hsl(var(--brand-cyan) / 0.18);
+  }
+
+  .osbe-brand-icon img {
+    @apply size-full object-cover;
+  }
+
+  .osbe-brand-name {
+    @apply truncate text-lg font-bold leading-6 tracking-normal;
+  }
+
+  .osbe-brand-kicker {
+    @apply block truncate text-xs font-medium leading-4 text-muted-foreground;
+  }
+
+  .osbe-dashboard {
+    min-height: calc(100vh - 73px);
+  }
+
+  .osbe-workspace {
+    width: min(calc(100% - 3rem), 1040px);
+    margin: 0 auto;
+    padding: 2.75rem 0 4rem;
+  }
+
+  .osbe-page-head {
+    @apply flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between;
+  }
+
+  .osbe-page-title {
+    @apply text-4xl font-bold leading-tight tracking-normal;
+  }
+
+  .osbe-page-copy {
+    @apply mt-2 max-w-xl text-base leading-7 text-muted-foreground;
+  }
+
+  .osbe-global-rail {
+    @apply flex cursor-pointer items-center gap-3 border-b bg-secondary/55 p-4 transition-colors;
+    box-shadow: inset 4px 0 0 hsl(var(--primary));
+  }
+
+  .osbe-global-rail[data-state="paused"] {
+    background: hsl(var(--brand-amber) / 0.08);
+    box-shadow: inset 4px 0 0 hsl(var(--brand-amber));
+  }
+
+  .osbe-global-icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground;
+  }
+
+  .osbe-global-rail[data-state="paused"] .osbe-global-icon {
+    background: hsl(var(--brand-amber) / 0.12);
+    color: hsl(var(--brand-amber));
+  }
+
+  .osbe-global-icon svg {
+    @apply size-5;
+  }
+
+  .osbe-global-title {
+    @apply block text-sm font-semibold leading-5;
+  }
+
+  .osbe-global-copy {
+    @apply mt-0.5 block text-xs font-medium leading-4 text-muted-foreground;
+  }
+
+  .osbe-metrics {
+    @apply mt-6 grid auto-rows-fr grid-cols-2 gap-3 xl:grid-cols-4;
+  }
+
+  .osbe-metric-value {
+    @apply mt-2 min-w-12 text-2xl font-bold;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .osbe-list-card {
+    @apply mt-6 overflow-hidden shadow-sm;
+  }
+
+  .osbe-list-header {
+    @apply flex flex-col gap-4 md:flex-row md:items-start md:justify-between;
+  }
+
+  .osbe-list-actions,
+  .osbe-inline-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .osbe-dialog-form {
+    @apply flex flex-col gap-4;
+  }
+
+  .osbe-temporary-dialog {
+    @apply gap-5;
+  }
+
+  .osbe-temporary-heading {
+    @apply flex items-start gap-3 pr-7;
+  }
+
+  .osbe-temporary-heading-icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground;
+  }
+
+  .osbe-temporary-heading-icon svg {
+    @apply size-5;
+  }
+
+  .osbe-temporary-heading strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .osbe-duration-fieldset {
+    @apply m-0 border-0 p-0;
+  }
+
+  .osbe-duration-fieldset legend {
+    @apply mb-2 text-sm font-semibold leading-5;
+  }
+
+  .osbe-duration-grid {
+    @apply grid grid-cols-4 gap-2;
+  }
+
+  .osbe-duration-option {
+    @apply relative flex h-20 flex-col items-center justify-center rounded-md border bg-card px-2 text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .osbe-duration-value {
+    @apply text-xl font-bold leading-6 text-foreground;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .osbe-duration-unit {
+    @apply text-xs font-semibold leading-4;
+  }
+
+  .osbe-duration-check {
+    @apply absolute right-1.5 top-1.5 size-3.5 opacity-0;
+  }
+
+  .osbe-duration-option[data-selected="true"] {
+    @apply border-primary bg-primary text-primary-foreground hover:border-primary hover:bg-primary;
+    box-shadow: 0 6px 16px hsl(var(--primary) / 0.18);
+  }
+
+  .osbe-duration-option[data-selected="true"] .osbe-duration-value {
+    @apply text-primary-foreground;
+  }
+
+  .osbe-duration-option[data-selected="true"] .osbe-duration-check {
+    @apply opacity-100;
+  }
+
+  .osbe-temporary-footer {
+    @apply mt-1 border-t pt-4;
+  }
+
+  .osbe-field {
+    @apply flex flex-col gap-2;
+  }
+
+  .osbe-empty-state {
+    @apply flex min-h-64 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center text-muted-foreground;
+  }
+
+  .osbe-empty-state svg {
+    @apply mb-4 size-10;
+  }
+
+  .osbe-empty-state h3 {
+    @apply text-base font-semibold text-foreground;
+  }
+
+  .osbe-empty-state p {
+    @apply mt-2 max-w-md text-sm leading-6;
+  }
+
+  .osbe-rule-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .osbe-rule-row {
+    @apply flex items-center gap-3 rounded-lg border bg-muted/45 p-3 transition-colors;
+  }
+
+  .osbe-rule-row:hover {
+    @apply bg-muted;
+  }
+
+  .osbe-rule-row.is-muted {
+    @apply bg-muted/30 text-muted-foreground;
+  }
+
+  .osbe-site-icon {
+    position: relative;
+    @apply flex size-12 shrink-0 items-center justify-center rounded-md border bg-background text-primary;
+  }
+
+  .osbe-site-icon img {
+    @apply relative z-10 size-8 rounded-sm object-contain;
+  }
+
+  .osbe-site-icon svg {
+    @apply size-5;
+  }
+
+  .osbe-site-icon-fallback {
+    @apply absolute text-muted-foreground;
+  }
+
+  .osbe-rule-summary {
+    @apply flex min-w-0 flex-col items-start;
+  }
+
+  .osbe-rule-title {
+    @apply flex min-w-0 flex-wrap items-center gap-2;
+  }
+
+  .osbe-rule-label {
+    @apply truncate text-base font-semibold leading-6 text-foreground;
+  }
+
+  .osbe-effective-status {
+    @apply mt-1 flex min-w-0 items-center gap-2 text-sm font-medium leading-5 text-muted-foreground;
+  }
+
+  .osbe-effective-status svg {
+    @apply size-4 shrink-0;
+  }
+
+  .osbe-effective-status[data-tone="blocking"] {
+    @apply text-emerald-700;
+  }
+
+  .osbe-effective-status[data-tone="paused"],
+  .osbe-effective-status[data-tone="allowed"] {
+    @apply text-amber-700;
+  }
+
+  .osbe-effective-status[data-tone="off"] {
+    @apply text-muted-foreground;
+  }
+
+  .osbe-temporary-status {
+    @apply mt-1 flex min-h-5 max-w-full items-center gap-2 overflow-hidden text-sm font-medium leading-5 text-amber-700;
+  }
+
+  .osbe-temporary-status > svg {
+    @apply size-4 shrink-0;
+  }
+
+  .osbe-temporary-copy {
+    @apply flex min-w-0 items-center gap-1 whitespace-nowrap;
+  }
+
+  .osbe-countdown {
+    @apply whitespace-nowrap font-mono font-semibold text-amber-700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .osbe-temporary-dismiss {
+    @apply flex size-5 shrink-0 items-center justify-center rounded-sm text-amber-700 transition-colors hover:bg-amber-100 hover:text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .osbe-temporary-dismiss svg {
+    @apply size-3;
+  }
+
+  .osbe-diagnostics {
+    @apply mt-4 border-t pt-3;
+  }
+
+  .osbe-diagnostics summary {
+    @apply flex cursor-pointer list-none items-center justify-between gap-2 text-xs font-semibold leading-5;
+  }
+
+  .osbe-diagnostics summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .osbe-diagnostics dl {
+    @apply mt-3 flex flex-col gap-2 text-xs;
+  }
+
+  .osbe-diagnostics dl div {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  .osbe-diagnostics dt {
+    @apply text-muted-foreground;
+  }
+
+  .osbe-diagnostics dd {
+    @apply m-0 font-semibold;
+  }
+
+  .osbe-diagnostic-warning {
+    @apply text-amber-700;
+  }
+
+  .osbe-diagnostic-error {
+    @apply mt-3 text-xs leading-5 text-destructive;
+  }
+
+  .osbe-about-section {
+    @apply mt-8 grid gap-6 border-t py-6 md:grid-cols-2;
+  }
+
+  .osbe-about-copy {
+    @apply flex gap-3;
+  }
+
+  .osbe-about-copy > svg {
+    @apply mt-0.5 size-5 shrink-0 text-primary;
+  }
+
+  .osbe-about-copy h2 {
+    @apply text-sm font-semibold leading-5;
+  }
+
+  .osbe-about-copy p {
+    @apply mt-1 max-w-md text-sm leading-6 text-muted-foreground;
+  }
+
+  .osbe-about-section .osbe-diagnostics {
+    @apply m-0 border-0 p-0;
+  }
+
+  .osbe-row-controls {
+    @apply flex shrink-0 items-center gap-2;
+  }
+
+  .osbe-edit-grid {
+    @apply grid gap-3 md:grid-cols-2;
+  }
+
+  .osbe-popup-shell {
+    @apply w-[382px] overflow-hidden bg-background text-foreground;
+  }
+
+  .osbe-popup-frame {
+    @apply p-4;
+  }
+
+  .osbe-status-card {
+    @apply rounded-lg border bg-card p-4;
+  }
+
+  .osbe-status-icon {
+    @apply flex size-10 items-center justify-center rounded-lg border;
+  }
+
+  .osbe-blocked-page {
+    @apply flex min-h-screen items-center justify-center px-5 py-10;
+    background: radial-gradient(
+        circle at top left,
+        hsl(var(--brand-red) / 0.09),
+        transparent 34rem
+      ),
+      linear-gradient(180deg, hsl(var(--background)), hsl(210 40% 96%));
+  }
+
+  .osbe-blocked-card {
+    @apply w-full max-w-xl rounded-lg border bg-card p-6 shadow-sm md:p-8;
+  }
+
+  @media (max-width: 960px) {
+    .osbe-workspace {
+      padding-top: 2rem;
+    }
+
+    .osbe-page-title {
+      @apply text-3xl;
+    }
+
+    .osbe-list-actions {
+      width: 100%;
+    }
+
+    .osbe-list-actions > button,
+    .osbe-list-actions > [data-radix-dialog-trigger] {
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .osbe-app-header-inner,
+    .osbe-workspace {
+      width: min(calc(100% - 2rem), 1040px);
+    }
+
+    .osbe-app-header-inner {
+      min-height: 64px;
+    }
+
+    .osbe-brand-icon {
+      @apply size-9;
+    }
+
+    .osbe-rule-row {
+      align-items: flex-start;
+    }
+
+    .osbe-row-controls {
+      @apply flex-col items-end;
+    }
+
+    .osbe-inline-actions {
+      @apply justify-end;
+    }
+  }
+}
