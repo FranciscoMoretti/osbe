@@ -1,6 +1,6 @@
 import {
   clearExpiredOverrides,
-  createDnrRegexFilter,
+  createDnrUrlFilter,
   createSampleUrlForDomain,
   domainSpecificity,
   isRuleBlocking
@@ -54,7 +54,7 @@ export async function refreshDynamicBlockingRules(): Promise<BlockingRulesStatus
                 type: chrome.declarativeNetRequest.RuleActionType.ALLOW
               },
           condition: {
-            regexFilter: createDnrRegexFilter(rule.domain),
+            urlFilter: createDnrUrlFilter(rule.domain),
             resourceTypes: MAIN_FRAME_RESOURCE_TYPES
           }
         })

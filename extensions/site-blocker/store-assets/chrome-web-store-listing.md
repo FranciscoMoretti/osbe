@@ -16,7 +16,7 @@ OSBE Site Blocker
 This value comes from `package.json` and cannot be edited in the dashboard.
 
 ```text
-Block distracting websites with local rules, temporary access, and a private dashboard.
+Block distracting websites and allow temporary access when you need it.
 ```
 
 ### Description
@@ -39,8 +39,6 @@ WHAT YOU CAN DO
 PRIVATE BY DESIGN
 
 Your block list and settings are stored locally in Chrome. OSBE Site Blocker has no account, analytics, advertising, or remote sync.
-
-The optional “Verify official build” action contacts osbe.dev only after you click it. It sends the extension name, version, runtime ID, and a short-lived verification challenge. It does not send your block list, settings, or browsing activity.
 
 OSBE Site Blocker is open source.
 ```
@@ -129,7 +127,13 @@ Creates local dynamic rules that redirect top-level navigation for user-selected
 #### favicon
 
 ```text
-Displays Chrome's locally cached favicon beside each website in the dashboard so rules are easier to identify. The extension does not request favicons from an OSBE server.
+Displays a favicon beside each website so rules are easier to identify. The dashboard requests the listed site's own /favicon.ico with no referrer and falls back to Chrome's locally cached favicon. It does not use an OSBE or centralized favicon service.
+```
+
+#### webNavigation
+
+```text
+Observes top-frame navigation events locally so blocked sites are still redirected when a browser-restored, cached, or client-side navigation does not produce the main-frame request handled by the declarative rule. Navigation URLs are not stored or transmitted.
 ```
 
 #### storage

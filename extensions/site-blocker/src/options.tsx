@@ -2,14 +2,12 @@ import {
   Ban,
   Check,
   Clock3,
-  Edit3,
   FileDown,
   FileUp,
   Globe2,
   MoreVertical,
   PauseCircle,
   Plus,
-  Save,
   Shield,
   ShieldCheck,
   Trash2,
@@ -50,9 +48,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "~/components/ui/dropdown-menu"
@@ -67,6 +63,8 @@ import {
 } from "~/components/ui/tooltip"
 import {
   clearExpiredOverrides,
+  createDirectFaviconUrls,
+  createFaviconPageUrls,
   isRuleBlocking,
   isRuleOverridden,
   normalizeDomain,
@@ -94,9 +92,6 @@ function OptionsPage() {
   >(null)
   const [domain, setDomain] = useState("")
   const [error, setError] = useState("")
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editDomain, setEditDomain] = useState("")
-  const [editError, setEditError] = useState("")
   const [blockingRulesStatus, setBlockingRulesStatus] =
     useState<BlockingRulesStatus | null>(null)
   const [blockingRulesError, setBlockingRulesError] = useState("")
@@ -114,6 +109,10 @@ function OptionsPage() {
     () => state.rules.filter((rule) => !rule.enabled),
     [state.rules]
   )
+  const addPreviewDomain = useMemo(() => {
+    const normalizedDomain = normalizeDomain(domain)
+    return validateDomain(normalizedDomain) ? null : normalizedDomain
+  }, [domain])
   const temporaryAccessRule = useMemo(
     () => state.rules.find((rule) => rule.id === temporaryAccessRuleId) || null,
     [state.rules, temporaryAccessRuleId]
@@ -256,7 +255,6 @@ function OptionsPage() {
     if (temporaryAccessRuleId === ruleId) {
       setTemporaryAccessRuleId(null)
     }
-
     await commitState({
       ...state,
       rules: state.rules.filter((rule) => rule.id !== ruleId)
@@ -293,37 +291,6 @@ function OptionsPage() {
 
   function openTemporaryAccess(ruleId: string) {
     setTemporaryAccessRuleId(ruleId)
-  }
-
-  function startEdit(rule: BlockRule) {
-    setEditingId(rule.id)
-    setEditDomain(rule.domain)
-    setEditError("")
-  }
-
-  async function saveEdit(ruleId: string) {
-    const normalizedDomain = normalizeDomain(editDomain)
-    const validationError = validateDomain(normalizedDomain)
-
-    if (validationError) {
-      setEditError(validationError)
-      return
-    }
-
-    if (
-      state.rules.some(
-        (rule) => rule.id !== ruleId && rule.domain === normalizedDomain
-      )
-    ) {
-      setEditError(`${normalizedDomain} is already in the block list.`)
-      return
-    }
-
-    await updateRule(ruleId, {
-      domain: normalizedDomain
-    })
-
-    setEditingId(null)
   }
 
   function exportRules() {
@@ -520,15 +487,18 @@ function OptionsPage() {
                       <form className="osbe-dialog-form" onSubmit={addRule}>
                         <div className="osbe-field">
                           <Label htmlFor="new-rule-domain">Website</Label>
-                          <Input
-                            autoFocus
-                            id="new-rule-domain"
-                            onChange={(event) =>
-                              setDomain(event.currentTarget.value)
-                            }
-                            placeholder="x.com"
-                            value={domain}
-                          />
+                          <div className="osbe-domain-input-shell">
+                            <SiteIcon domain={addPreviewDomain || ""} />
+                            <Input
+                              autoFocus
+                              id="new-rule-domain"
+                              onChange={(event) =>
+                                setDomain(event.currentTarget.value)
+                              }
+                              placeholder="x.com"
+                              value={domain}
+                            />
+                          </div>
                         </div>
                         {error ? (
                           <Alert variant="destructive">
@@ -585,22 +555,14 @@ function OptionsPage() {
                     {state.rules.map((rule) => {
                       const overridden = isRuleOverridden(rule)
                       const blocking = isRuleBlocking(rule)
-                      const editing = editingId === rule.id
 
                       return (
                         <RuleRow
                           blocking={blocking}
-                          editing={editing}
-                          editError={editError}
-                          editDomain={editDomain}
                           key={rule.id}
                           onDelete={deleteRule}
                           onEndTemporaryAccess={endTemporaryAccess}
-                          onEditDomainChange={setEditDomain}
                           onOpenTemporaryAccess={openTemporaryAccess}
-                          onSaveEdit={saveEdit}
-                          onStartEdit={startEdit}
-                          onStopEdit={() => setEditingId(null)}
                           onUpdate={updateRule}
                           overridden={overridden}
                           paused={state.settings.paused}
@@ -872,16 +834,9 @@ function formatCountdown(milliseconds: number) {
 
 function RuleRow({
   blocking,
-  editing,
-  editError,
-  editDomain,
   onDelete,
   onEndTemporaryAccess,
-  onEditDomainChange,
   onOpenTemporaryAccess,
-  onSaveEdit,
-  onStartEdit,
-  onStopEdit,
   onUpdate,
   overridden,
   paused,
@@ -889,16 +844,9 @@ function RuleRow({
   rules
 }: {
   blocking: boolean
-  editing: boolean
-  editError: string
-  editDomain: string
   onDelete: (ruleId: string) => Promise<void>
   onEndTemporaryAccess: (rule: BlockRule) => Promise<void>
-  onEditDomainChange: (value: string) => void
   onOpenTemporaryAccess: (ruleId: string) => void
-  onSaveEdit: (ruleId: string) => Promise<void>
-  onStartEdit: (rule: BlockRule) => void
-  onStopEdit: () => void
   onUpdate: (ruleId: string, patch: Partial<BlockRule>) => Promise<void>
   overridden: boolean
   paused: boolean
@@ -910,40 +858,19 @@ function RuleRow({
       className={cn("osbe-rule-row", (!blocking || paused) && "is-muted")}>
       <SiteIcon domain={rule.domain} />
       <div className="min-w-0 flex-1">
-        {editing ? (
-          <div className="osbe-edit-grid">
-            <div className="osbe-field">
-              <Label htmlFor={`domain-${rule.id}`}>Website</Label>
-              <Input
-                id={`domain-${rule.id}`}
-                onChange={(event) =>
-                  onEditDomainChange(event.currentTarget.value)
-                }
-                value={editDomain}
-              />
-            </div>
-            {editError ? (
-              <Alert className="md:col-span-2" variant="destructive">
-                <AlertTitle>Could not save rule</AlertTitle>
-                <AlertDescription>{editError}</AlertDescription>
-              </Alert>
-            ) : null}
-          </div>
-        ) : (
-          <div className="osbe-rule-summary">
-            <span className="osbe-rule-title">
-              <span className="osbe-rule-label">{rule.domain}</span>
-            </span>
-            {overridden ? (
-              <TemporaryAccessStatus
-                onDismiss={onEndTemporaryAccess}
-                rule={rule}
-              />
-            ) : (
-              <RuleEffectiveStatus paused={paused} rule={rule} rules={rules} />
-            )}
-          </div>
-        )}
+        <div className="osbe-rule-summary">
+          <span className="osbe-rule-title">
+            <span className="osbe-rule-label">{rule.domain}</span>
+          </span>
+          {overridden ? (
+            <TemporaryAccessStatus
+              onDismiss={onEndTemporaryAccess}
+              rule={rule}
+            />
+          ) : (
+            <RuleEffectiveStatus paused={paused} rule={rule} rules={rules} />
+          )}
+        </div>
       </div>
 
       <div className="osbe-row-controls">
@@ -972,31 +899,13 @@ function RuleRow({
           </TooltipContent>
         </Tooltip>
 
-        {editing ? (
-          <div className="osbe-inline-actions">
-            <Button onClick={() => onSaveEdit(rule.id)} size="sm" type="button">
-              <Save data-icon="inline-start" />
-              Save
-            </Button>
-            <Button
-              onClick={onStopEdit}
-              size="sm"
-              type="button"
-              variant="outline">
-              <X data-icon="inline-start" />
-              Cancel
-            </Button>
-          </div>
-        ) : (
-          <RuleActionsMenu
-            onDelete={onDelete}
-            onEndTemporaryAccess={onEndTemporaryAccess}
-            onOpenTemporaryAccess={onOpenTemporaryAccess}
-            onStartEdit={onStartEdit}
-            overridden={overridden}
-            rule={rule}
-          />
-        )}
+        <RuleActionsMenu
+          onDelete={onDelete}
+          onEndTemporaryAccess={onEndTemporaryAccess}
+          onOpenTemporaryAccess={onOpenTemporaryAccess}
+          overridden={overridden}
+          rule={rule}
+        />
       </div>
     </article>
   )
@@ -1006,14 +915,12 @@ function RuleActionsMenu({
   onDelete,
   onEndTemporaryAccess,
   onOpenTemporaryAccess,
-  onStartEdit,
   overridden,
   rule
 }: {
   onDelete: (ruleId: string) => Promise<void>
   onEndTemporaryAccess: (rule: BlockRule) => Promise<void>
   onOpenTemporaryAccess: (ruleId: string) => void
-  onStartEdit: (rule: BlockRule) => void
   overridden: boolean
   rule: BlockRule
 }) {
@@ -1028,14 +935,6 @@ function RuleActionsMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Rule actions</DropdownMenuLabel>
-        <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={() => onStartEdit(rule)}>
-            <Edit3 data-icon="inline-start" />
-            Edit
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           disabled={!rule.enabled}
           onSelect={() => onOpenTemporaryAccess(rule.id)}>
@@ -1078,9 +977,7 @@ function SiteIcon({ domain }: { domain: string }) {
           referrerPolicy="no-referrer"
           src={currentSource}
         />
-      ) : (
-        <Globe2 data-icon="inline-start" />
-      )}
+      ) : null}
       <Globe2 className="osbe-site-icon-fallback" data-icon="inline-start" />
     </div>
   )
@@ -1182,25 +1079,19 @@ function getMatchTestLabel(
 }
 
 function faviconSourcesForDomain(domain: string) {
-  const pageUrl = pageUrlForDomain(domain)
+  const directSources = createDirectFaviconUrls(domain)
 
-  if (!pageUrl || typeof chrome === "undefined" || !chrome.runtime?.getURL) {
-    return []
+  if (typeof chrome === "undefined" || !chrome.runtime?.getURL) {
+    return directSources
   }
 
   return [
-    `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(pageUrl)}&size=32`
+    ...directSources,
+    ...createFaviconPageUrls(domain).map(
+      (pageUrl) =>
+        `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(pageUrl)}&size=32`
+    )
   ]
-}
-
-function pageUrlForDomain(domain: string) {
-  const host = normalizeDomain(domain)
-
-  if (!host || !host.includes(".")) {
-    return null
-  }
-
-  return `https://${host}/`
 }
 
 export default OptionsPage

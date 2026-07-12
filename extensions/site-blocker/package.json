@@ -2,12 +2,13 @@
   "name": "@osbe/site-blocker",
   "displayName": "OSBE Site Blocker",
   "version": "0.0.1",
-  "description": "Block distracting websites with local rules, temporary access, and a private dashboard.",
+  "description": "Block distracting websites and allow temporary access when you need it.",
   "author": "Fran",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.16",
@@ -35,21 +36,17 @@
     "@types/react-dom": "18.2.18",
     "postcss": "8.4.33",
     "prettier": "3.2.4",
+    "tsx": "^4.23.0",
     "typescript": "5.3.3"
   },
   "manifest": {
-    "externally_connectable": {
-      "matches": [
-        "https://osbe.dev/*",
-        "https://www.osbe.dev/*"
-      ]
-    },
     "permissions": [
       "activeTab",
       "alarms",
       "declarativeNetRequest",
       "favicon",
-      "storage"
+      "storage",
+      "webNavigation"
     ],
     "host_permissions": [
       "<all_urls>"

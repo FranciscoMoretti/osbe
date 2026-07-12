@@ -12,7 +12,6 @@ import iconUrl from "data-base64:../assets/icon.png"
 
 import { Button } from "~/components/ui/button"
 import { findMatchingRule } from "~/lib/matcher"
-import { openOsbeVerificationPage } from "~/lib/osbe-verification"
 import { readState, subscribeToStateChanges } from "~/lib/storage"
 import {
   DEFAULT_STATE,
@@ -95,14 +94,6 @@ function IndexPopup() {
         <Button className="mt-4 w-full" onClick={openDashboard} type="button">
           <ExternalLink />
           Open dashboard
-        </Button>
-        <Button
-          className="mt-2 w-full"
-          onClick={openOsbeVerificationPage}
-          type="button"
-          variant="outline">
-          <ShieldCheck />
-          Verify official build
         </Button>
       </div>
     </main>

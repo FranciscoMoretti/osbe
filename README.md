@@ -77,9 +77,3 @@ pnpm --filter @osbe/my-extension dev
 ```
 
 See `docs/create-extension.md` for the full checklist.
-
-## Official Install Verification
-
-OSBE extensions include a `Verify official build` popup action. The extension opens an OSBE verification link with a short-lived challenge, and the OSBE website checks that challenge against the official Chrome Web Store extension ID.
-
-See [docs/extension-verification.md](docs/extension-verification.md) for the protocol and launch checklist.

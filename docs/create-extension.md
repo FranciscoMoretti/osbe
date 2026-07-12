@@ -301,8 +301,6 @@ Use one secret per target listing if multiple extensions are submitted from the 
 - `package.json` has final `displayName`, `description`, `version`, and `manifest.permissions`.
 - `package.json` `description` is the short summary from package and is 132 characters or less.
 - `package.json` `version` is greater than the currently published Chrome Web Store version.
-- `apps/website/src/extension-verification.ts` contains the official Chrome Web Store ID after the first listing is created.
-- The extension manifest has `externally_connectable` limited to OSBE website origins, and the background service worker handles `osbe/extension:verify`.
 - `assets/icon.png` is a final product icon and the production build shows it in `chrome://extensions`.
 - `store-assets/` contains the listing icon, screenshots, and promotional image.
 - `store-assets/chrome-web-store-listing.md` contains the long dashboard description copy.

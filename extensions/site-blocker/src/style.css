@@ -199,6 +199,26 @@
     @apply flex flex-col gap-4;
   }
 
+  .osbe-domain-input-shell {
+    @apply flex h-10 items-center rounded-md border border-input bg-background px-1 transition-shadow focus-within:ring-2 focus-within:ring-ring;
+  }
+
+  .osbe-domain-input-shell .osbe-site-icon {
+    @apply size-8 border-0 bg-transparent;
+  }
+
+  .osbe-domain-input-shell .osbe-site-icon img {
+    @apply size-6;
+  }
+
+  .osbe-domain-input-shell .osbe-site-icon svg {
+    @apply size-4;
+  }
+
+  .osbe-domain-input-shell input {
+    @apply h-full border-0 px-2 shadow-none focus-visible:ring-0;
+  }
+
   .osbe-temporary-dialog {
     @apply gap-5;
   }
@@ -518,5 +538,6 @@
     .osbe-inline-actions {
       @apply justify-end;
     }
+
   }
 }

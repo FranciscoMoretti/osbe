@@ -7,7 +7,6 @@ import {
   type DownloadRequest,
   type ExtensionResponse
 } from "~lib/clip-types"
-import { installOsbeVerificationHandler } from "~lib/osbe-verification"
 import {
   copyMarkdownToTab,
   requestClipFromTab,
@@ -20,8 +19,6 @@ const COPY_SELECTION_CONTEXT_MENU_ID = "osbe-markdown-clipper-copy-selection"
 const OFFSCREEN_DOCUMENT_PATH = "tabs/offscreen.html"
 
 let creatingOffscreenDocument: Promise<void> | null = null
-
-installOsbeVerificationHandler()
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {

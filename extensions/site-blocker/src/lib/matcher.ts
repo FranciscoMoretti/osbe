@@ -125,11 +125,34 @@ export function ruleDomainMatchesUrl(rule: BlockRule, urlValue: string) {
   return host === domain || host.endsWith(`.${domain}`)
 }
 
-export function createDnrRegexFilter(domainValue: string) {
+export function createDnrUrlFilter(domainValue: string) {
   const domain = normalizeDomain(domainValue)
-  const hostRegex = `(?:[^/]+\\.)?${escapeRegex(domain)}`
 
-  return `^https?://${hostRegex}(?::[0-9]+)?(?:[/?#].*)?$`
+  return `||${domain}^`
+}
+
+export function createFaviconPageUrls(domainValue: string) {
+  const domain = normalizeDomain(domainValue)
+
+  if (!domain || !domain.includes(".")) {
+    return []
+  }
+
+  const urls = [`https://${domain}/`]
+  const registrableDomain = getDomain(domain, { allowPrivateDomains: true })
+
+  if (registrableDomain === domain && !domain.startsWith("www.")) {
+    urls.push(`https://www.${domain}/`)
+  }
+
+  return urls
+}
+
+export function createDirectFaviconUrls(domainValue: string) {
+  return createFaviconPageUrls(domainValue).map((pageUrl) => {
+    const url = new URL(pageUrl)
+    return `${url.origin}/favicon.ico`
+  })
 }
 
 export function createSampleUrlForDomain(domain: string) {
@@ -146,8 +169,4 @@ function compareRuleSpecificity(left: BlockRule, right: BlockRule) {
     right.domain.length - left.domain.length ||
     right.createdAt - left.createdAt
   )
-}
-
-function escapeRegex(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }

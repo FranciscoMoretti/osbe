@@ -83,10 +83,13 @@ Checks for expired temporary-access timers so blocking resumes automatically.
 Reads the current tab URL only when the user opens the popup so it can show whether the current website matches an active local rule. The URL is not stored or transmitted.
 
 `favicon` justification:
-Displays Chrome's locally cached favicon beside each website in the dashboard so rules are easier to identify.
+Displays a favicon beside each website so rules are easier to identify. It first requests the listed site's own `/favicon.ico`, then falls back to Chrome's locally cached favicon. No centralized favicon or OSBE service is used.
+
+`webNavigation` justification:
+Observes top-frame navigation events locally so blocked sites are still redirected when a browser-restored, cached, or client-side navigation does not produce the main-frame request handled by the declarative rule.
 
 Web history disclosure:
-Handles user-entered website hostnames and the active tab URL locally to apply blocking rules and show current-site status. This data stays in `chrome.storage.local` and is not transmitted to OSBE or third parties.
+Handles user-entered website hostnames and top-frame navigation URLs locally to apply blocking rules and show current-site status. Navigation URLs are not stored or transmitted to OSBE or a centralized favicon service. When the dashboard is open, it may request `/favicon.ico` directly from a listed website with no referrer.
 
 External connection disclosure:
 Allows `osbe.dev` to verify an installed OSBE extension only after the user starts verification. The response contains the extension name, version, runtime ID, and a short-lived challenge; it does not include block rules, browsing activity, or settings.

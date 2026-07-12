@@ -33,12 +33,6 @@
     "typescript": "5.3.3"
   },
   "manifest": {
-    "externally_connectable": {
-      "matches": [
-        "https://osbe.dev/*",
-        "https://www.osbe.dev/*"
-      ]
-    },
     "permissions": [
       "activeTab",
       "contextMenus",

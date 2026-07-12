@@ -10,7 +10,6 @@ import {
   Loader2,
   Moon,
   RefreshCw,
-  ShieldCheck,
   Sun
 } from "lucide-react"
 import type { ReactNode } from "react"
@@ -30,7 +29,6 @@ import {
   type ClipPayload,
   type ExtensionResponse
 } from "~lib/clip-types"
-import { openOsbeVerificationPage } from "~lib/osbe-verification"
 import { copyMarkdownToTab, requestClipFromTab } from "~lib/request-clip"
 
 type Status = "idle" | "busy" | "done" | "error"
@@ -252,11 +250,6 @@ function IndexPopup() {
             </IconButton>
             <IconButton label="Refresh clip" onClick={loadClip}>
               <RefreshCw />
-            </IconButton>
-            <IconButton
-              label="Verify official OSBE build"
-              onClick={openOsbeVerificationPage}>
-              <ShieldCheck />
             </IconButton>
           </div>
         </header>
