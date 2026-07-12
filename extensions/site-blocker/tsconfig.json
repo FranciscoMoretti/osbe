@@ -1,5 +1,5 @@
 {
-  "extends": "plasmo/templates/tsconfig.base",
+  "extends": "@osbe/config/tsconfig.plasmo.json",
   "exclude": ["node_modules"],
   "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {

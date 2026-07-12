@@ -24,17 +24,15 @@ import {
 
 import "~style.css"
 
-import iconUrl from "data-base64:../assets/icon.png"
-
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
-import { Button } from "~/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@osbe/ui/components/alert"
+import { Button } from "@osbe/ui/components/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "~/components/ui/card"
+} from "@osbe/ui/components/card"
 import {
   Dialog,
   DialogClose,
@@ -44,23 +42,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "~/components/ui/dialog"
+} from "@osbe/ui/components/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from "~/components/ui/dropdown-menu"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { Switch } from "~/components/ui/switch"
+} from "@osbe/ui/components/dropdown-menu"
+import { Input } from "@osbe/ui/components/input"
+import { Label } from "@osbe/ui/components/label"
+import { Switch } from "@osbe/ui/components/switch"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from "~/components/ui/tooltip"
+} from "@osbe/ui/components/tooltip"
+import { cn } from "@osbe/ui/lib/utils"
+import iconUrl from "data-base64:../assets/icon.png"
+
 import {
   clearExpiredOverrides,
   createDirectFaviconUrls,
@@ -79,7 +80,7 @@ import {
   type BlockingRulesStatus,
   type ExtensionMessageResponse
 } from "~/lib/types"
-import { cn, createId } from "~/lib/utils"
+import { createId } from "~/lib/utils"
 
 const OVERRIDE_MINUTES = [5, 10, 15, 30]
 

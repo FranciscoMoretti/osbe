@@ -1,0 +1,16 @@
+{
+  "extensions": [
+    {
+      "slug": "markdown-clipper",
+      "packageName": "@osbe/markdown-clipper",
+      "workflow": "submit.yml",
+      "secretName": "SUBMIT_KEYS"
+    },
+    {
+      "slug": "site-blocker",
+      "packageName": "@osbe/site-blocker",
+      "workflow": "submit-site-blocker.yml",
+      "secretName": "SITE_BLOCKER_SUBMIT_KEYS"
+    }
+  ]
+}

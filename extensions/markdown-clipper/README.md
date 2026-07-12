@@ -14,7 +14,7 @@ An Open Source Browser Extension Chrome MV3 extension built with [Plasmo](https:
 
 ```bash
 pnpm install
-pnpm dev:markdown-clipper
+pnpm extension dev markdown-clipper
 ```
 
 Load the generated development extension from:
@@ -26,7 +26,7 @@ extensions/markdown-clipper/build/chrome-mv3-dev
 ## Production Build
 
 ```bash
-pnpm build:markdown-clipper
+pnpm extension build markdown-clipper
 ```
 
 Load or package the production extension from:
@@ -85,5 +85,5 @@ Stores the user's Images and Template clipping preferences so popup and context 
 - `src/lib/request-clip.ts` - user-invoked page and selection serialization to Markdown.
 - `src/background.ts` - context menu setup, popup/context orchestration, and Chrome downloads.
 - `src/tabs/offscreen.ts` - ZIP/Markdown Blob URL creation for MV3.
-- `src/components/ui/button.tsx` - shadcn/ui button component.
+- `packages/ui` - shared OSBE theme and shadcn/ui primitives.
 - `store-assets/` - Chrome Web Store artwork for this extension.

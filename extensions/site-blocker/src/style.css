@@ -1,46 +1,10 @@
+@import "@osbe/ui/theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 215 100% 45%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 199 94% 94%;
-    --secondary-foreground: 215 100% 35%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 204 100% 94%;
-    --accent-foreground: 215 100% 35%;
-    --destructive: 5 100% 62%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 214 95% 90%;
-    --input: 214 95% 90%;
-    --ring: 215 100% 45%;
-    --radius: 0.5rem;
-
-    --brand-ink: 222 47% 11%;
-    --brand-paper: 210 40% 98%;
-    --brand-blue: 215 100% 45%;
-    --brand-cyan: 199 89% 48%;
-    --brand-red: 5 100% 62%;
-    --brand-green: 142 71% 45%;
-    --brand-amber: 32 95% 44%;
-    --brand-glass: 199 94% 94%;
-    --brand-glass-border: 214 95% 90%;
-    --brand-glow: 199 89% 72%;
-  }
-
-  * {
-    @apply border-border;
-  }
-
   html {
     @apply bg-background text-foreground;
   }

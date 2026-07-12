@@ -8,9 +8,9 @@ import { useEffect, useMemo, useState } from "react"
 
 import "~style.css"
 
+import { Button } from "@osbe/ui/components/button"
 import iconUrl from "data-base64:../assets/icon.png"
 
-import { Button } from "~/components/ui/button"
 import { findMatchingRule } from "~/lib/matcher"
 import { readState, subscribeToStateChanges } from "~/lib/storage"
 import {

@@ -1,0 +1,16 @@
+name: "Submit {{displayName}} to Web Store"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: submit-{{slug}}
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    uses: ./.github/workflows/_submit-extension.yml
+    with:
+      extension: {{slug}}
+    secrets:
+      submit_keys: ${{ secrets.{{secretName}} }}

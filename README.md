@@ -9,7 +9,9 @@ OSBE builds small, transparent browser extensions that users can inspect, reason
 - `extensions/markdown-clipper` - OSBE Markdown clipper built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `extensions/site-blocker` - OSBE site blocker built with the same Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `apps/website` - placeholder package for the future OSBE website.
-- `packages/*` - reserved for shared packages when an extension or the website needs shared code.
+- `packages/ui` - shared OSBE theme, utility, and shadcn/ui source components.
+- `packages/config` - shared Plasmo TypeScript, Tailwind, and PostCSS policy.
+- `extensions/catalog.json` - registry used by extension commands and validation.
 
 ## Development
 
@@ -19,34 +21,23 @@ Install dependencies from the repository root:
 pnpm install
 ```
 
-Run Markdown Clipper:
+List extensions:
 
 ```bash
-pnpm dev
+pnpm extension list
 ```
 
-or explicitly:
+Run an extension:
 
 ```bash
-pnpm dev:markdown-clipper
+pnpm extension dev markdown-clipper
+pnpm extension dev site-blocker
 ```
 
 Load the generated development extension from:
 
 ```text
 extensions/markdown-clipper/build/chrome-mv3-dev
-```
-
-Run Site Blocker:
-
-```bash
-pnpm dev:site-blocker
-```
-
-Load the generated extension from:
-
-```text
-extensions/site-blocker/build/chrome-mv3-dev
 ```
 
 ## Build
@@ -57,13 +48,18 @@ Build every workspace that has a `build` script:
 pnpm build
 ```
 
-Build or package an extension directly:
+Build or package one extension through the catalog:
 
 ```bash
-pnpm build:markdown-clipper
-pnpm package:markdown-clipper
-pnpm build:site-blocker
-pnpm package:site-blocker
+pnpm extension build markdown-clipper
+pnpm extension package markdown-clipper
+pnpm extension publish markdown-clipper
+```
+
+Validate release structure, run tests, typecheck, and build everything:
+
+```bash
+pnpm check
 ```
 
 ## Create A New Extension
@@ -73,7 +69,9 @@ Use the scaffold script:
 ```bash
 pnpm new:extension my-extension "OSBE My Extension"
 pnpm install
-pnpm --filter @osbe/my-extension dev
+pnpm extension dev my-extension
 ```
 
-See `docs/create-extension.md` for the full checklist.
+The generator registers the package, creates the branded runtime/store baseline,
+and adds a thin workflow that uses the shared submission workflow. See
+`docs/create-extension.md` for the product-specific release checklist.

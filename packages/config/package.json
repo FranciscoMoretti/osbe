@@ -1,0 +1,14 @@
+{
+  "name": "@osbe/config",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "exports": {
+    "./postcss": "./postcss.cjs",
+    "./tailwind": "./tailwind.cjs",
+    "./tsconfig.plasmo.json": "./tsconfig.plasmo.json"
+  },
+  "dependencies": {
+    "plasmo": "catalog:"
+  }
+}

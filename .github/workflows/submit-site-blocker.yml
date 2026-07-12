@@ -1,35 +1,16 @@
 name: "Submit Site Blocker to Web Store"
+
 on:
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 concurrency:
   group: submit-site-blocker
   cancel-in-progress: false
 
 jobs:
-  site-blocker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: "pnpm"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Build Site Blocker
-        run: pnpm --filter @osbe/site-blocker build
-      - name: Package Site Blocker into a zip artifact
-        run: pnpm --filter @osbe/site-blocker package
-      - name: Upload and submit Site Blocker
-        env:
-          SUBMIT_KEYS: ${{ secrets.SITE_BLOCKER_SUBMIT_KEYS }}
-          ZIP_PATH: extensions/site-blocker/build/chrome-mv3-prod.zip
-        run: .github/scripts/submit-chrome-webstore.sh
+  submit:
+    uses: ./.github/workflows/_submit-extension.yml
+    with:
+      extension: site-blocker
+    secrets:
+      submit_keys: ${{ secrets.SITE_BLOCKER_SUBMIT_KEYS }}

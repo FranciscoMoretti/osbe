@@ -1,0 +1,43 @@
+name: "Submit OSBE extension"
+
+on:
+  workflow_call:
+    inputs:
+      extension:
+        description: "Extension directory slug"
+        required: true
+        type: string
+    secrets:
+      submit_keys:
+        description: "Chrome Web Store submission credentials"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate extension release inputs
+        run: pnpm extension validate "${{ inputs.extension }}"
+      - name: Build extension
+        run: pnpm extension build "${{ inputs.extension }}"
+      - name: Package extension
+        run: pnpm extension package "${{ inputs.extension }}"
+      - name: Upload and submit extension
+        env:
+          SUBMIT_KEYS: ${{ secrets.submit_keys }}
+          ZIP_PATH: extensions/${{ inputs.extension }}/build/chrome-mv3-prod.zip
+        run: .github/scripts/submit-chrome-webstore.sh

@@ -1,0 +1,6 @@
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "compilerOptions": {
+    "moduleResolution": "Bundler"
+  }
+}

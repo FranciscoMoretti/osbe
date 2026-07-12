@@ -34,7 +34,7 @@ the user starts it.
 
 ```bash
 pnpm install
-pnpm dev:site-blocker
+pnpm extension dev site-blocker
 ```
 
 Load the generated extension from:
@@ -46,8 +46,8 @@ extensions/site-blocker/build/chrome-mv3-dev
 ## Production Build
 
 ```bash
-pnpm build:site-blocker
-pnpm package:site-blocker
+pnpm extension build site-blocker
+pnpm extension package site-blocker
 ```
 
 Load the production extension from:

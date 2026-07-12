@@ -1,0 +1,33 @@
+{
+  "name": "@osbe/{{slug}}",
+  "displayName": "{{displayName}}",
+  "version": "0.0.1",
+  "description": "{{displayName}} browser extension.",
+  "author": "Fran",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@osbe/config": "workspace:*",
+    "@osbe/ui": "workspace:*",
+    "lucide-react": "catalog:",
+    "plasmo": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "manifest": {
+    "permissions": []
+  }
+}

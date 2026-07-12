@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from "react"
 
 import "~style.css"
 
-import { Button } from "~/components/ui/button"
+import { Button } from "@osbe/ui/components/button"
+
 import { readState, subscribeToStateChanges } from "~/lib/storage"
 import {
   DEFAULT_STATE,

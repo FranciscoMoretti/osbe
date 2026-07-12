@@ -1,312 +1,152 @@
-# Create A New Extension
+# Create an OSBE Extension
 
-OSBE extensions live in `extensions/*` as independent packages. Extension packages use Plasmo, Tailwind CSS, and shadcn/ui conventions so build, packaging, styling, aliases, and Chrome Web Store submission stay consistent across the repo.
+OSBE extensions are catalogued Plasmo packages that consume shared brand UI and build policy. Creating another extension should add product behavior, artwork, copy, and permissions—not another copy of the toolchain.
 
-Use this document as the full extension checklist, not just the code scaffold. A publishable extension needs package metadata, an installable icon, Chrome Web Store assets, permission justifications, and a submission workflow.
-
-## Generate The Package
+## Generate the extension
 
 From the repository root:
 
 ```bash
-pnpm new:extension my-extension "OSBE My Extension"
-```
-
-The script currently creates a Plasmo-based package:
-
-- `extensions/my-extension/package.json`
-- Plasmo TypeScript config and shadcn/ui config
-- Tailwind and PostCSS config
-- `src/style.css`
-- `src/popup.tsx`
-- `src/lib/utils.ts`
-- `src/components/ui/button.tsx`
-
-The generated package is intentionally minimal. Before publishing, add the extension-specific files listed below.
-
-## Install And Run
-
-```bash
+pnpm new:extension link-cleaner "OSBE Link Cleaner"
 pnpm install
-pnpm --filter @osbe/my-extension dev
+pnpm extension dev link-cleaner
 ```
 
-Load the generated development extension from:
+The generator creates and registers:
 
-```text
-extensions/my-extension/build/chrome-mv3-dev
-```
+- a Plasmo package under `extensions/link-cleaner`;
+- shared `@osbe/ui` and `@osbe/config` dependencies;
+- a popup using the shared OSBE theme and Button;
+- runtime and temporary store icons based on the OSBE base icon;
+- README, privacy, listing, permission, and submission-key templates;
+- a Chrome Web Store workflow backed by the reusable submission workflow;
+- an entry in `extensions/catalog.json`.
 
-## Naming
+It intentionally requests no browser permissions. Add only the capabilities the product actually needs.
 
-- Directory name: kebab case, for example `my-extension`.
-- Package name: `@osbe/my-extension`.
-- Display name: `OSBE My Extension`.
-- Keep each extension's assets, store submission files, and generated store artwork inside its own extension directory.
+## Extension commands
 
-## Package Metadata
-
-Plasmo derives the built Chrome manifest from each extension's `package.json`. Chrome Web Store also surfaces some of this metadata directly:
-
-- `displayName` becomes the extension title in the package and installed extension views.
-- `description` becomes the package summary. Chrome Web Store shows this as "Summary from package" in the listing overview and currently rejects values longer than 132 characters.
-- `version` becomes the submitted extension version. Every uploaded package must have a version greater than the currently published version.
-- `manifest.permissions` must list every requested Chrome permission.
-
-Set `package.json` `description` to a short feature-led summary, not the long store listing description. Keep it under 132 characters so it can be uploaded to Chrome Web Store.
-
-Keep the long dashboard `Description` field in source control, usually at:
-
-```text
-extensions/my-extension/store-assets/chrome-web-store-listing.md
-```
-
-Chrome's dashboard `Description` field allows long listing copy, currently up to 16,000 characters. That copy should be feature-led and easy to paste into the store dashboard.
-
-Example:
-
-```json
-{
-  "displayName": "OSBE Markdown Clipper",
-  "version": "0.0.2",
-  "description": "One-click Markdown clipper. Save pages and selections as clean Markdown with preview, copy, and download.",
-  "manifest": {
-    "permissions": [
-      "activeTab",
-      "contextMenus",
-      "downloads",
-      "offscreen",
-      "scripting"
-    ]
-  }
-}
-```
-
-For the dashboard `Description` field, keep a separate Markdown file:
-
-```markdown
-# Chrome Web Store Listing
-
-## Summary From Package
-
-One-click Markdown clipper. Save pages and selections as clean Markdown with preview, copy, and download.
-
-## Description
-
-One-click Markdown web clipper for saving pages and selections as clean, portable Markdown.
-
-Use feature sections and bullets here. This is the long store listing copy, not the manifest summary.
-```
-
-## Extension Icon
-
-The installed extension icon comes from the packaged extension, not from Chrome Web Store artwork. Plasmo reads the source icon from:
-
-```text
-extensions/my-extension/assets/icon.png
-```
-
-Use a product-specific square PNG before building. If this is missing or still a placeholder, the installed extension can show the default Plasmo-style diamond icon in `chrome://extensions` and the browser toolbar.
-
-After running a production build, inspect:
-
-```text
-extensions/my-extension/build/chrome-mv3-prod/manifest.json
-```
-
-Confirm the generated `icons` and `action.default_icon` entries are present and point to the generated `icon*.plasmo.*.png` files. Then load `extensions/my-extension/build/chrome-mv3-prod` locally and check the icon in `chrome://extensions`.
-
-## shadcn/ui In Plasmo
-
-Each extension keeps its own `components.json`, `tailwind.config.js`, `postcss.config.js`, and `src/style.css`, following the Plasmo shadcn example pattern. The default `~` alias maps to `src/*` through the extension's `tsconfig.json`.
-
-To add more shadcn/ui components, run commands from the extension directory so generated files land in that extension:
+Commands resolve packages through `extensions/catalog.json`; adding an extension does not add root package scripts.
 
 ```bash
-cd extensions/my-extension
-pnpm dlx shadcn@latest add dialog
+pnpm extension list
+pnpm extension dev link-cleaner
+pnpm extension build link-cleaner
+pnpm extension package link-cleaner
+pnpm extension publish link-cleaner
+pnpm extension test link-cleaner
+pnpm extension validate link-cleaner
 ```
 
-## Store Assets
+The `test` command runs product tests when that extension defines them; a newly generated extension has no placeholder test suite.
 
-Chrome Web Store artwork is separate from the runtime extension icon. Keep it in the extension directory:
+Run the complete repository check with:
+
+```bash
+pnpm check
+```
+
+## Shared UI ownership
+
+Canonical shadcn/ui source components live in `packages/ui/src/components`. Extensions import them directly:
+
+```tsx
+import { Button } from "@osbe/ui/components/button"
+```
+
+The repository currently uses Tailwind CSS v3. Run the Tailwind-v3-compatible shadcn CLI from an extension directory. Its `components.json` routes UI primitives and utilities to `packages/ui`, while product-specific modules remain in the extension.
+
+```bash
+cd extensions/link-cleaner
+pnpm dlx shadcn@2.3.0 add dialog
+```
+
+Do not create local copies of shared primitives. Extend their variants centrally or compose them into product-specific modules locally.
+
+The shared theme is `packages/ui/src/styles/theme.css`. Product CSS belongs in the extension and imports that theme. Shared Tailwind, PostCSS, and Plasmo TypeScript policy lives in `packages/config`.
+
+## Product work required before release
+
+The generated extension is a working branded development baseline. A real product still needs:
+
+- product behavior and product-specific modules;
+- a final product icon at `assets/icon.png`;
+- a 128×128 store icon and real 1280×800 screenshots;
+- feature-led store copy;
+- a precise privacy policy;
+- permission and host-permission justifications;
+- focused tests for valuable product seams.
+
+`pnpm extension validate <slug>` checks the release structure and rejects incomplete store assets such as a missing screenshot.
+
+## Metadata and permissions
+
+Plasmo builds the manifest from the extension `package.json`.
+
+- `displayName` must follow `OSBE [Function]`.
+- `description` is the Chrome package summary and must be 132 characters or fewer.
+- `version` must be greater than the version already published.
+- `manifest.permissions` must be explicit, even when empty.
+- Broad host permissions require a product-specific justification.
+
+Prefer user-invoked capabilities such as `activeTab` when they can support the product. Record one justification per permission in the extension README and store listing.
+
+## Icons and store assets
+
+Plasmo reads the installed extension icon from:
 
 ```text
-extensions/my-extension/store-assets/
+extensions/link-cleaner/assets/icon.png
 ```
 
-Use `extensions/markdown-clipper/store-assets` as the current reference structure:
+Chrome Web Store artwork is separate:
 
 ```text
 store-assets/
   README.md
   chrome-web-store-listing.md
   store-icon-128.png
-  small-promo-440x280.png
   screenshots/
-    screenshot-1-*.png
-    screenshot-2-*.png
-    screenshot-3-*.png
 ```
 
-The Markdown Clipper assets are generated by:
+The generator copies the neutral OSBE base icon as a temporary placeholder. Replace both icons with a product-specific member of the OSBE icon family before publishing. Screenshots should show the real workflow and contain no alpha channel.
+
+## Validation and packaging
+
+Before submission:
 
 ```bash
-pnpm --filter @osbe/markdown-clipper generate:store-assets
+pnpm extension validate link-cleaner
+pnpm extension build link-cleaner
+pnpm extension package link-cleaner
 ```
 
-For a new extension, add an equivalent extension-specific generator or create the files manually. Screenshots should show the real product workflow, not generic marketing art. If screenshots are generated from SVG or another source format, export them as 1280x800 PNGs without alpha; Chrome Web Store rejects or degrades some transparent screenshot assets.
+Inspect `build/chrome-mv3-prod/manifest.json`, then load `build/chrome-mv3-prod` locally. Confirm the popup, icon, requested permissions, background behavior, and product workflow.
 
-## Chrome Web Store Listing
+## Automated Chrome submission
 
-Create the first listing manually in the Chrome Web Store Developer Dashboard so the extension receives a store extension ID. Fill the listing using package metadata and extension-specific content:
+Each extension has a small caller workflow. Build, validation, packaging, and upload behavior live once in `.github/workflows/_submit-extension.yml`.
 
-- Title from package: comes from `displayName`.
-- Summary from package: comes from `package.json` `description`; keep this under 132 characters.
-- Description: dashboard field; copy the long listing copy from `store-assets/chrome-web-store-listing.md`.
-- Category: choose the narrowest accurate category.
-- Store icon: upload `store-assets/store-icon-128.png`.
-- Screenshots: upload the files under `store-assets/screenshots/`.
-- Promotional image: upload `store-assets/small-promo-440x280.png` when available.
-
-The package summary and dashboard description appear together in the listing overview. Treat them as a pair, but keep them in separate places:
+The generated workflow expects a repository secret named from the slug, for example:
 
 ```text
-Summary from package:
-One-click Markdown clipper. Save pages and selections as clean Markdown with preview, copy, and download.
-
-Description:
-Copy from store-assets/chrome-web-store-listing.md
+LINK_CLEANER_SUBMIT_KEYS
 ```
 
-Before packaging, check the generated production manifest:
+Use `submit-keys.example.json` as the shape of that secret. Never commit real credentials.
 
-```bash
-pnpm --filter @osbe/my-extension build
-node -e "const m=require('./extensions/my-extension/build/chrome-mv3-prod/manifest.json'); console.log(m.version, m.description.length, m.description)"
-```
+The shared workflow submits code packages only. Chrome Web Store listing content, screenshots, privacy answers, and permission declarations still need to be completed in the Developer Dashboard.
 
-Confirm the version is greater than the published Chrome Web Store version and the description length is 132 characters or less.
+## Release checklist
 
-## Permission Justifications
-
-Chrome Web Store requires a single-purpose description and one justification per requested permission. Keep these in source control with the extension so future updates do not depend on dashboard memory.
-
-Use this pattern:
-
-```text
-Single purpose:
-<one sentence describing the narrow job the extension performs>
-
-<permission> justification:
-<why the extension needs this permission, when it uses it, and why a narrower alternative does not work>
-```
-
-Markdown Clipper currently uses:
-
-```text
-Single purpose:
-Clip pages and selections into Markdown
-
-activeTab justification:
-Temporarily accesses the current tab only after the user clicks the extension or selects an extension context menu action. This access is needed to read the page or selected content and convert it to Markdown.
-
-contextMenus justification:
-Adds right-click actions so users can clip selected webpage content as Markdown.
-
-downloads justification:
-Saves user-requested Markdown files or ZIP files containing Markdown and local image assets.
-
-offscreen justification:
-Creates Blob URLs for Markdown and ZIP downloads because Manifest V3 service workers cannot create DOM Blob object URLs.
-
-scripting justification:
-Runs the Markdown clipping script only after the user invokes the extension on the current tab. The script reads the current page or selection, converts it to Markdown, and does not run persistently.
-
-Remote code:
-No, I am not using remote code.
-```
-
-Avoid broad host permissions unless the extension cannot work without them. OSBE extensions should prefer user-invoked access such as `activeTab` where possible.
-
-## Build And Package
-
-Publishing is per extension. Create a workflow or update an existing one to build and package the target workspace:
-
-```bash
-pnpm --filter @osbe/my-extension build
-pnpm --filter @osbe/my-extension package
-```
-
-Before running `package`, update `package.json` `version` to a value greater than the currently published store version. Chrome Web Store rejects ZIPs whose generated `manifest.json` version is not greater than the published package.
-
-The packaged ZIP will be under:
-
-```text
-extensions/my-extension/build/
-```
-
-Before uploading, load the production build locally:
-
-```text
-extensions/my-extension/build/chrome-mv3-prod
-```
-
-Check the popup, context menus, download flow, permissions, and icon. Then upload the ZIP from:
-
-```text
-extensions/my-extension/build/chrome-mv3-prod.zip
-```
-
-## Automated Chrome Submission
-
-The repository uses `.github/scripts/submit-chrome-webstore.sh` to submit packaged extension ZIPs from GitHub Actions. The script exchanges the stored Google OAuth refresh token for an access token, uploads the ZIP to the Chrome Web Store API, and requests publish. It does not replace store listing content, screenshots, privacy answers, or permission justifications.
-
-For Chrome, create a non-secret template in the extension directory:
-
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/PlasmoHQ/bpp/v3/keys.schema.json",
-  "chrome": {
-    "clientId": "YOUR_GOOGLE_OAUTH_CLIENT_ID",
-    "clientSecret": "YOUR_GOOGLE_OAUTH_CLIENT_SECRET",
-    "refreshToken": "YOUR_GOOGLE_OAUTH_REFRESH_TOKEN",
-    "extId": "YOUR_CHROME_WEB_STORE_EXTENSION_ID"
-  }
-}
-```
-
-Commit only the template, for example:
-
-```text
-extensions/my-extension/submit-keys.example.json
-```
-
-Store the real JSON in a GitHub Actions secret such as `SUBMIT_KEYS`.
-
-The current Markdown Clipper workflow is `.github/workflows/submit.yml`. Site Blocker uses `.github/workflows/submit-site-blocker.yml`. A new extension needs either a new workflow job or a parameterized workflow that builds that package and passes the produced ZIP to the shared script:
-
-```yaml
-- name: Upload and submit My Extension
-  env:
-    SUBMIT_KEYS: ${{ secrets.MY_EXTENSION_SUBMIT_KEYS }}
-    ZIP_PATH: extensions/my-extension/build/chrome-mv3-prod.zip
-  run: .github/scripts/submit-chrome-webstore.sh
-```
-
-Use one secret per target listing if multiple extensions are submitted from the same repository.
-
-## Release Checklist
-
-- `package.json` has final `displayName`, `description`, `version`, and `manifest.permissions`.
-- `package.json` `description` is the short summary from package and is 132 characters or less.
-- `package.json` `version` is greater than the currently published Chrome Web Store version.
-- `assets/icon.png` is a final product icon and the production build shows it in `chrome://extensions`.
-- `store-assets/` contains the listing icon, screenshots, and promotional image.
-- `store-assets/chrome-web-store-listing.md` contains the long dashboard description copy.
-- Dashboard description, single purpose, permission justifications, and remote-code answer are recorded in source control.
-- `pnpm --filter @osbe/my-extension build` succeeds.
-- `pnpm --filter @osbe/my-extension package` produces `build/chrome-mv3-prod.zip`.
-- The generated production `manifest.json` has the expected version and summary length.
-- The production build has been loaded locally and checked before submission.
-- Chrome submission keys are stored only in GitHub Secrets, never committed.
+- Final single-purpose behavior is implemented.
+- Permissions are minimal and justified.
+- Package summary is 1–132 characters.
+- Version exceeds the published version.
+- Runtime and store icons are product-specific.
+- At least one real 1280×800 screenshot is present.
+- Store listing and privacy copy are final.
+- `pnpm extension validate <slug>` passes.
+- Product tests pass.
+- Production build and package succeed.
+- The unpacked production extension has been checked in Chrome.

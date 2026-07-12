@@ -18,7 +18,8 @@ import lightLogoUrl from "url:../assets/icon-menu.png"
 
 import "~style.css"
 
-import { Button } from "~components/ui/button"
+import { Button } from "@osbe/ui/components/button"
+
 import {
   DEFAULT_CLIP_OPTIONS,
   getStoredClipOptions,

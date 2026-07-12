@@ -241,15 +241,15 @@ Recommended light theme tokens:
   --ring: 199 89% 48%;
   --radius: 0.5rem;
 
-  --brand-ink: 222 47% 11%;
+  --brand-ink: 222.2 47.4% 11.2%;
   --brand-paper: 210 40% 98%;
-  --brand-blue: 212 100% 50%;
-  --brand-cyan: 199 89% 48%;
-  --brand-red: 5 100% 62%;
-  --brand-green: 142 71% 45%;
-  --brand-amber: 32 95% 44%;
-  --brand-glass: 199 100% 96%;
-  --brand-glass-border: 214 95% 93%;
+  --brand-blue: 215.4 100% 45.5%;
+  --brand-cyan: 198.6 88.7% 48.4%;
+  --brand-red: 4.9 100% 62%;
+  --brand-green: 142.1 76.2% 36.3%;
+  --brand-amber: 32.1 94.6% 43.7%;
+  --brand-glass: 204 93.8% 93.7%;
+  --brand-glass-border: 213.3 96.9% 87.3%;
 }
 ```
 

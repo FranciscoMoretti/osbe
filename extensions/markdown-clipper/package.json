@@ -8,29 +8,26 @@
     "dev": "plasmo dev",
     "build": "plasmo build",
     "package": "plasmo package",
+    "typecheck": "tsc --noEmit --pretty false",
     "generate:store-assets": "python3 scripts/generate-store-assets.py"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
+    "@osbe/config": "workspace:*",
+    "@osbe/ui": "workspace:*",
     "jszip": "^3.10.1",
-    "lucide-react": "^0.468.0",
-    "plasmo": "0.90.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss": "3.4.1"
+    "lucide-react": "catalog:",
+    "plasmo": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
-    "@types/chrome": "0.0.258",
-    "@types/node": "20.11.5",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
-    "postcss": "8.4.33",
-    "prettier": "3.2.4",
-    "typescript": "5.3.3"
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "typescript": "catalog:"
   },
   "manifest": {
     "permissions": [

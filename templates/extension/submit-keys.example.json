@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/PlasmoHQ/bpp/v3/keys.schema.json",
+  "chrome": {
+    "clientId": "YOUR_GOOGLE_OAUTH_CLIENT_ID",
+    "clientSecret": "YOUR_GOOGLE_OAUTH_CLIENT_SECRET",
+    "refreshToken": "YOUR_GOOGLE_OAUTH_REFRESH_TOKEN",
+    "extId": "YOUR_CHROME_WEB_STORE_EXTENSION_ID"
+  }
+}

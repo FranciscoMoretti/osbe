@@ -5,14 +5,15 @@
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.js",
-    "css": "src/style.css",
+    "css": "../../packages/ui/src/styles/theme.css",
     "baseColor": "zinc",
     "cssVariables": true
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "~components",
-    "utils": "~lib/utils",
-    "ui": "~components/ui",
+    "utils": "@osbe/ui/lib/utils",
+    "ui": "@osbe/ui/components",
     "lib": "~lib",
     "hooks": "~hooks"
   }
