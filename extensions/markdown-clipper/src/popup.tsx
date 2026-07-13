@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Sun
 } from "lucide-react"
+import * as React from "react"
 import type { ReactNode } from "react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import lightLogoUrl from "url:../assets/icon-menu.png"
