@@ -156,6 +156,13 @@ Use `submit-keys.example.json` as the shape of that secret. Never commit real cr
 
 The shared workflow submits code packages only. Chrome Web Store listing content, screenshots, privacy answers, and permission declarations still need to be completed in the Developer Dashboard.
 
+Chrome considers reading, clipping, or scraping website content to be handling
+user data even when the extension processes it only on the user's device. The
+dashboard's Privacy practices tab must therefore match the extension's actual
+behavior, link to the published privacy policy, justify every requested
+permission, disclose each handled data category, and complete the Limited Use
+certifications before the submission API can publish a release.
+
 ## Release checklist
 
 - Final single-purpose behavior is implemented.
