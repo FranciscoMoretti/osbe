@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/osbe-logo-official.png" alt="OSBE icon" width="128" height="128">
+</p>
+
 # OSBE
 
 Open Source Browser Extensions is a monorepo for OSBE browser extensions and the future OSBE website.
