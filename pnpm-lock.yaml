@@ -92,8 +92,6 @@ importers:
         specifier: 'catalog:'
         version: 0.33.5
 
-  apps/website: {}
-
   extensions/markdown-clipper:
     dependencies:
       '@osbe/config':

@@ -90,28 +90,6 @@ Avoid:
 4. Users can install, review, self-build, clone, or fork.
 5. Markdown Clipper is the first example; more focused tools will follow.
 
-## Website Hero Draft
-
-```text
-OSBE
-
-Browser extensions you can trust.
-
-Open-source browser extensions built with focused permissions, clear behavior, and public source code. Install them, review them, build them yourself, or fork them for your own workflow.
-```
-
-Primary action:
-
-```text
-Browse extensions
-```
-
-Secondary action:
-
-```text
-View source
-```
-
 ## Markdown Clipper Copy
 
 ### Product One-Liner

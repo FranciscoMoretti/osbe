@@ -4,15 +4,14 @@
 
 # OSBE
 
-Open Source Browser Extensions is a monorepo for OSBE browser extensions and the future OSBE website.
+Open Source Browser Extensions is a monorepo for OSBE browser extensions.
 
-OSBE builds small, transparent browser extensions that users can inspect, reason about, clone, and adapt. See [docs/brand.md](docs/brand.md) for the brand brief, messaging, and trust principles.
+OSBE builds small, transparent browser extensions that users can inspect, reason about, clone, and adapt. This GitHub repository and README are the public source of truth for OSBE; there is no separate project website. See [docs/brand.md](docs/brand.md) for the brand brief, messaging, and trust principles.
 
 ## Workspaces
 
 - `extensions/markdown-clipper` - OSBE Markdown clipper built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `extensions/site-blocker` - OSBE site blocker built with the same Plasmo, Tailwind CSS, and shadcn/ui conventions.
-- `apps/website` - placeholder package for the future OSBE website.
 - `packages/ui` - shared OSBE theme, utility, and shadcn/ui source components.
 - `packages/config` - shared Plasmo TypeScript, Tailwind, and PostCSS policy.
 - `extensions/catalog.json` - registry used by extension commands and validation.
