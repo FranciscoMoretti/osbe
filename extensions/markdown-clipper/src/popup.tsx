@@ -15,7 +15,7 @@ import {
 import * as React from "react"
 import type { ReactNode } from "react"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import lightLogoUrl from "url:../assets/icon-menu.png"
+import iconUrl from "url:../assets/icon.png"
 
 import "~style.css"
 
@@ -226,14 +226,8 @@ function IndexPopup() {
             <img
               alt=""
               aria-hidden="true"
-              className="clipper-icon-frame block dark:hidden"
-              src={lightLogoUrl}
-            />
-            <img
-              alt=""
-              aria-hidden="true"
-              className="clipper-icon-frame hidden dark:block"
-              src={lightLogoUrl}
+              className="clipper-icon-frame"
+              src={iconUrl}
             />
             <h1 className="clipper-title">Markdown Clipper</h1>
           </div>

@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-import { copyFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import sharp from "sharp"
 
-import { readCatalog } from "./lib/extensions.mjs"
+import { generateExtensionIcons, readCatalog } from "./lib/extensions.mjs"
 
 const repoRoot = process.env.OSBE_REPO_ROOT
   ? path.resolve(process.env.OSBE_REPO_ROOT)
@@ -15,8 +14,6 @@ const workflowTemplate = path.join(
   "templates",
   "submit-extension.yml"
 )
-const iconSource = path.join(repoRoot, "docs", "assets", "osbe-icon-base.png")
-
 const slug = process.argv[2]
 const displayName = process.argv.slice(3).join(" ")
 
@@ -82,12 +79,7 @@ try {
 }
 
 await renderDirectory(templateRoot, extensionRoot)
-await mkdir(path.join(extensionRoot, "assets"), { recursive: true })
-await copyFile(iconSource, path.join(extensionRoot, "assets", "icon.png"))
-await sharp(iconSource)
-  .resize(128, 128)
-  .png()
-  .toFile(path.join(extensionRoot, "store-assets", "store-icon-128.png"))
+await generateExtensionIcons(repoRoot, { slug })
 
 const workflow = render(await readFile(workflowTemplate, "utf8"))
 await writeFile(workflowPath, workflow, { flag: "wx" })

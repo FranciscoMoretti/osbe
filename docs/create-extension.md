@@ -99,6 +99,19 @@ Plasmo reads the installed extension icon from:
 extensions/link-cleaner/assets/icon.png
 ```
 
+Every extension also owns one editable source:
+
+```text
+extensions/link-cleaner/assets/icon-source.svg
+```
+
+The scaffold starts with the neutral OSBE mark. Replace only its inner symbol
+with a product-specific mark, then generate both required PNGs together:
+
+```bash
+pnpm extension artwork link-cleaner
+```
+
 Chrome Web Store artwork is separate:
 
 ```text
@@ -109,7 +122,13 @@ store-assets/
   screenshots/
 ```
 
-The generator copies the neutral OSBE base icon as a temporary placeholder. Replace both icons with a product-specific member of the OSBE icon family before publishing. Screenshots should show the real workflow and contain no alpha channel.
+The artwork command renders `icon.png` and `store-icon-128.png` from the same
+canonical SVG, so those surfaces cannot drift. Keep the pale tile, border,
+padding, navy functional ink, and transparent corners. Prefer one primary
+symbol; when a second concept is essential, use one simple functional badge at
+least one quarter of the tile height. Avoid colored underlays, decorative
+shadows, and details that disappear at `16px`. Screenshots should show the real
+workflow and contain no alpha channel.
 
 ## Validation and packaging
 
@@ -144,6 +163,8 @@ The shared workflow submits code packages only. Chrome Web Store listing content
 - Package summary is 1–132 characters.
 - Version exceeds the published version.
 - Runtime and store icons are product-specific.
+- Runtime and store icons were regenerated from `assets/icon-source.svg`.
+- The icon remains recognizable at `16px`, `24px`, and `32px`.
 - At least one real 1280×800 screenshot is present.
 - Store listing and privacy copy are final.
 - `pnpm extension validate <slug>` passes.

@@ -1,9 +1,11 @@
 import { access, readdir, readFile } from "node:fs/promises"
 import path from "node:path"
+import sharp from "sharp"
 
 const REQUIRED_FILES = [
   "README.md",
   "PRIVACY.md",
+  "assets/icon-source.svg",
   "assets/icon.png",
   "components.json",
   "postcss.config.js",
@@ -52,6 +54,21 @@ export async function readCatalog(repoRoot) {
 
 export function findExtension(catalog, slug) {
   return catalog.extensions.find((extension) => extension.slug === slug)
+}
+
+export async function generateExtensionIcons(repoRoot, extension) {
+  const extensionRoot = path.join(repoRoot, "extensions", extension.slug)
+  const source = path.join(extensionRoot, "assets", "icon-source.svg")
+
+  await Promise.all([
+    sharp(source)
+      .png()
+      .toFile(path.join(extensionRoot, "assets", "icon.png")),
+    sharp(source)
+      .resize(128, 128)
+      .png()
+      .toFile(path.join(extensionRoot, "store-assets", "store-icon-128.png"))
+  ])
 }
 
 export async function validateExtension(repoRoot, extension) {

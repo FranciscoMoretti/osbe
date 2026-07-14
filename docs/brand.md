@@ -292,13 +292,9 @@ Canonical icons:
 
 ![OSBE logo](assets/osbe-logo-official.png)
 
-![OSBE inverted logo](assets/osbe-logo-inverted.png)
+![OSBE Markdown Clipper icon](../extensions/markdown-clipper/assets/icon.png)
 
-![OSBE Markdown Clipper icon](assets/osbe-markdown-clipper-official.png)
-
-![OSBE Markdown Clipper inverted icon](assets/osbe-markdown-clipper-inverted.png)
-
-![OSBE Site Blocker icon](assets/osbe-site-blocker.png)
+![OSBE Site Blocker icon](../extensions/site-blocker/assets/icon.png)
 
 Good concepts:
 
@@ -306,6 +302,7 @@ Good concepts:
 - A near-black foreground mark over a very light glass background
 - An inverted dark-ink tile with a white or pale-cyan symbol when the icon appears on a light product surface
 - A restrained cyan side or lower edge only when extra separation is needed
+- At most one large functional accent badge when a second concept is essential
 - The letters OSBE in a plain wordmark paired with the glass module icon
 - Extension variants that keep the same glass tile, blue lighting, and border radius while changing only the functional symbol
 
@@ -314,9 +311,9 @@ Avoid angle brackets, shields, locks, and puzzle-piece cliches. OSBE is about in
 Extension icon system:
 
 - OSBE base: glass tile plus a simple near-black open/source mark.
-- Markdown Clipper: glass tile plus a large near-black Markdown mark (`M` with the down-arrow to its right).
+- Markdown Clipper: glass tile plus a large near-black Markdown mark (`M` with the down-arrow to its right) and one large coral paperclip badge overlapping the arrow.
 - Inverted OSBE base: dark ink tile plus a simple white open/source mark.
-- Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right).
+- Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
 - Site Blocker: glass tile plus a simple browser/page shape with a large red block sign over the page.
 - Future extensions: same glass tile, same lighting, same border radius, unique inner symbol.
 
@@ -324,13 +321,15 @@ Icon rules:
 
 - Keep icons square at `1:1`.
 - Optimize the inner symbol for browser-toolbar sizes first.
-- Prefer one strong symbol over several small details.
+- Prefer one strong primary symbol. If the product needs a secondary concept, express it as one simple badge that occupies at least one quarter of the tile height.
 - Use a light glass base with restrained cyan support only when it improves separation.
+- Keep accent badges semantically meaningful and draw them above the primary mark; do not use colored stroke underlays or decorative shadows.
 - Avoid top-edge color strips; they read as decoration rather than brand.
 - Keep toolbar foreground marks black or near-black unless color is essential to the product meaning.
 - Use inverted dark-tile icons on light popup/menu surfaces when the pale glass icon loses contrast.
-- Use red only when the product meaning is block, stop, remove, or destructive.
+- Use coral red sparingly for a single high-attention functional badge, such as block/stop or clip/attach; never use it as general decoration.
 - Do not use a puzzle piece as the main symbol; it is too generic for OSBE extension products.
+- Maintain one canonical `assets/icon-source.svg` per extension and generate runtime and store icons from it with `pnpm extension artwork <slug>`.
 - Treat browser-toolbar icons and store artwork separately: toolbar icons should be simpler, flatter, and higher contrast; store artwork can use richer liquid-glass rendering.
 
 ## Extension Quality Principles

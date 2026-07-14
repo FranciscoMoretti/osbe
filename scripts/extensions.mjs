@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url"
 
 import {
   findExtension,
+  generateExtensionIcons,
   readCatalog,
   validateExtension
 } from "./lib/extensions.mjs"
@@ -50,9 +51,21 @@ if (command === "validate") {
   process.exit(0)
 }
 
+if (command === "artwork") {
+  const extension = findExtension(catalog, slug)
+  if (!extension) {
+    console.error(`Unknown extension: ${slug ?? "(missing slug)"}`)
+    process.exit(1)
+  }
+
+  await generateExtensionIcons(repoRoot, extension)
+  console.log(`Generated runtime and store icons for ${extension.slug}.`)
+  process.exit(0)
+}
+
 if (!["dev", "build", "package", "publish", "test"].includes(command)) {
   console.error(
-    "Usage: pnpm extension <list|validate|dev|build|package|publish|test> [slug]"
+    "Usage: pnpm extension <list|validate|artwork|dev|build|package|publish|test> [slug]"
   )
   process.exit(1)
 }

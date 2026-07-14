@@ -2,6 +2,9 @@
 
 Upload these files in the Chrome Web Store Developer Dashboard.
 
+These files are generated from the canonical `../assets/icon-source.svg` mark
+by `python3 ../scripts/generate-store-assets.py`.
+
 ## Listing copy
 
 - Summary from package: `../package.json` `description`

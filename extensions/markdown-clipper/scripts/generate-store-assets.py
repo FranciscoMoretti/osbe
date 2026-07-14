@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import base64
 import binascii
 import os
 import shutil
@@ -8,8 +9,11 @@ import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+ASSETS = ROOT / "assets"
 OUT = ROOT / "store-assets"
 TMP = OUT / "_tmp"
+ICON_SOURCE = ASSETS / "icon-source.svg"
+RUNTIME_ICON = ASSETS / "icon.png"
 
 
 def png_chunk(kind: bytes, data: bytes) -> bytes:
@@ -134,6 +138,15 @@ def svg_to_png(svg: str, dest: Path, strip_alpha=False) -> None:
         dest.write_bytes(tmp_png.read_bytes())
 
 
+def resize_png(src: Path, dest: Path, size: int) -> None:
+    subprocess.run(
+        ["sips", "-z", str(size), str(size), str(src), "--out", str(dest)],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+
 def esc(value: str) -> str:
     return (
         value.replace("&", "&amp;")
@@ -151,25 +164,12 @@ def text(x, y, value, size=28, weight=500, fill="#111827", anchor="start"):
     )
 
 
-def store_icon_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="paper" x1="32" y1="18" x2="100" y2="108" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#eef2ff"/>
-    </linearGradient>
-    <linearGradient id="mark" x1="30" y1="26" x2="98" y2="104" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#2563eb"/>
-      <stop offset="1" stop-color="#0f172a"/>
-    </linearGradient>
-  </defs>
-  <path d="M38 16h38l22 22v58c0 8.8-7.2 16-16 16H38c-8.8 0-16-7.2-16-16V32c0-8.8 7.2-16 16-16Z" fill="url(#paper)"/>
-  <path d="M76 16v19c0 4.4 3.6 8 8 8h14" fill="#dbeafe"/>
-  <path d="M38 16h38l22 22v58c0 8.8-7.2 16-16 16H38c-8.8 0-16-7.2-16-16V32c0-8.8 7.2-16 16-16Z" fill="none" stroke="#172554" stroke-width="4"/>
-  <path d="M38 73h52" stroke="url(#mark)" stroke-width="8" stroke-linecap="round"/>
-  <path d="M44 53l11 11-11 11" fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M69 52l-10 34" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>
-</svg>"""
+def icon_image(x: int, y: int, size: int) -> str:
+    encoded = base64.b64encode(RUNTIME_ICON.read_bytes()).decode("ascii")
+    return (
+        f'<image x="{x}" y="{y}" width="{size}" height="{size}" '
+        f'href="data:image/png;base64,{encoded}"/>'
+    )
 
 
 def browser_frame(content: str) -> str:
@@ -199,8 +199,7 @@ def screenshot_one() -> str:
   <rect x="96" y="559" width="500" height="18" rx="9" fill="#e2e8f0"/>
   <rect x="812" y="144" width="360" height="352" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
   <rect x="812" y="144" width="360" height="352" rx="16" fill="none" stroke="#0f172a" stroke-width="1"/>
-  <rect x="836" y="168" width="42" height="42" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
-  <path d="M850 181h14l8 8v18h-22z" fill="#dbeafe" stroke="#0f172a" stroke-width="2"/>
+  {icon_image(836, 168, 42)}
   {text(892, 190, "OSBE Markdown Clipper", 20, 700)}
   {text(892, 213, "Save the active page as Markdown.", 14, 400, "#64748b")}
   <rect x="836" y="242" width="312" height="98" rx="9" fill="#ffffff" stroke="#e2e8f0"/>
@@ -264,11 +263,7 @@ def promo_svg() -> str:
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280">
   <rect width="440" height="280" fill="#0f172a"/>
   <circle cx="376" cy="42" r="88" fill="#2563eb" opacity="0.34"/>
-  <rect x="34" y="38" width="162" height="204" rx="18" fill="#ffffff"/>
-  <path d="M78 76h58l24 24v72c0 12-10 22-22 22H78c-12 0-22-10-22-22V98c0-12 10-22 22-22Z" fill="#dbeafe" stroke="#172554" stroke-width="6"/>
-  <path d="M136 76v22c0 5 4 9 9 9h15" fill="#bfdbfe"/>
-  <path d="M76 141h70" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
-  <path d="M86 120l15 15-15 15" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  {icon_image(34, 59, 162)}
   {text(216, 112, "OSBE", 42, 850, "#ffffff")}
   {text(216, 154, "Markdown Clipper", 23, 750, "#bfdbfe")}
   {text(216, 196, "Clip pages into Markdown", 16, 500, "#e2e8f0")}
@@ -279,7 +274,8 @@ def main() -> None:
     OUT.mkdir(exist_ok=True)
     (OUT / "screenshots").mkdir(exist_ok=True)
 
-    svg_to_png(store_icon_svg(), OUT / "store-icon-128.png", strip_alpha=False)
+    svg_to_png(ICON_SOURCE.read_text(encoding="utf-8"), RUNTIME_ICON)
+    resize_png(RUNTIME_ICON, OUT / "store-icon-128.png", 128)
     svg_to_png(screenshot_one(), OUT / "screenshots" / "screenshot-1-popup-1280x800.png", strip_alpha=True)
     svg_to_png(screenshot_two(), OUT / "screenshots" / "screenshot-2-selection-menu-1280x800.png", strip_alpha=True)
     svg_to_png(screenshot_three(), OUT / "screenshots" / "screenshot-3-markdown-output-1280x800.png", strip_alpha=True)

@@ -35,6 +35,15 @@ Load or package the production extension from:
 extensions/markdown-clipper/build/chrome-mv3-prod
 ```
 
+## Artwork
+
+`assets/icon-source.svg` is the canonical Markdown Clipper product mark. Run
+`python3 scripts/generate-store-assets.py` to regenerate the runtime icon,
+Chrome Web Store icon, promotional tile, and any store screenshots that embed
+the mark. The symbol combines the Markdown `M`, download arrow, and one large
+coral paperclip badge; the paperclip is a functional clipping cue, not a colored
+underlay. Do not maintain separate hand-drawn icon variants for those surfaces.
+
 ## Chrome Web Store Submission
 
 The GitHub Actions workflow in `.github/workflows/submit.yml` uses `PlasmoHQ/bpp@v3` and expects a GitHub Actions secret named `SUBMIT_KEYS`.

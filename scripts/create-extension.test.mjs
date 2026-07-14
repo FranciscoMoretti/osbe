@@ -22,15 +22,10 @@ test("generated extension uses the shared foundation and valid store icon", asyn
     await mkdir(path.join(temporaryRoot, ".github", "workflows"), {
       recursive: true
     })
-    await mkdir(path.join(temporaryRoot, "docs", "assets"), { recursive: true })
     await cp(
       path.join(repoRoot, "templates"),
       path.join(temporaryRoot, "templates"),
       { recursive: true }
-    )
-    await cp(
-      path.join(repoRoot, "docs", "assets", "osbe-icon-base.png"),
-      path.join(temporaryRoot, "docs", "assets", "osbe-icon-base.png")
     )
     await writeFile(
       path.join(temporaryRoot, "extensions", "catalog.json"),
@@ -55,6 +50,12 @@ test("generated extension uses the shared foundation and valid store icon", asyn
     )
     assert.match(popup, /OSBE Link Cleaner/)
     assert.doesNotMatch(popup, /\{\{.*displayName.*\}\}/)
+
+    const iconSource = await readFile(
+      path.join(extensionRoot, "assets", "icon-source.svg"),
+      "utf8"
+    )
+    assert.match(iconSource, /OSBE Link Cleaner icon/)
 
     const storeIcon = await readFile(
       path.join(extensionRoot, "store-assets", "store-icon-128.png")
