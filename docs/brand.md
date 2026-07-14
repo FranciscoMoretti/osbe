@@ -197,7 +197,7 @@ Avoid:
 
 ## Color Direction
 
-Use a practical palette that supports documentation, extension UI, store artwork, and the minimal glass icon family. The palette should read as transparent and technical, with ink as the primary UI color, blue/cyan as restrained connective accents, and red reserved for blocking or destructive states.
+Use a practical palette that supports documentation, extension UI, store artwork, and the minimal glass icon family. The palette should read as transparent and technical, with ink as the primary UI color, blue/cyan as restrained connective accents, and coral reserved for one high-attention functional or brand-completing accent.
 
 - Ink: `#0f172a`
 - Paper: `#f8fafc`
@@ -210,7 +210,7 @@ Use a practical palette that supports documentation, extension UI, store artwork
 - Verify Green: `#16a34a`
 - Caution Amber: `#d97706`
 
-Ink is the primary UI/action color, matching the high-contrast foreground marks in the icon system. Blue is the connective product accent, and cyan should appear as a focus color or small reflective detail rather than a heavy background treatment. Avoid top-edge accent strips in icons and product UI. Red should be used for the site blocker icon, destructive actions, and explicit blocked states. Green and amber should be reserved for meaningful trust, permission, and warning states.
+Ink is the primary UI/action color, matching the high-contrast foreground marks in the icon system. Blue is the connective product accent, and cyan should appear as a focus color or small reflective detail rather than a heavy background treatment. Avoid top-edge accent strips in icons and product UI. Coral may complete the OSBE master mark or identify one essential product action; in UI, reserve it for destructive actions and explicit blocked states. Green and amber should be reserved for meaningful trust, permission, and warning states.
 
 ## Theme Tokens
 
@@ -308,9 +308,9 @@ Good concepts:
 
 Avoid angle brackets, shields, locks, and puzzle-piece cliches. OSBE is about inspectability and user agency, not a promise of invulnerability.
 
-Extension icon system:
+Brand and extension icon system:
 
-- OSBE base: glass tile plus a simple near-black open/source mark.
+- OSBE base: glass tile plus a thick near-black open ring completed by one coral node. The ring represents an open shared core; the node represents a focused extension joining it.
 - Markdown Clipper: glass tile plus a large near-black Markdown mark (`M` with the down-arrow to its right) and one large coral paperclip badge overlapping the arrow.
 - Inverted OSBE base: dark ink tile plus a simple white open/source mark.
 - Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
@@ -327,7 +327,8 @@ Icon rules:
 - Avoid top-edge color strips; they read as decoration rather than brand.
 - Keep toolbar foreground marks black or near-black unless color is essential to the product meaning.
 - Use inverted dark-tile icons on light popup/menu surfaces when the pale glass icon loses contrast.
-- Use coral red sparingly for a single high-attention functional badge, such as block/stop or clip/attach; never use it as general decoration.
+- Use coral red sparingly for one high-attention element: the OSBE node or a functional badge such as block/stop or clip/attach. Never use it as general decoration.
+- Keep `docs/assets/osbe-icon-source.svg` as the canonical OSBE master mark; generate raster brand assets from it rather than tracing generated PNGs independently.
 - Do not use a puzzle piece as the main symbol; it is too generic for OSBE extension products.
 - Maintain one canonical `assets/icon-source.svg` per extension and generate runtime and store icons from it with `pnpm extension artwork <slug>`.
 - Treat browser-toolbar icons and store artwork separately: toolbar icons should be simpler, flatter, and higher contrast; store artwork can use richer liquid-glass rendering.
