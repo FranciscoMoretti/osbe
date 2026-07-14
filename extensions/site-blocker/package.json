@@ -1,7 +1,7 @@
 {
   "name": "@osbe/site-blocker",
   "displayName": "OSBE Site Blocker",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Block distracting websites and allow temporary access when you need it.",
   "author": "Fran",
   "scripts": {

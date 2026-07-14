@@ -44,8 +44,26 @@ export function subscribeToStateChanges(callback: () => void) {
       }
     }
 
-    chrome.storage.onChanged.addListener(listener)
-    return () => chrome.storage.onChanged.removeListener(listener)
+    const storageChanged = chrome.storage.onChanged
+
+    if (!storageChanged) {
+      return () => {}
+    }
+
+    try {
+      storageChanged.addListener(listener)
+    } catch {
+      // A blocked tab can outlive an extension update or reload.
+      return () => {}
+    }
+
+    return () => {
+      try {
+        storageChanged.removeListener(listener)
+      } catch {
+        // The extension context may have been invalidated after subscribing.
+      }
+    }
   }
 
   const listener = () => callback()

@@ -22,11 +22,28 @@ function BlockedPage() {
   )
 
   useEffect(() => {
-    readState().then(setState)
+    let active = true
 
-    return subscribeToStateChanges(() => {
-      readState().then(setState)
-    })
+    const refreshState = () => {
+      void readState()
+        .then((nextState) => {
+          if (active) {
+            setState(nextState)
+          }
+        })
+        .catch(() => {
+          // Keep the blocked page usable when an extension reload invalidates it.
+        })
+    }
+
+    refreshState()
+
+    const unsubscribe = subscribeToStateChanges(refreshState)
+
+    return () => {
+      active = false
+      unsubscribe()
+    }
   }, [])
 
   return (
