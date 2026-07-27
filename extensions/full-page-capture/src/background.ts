@@ -14,6 +14,22 @@ const previewWaiters = new Map<
   (port: chrome.runtime.Port) => void
 >()
 
+interface CapturedPageElement {
+  element: HTMLElement
+  documentTop: number
+  position: "fixed" | "sticky"
+  visibility: string
+  visibilityPriority: string
+}
+
+interface CapturedPageState {
+  captureId: string
+  originalScrollX: number
+  originalScrollY: number
+  elements: CapturedPageElement[]
+  styleElement: HTMLStyleElement
+}
+
 chrome.runtime.onConnect.addListener((port) => {
   if (!port.name.startsWith("capture:")) return
 
@@ -105,6 +121,7 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
     let frameCount = 0
     let finalDocumentHeight = metadata.documentHeight
     let lastCaptureAt = 0
+    let reachedDocumentEnd = false
 
     while (frameCount < MAX_CAPTURE_FRAMES) {
       const activeTab = (
@@ -166,11 +183,14 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
         viewportHeight: position.viewportHeight
       })
 
-      if (nextY === null) break
+      if (nextY === null) {
+        reachedDocumentEnd = true
+        break
+      }
       requestedY = nextY
     }
 
-    if (frameCount >= MAX_CAPTURE_FRAMES) {
+    if (!reachedDocumentEnd) {
       throw new Error(
         "This page kept growing while it was captured. Capture stopped after 200 screens."
       )
@@ -266,24 +286,9 @@ function getCaptureErrorMessage(error: unknown) {
 }
 
 function preparePageForCapture(captureId: string) {
-  type CapturedElement = {
-    element: HTMLElement
-    documentTop: number
-    position: "fixed" | "sticky"
-    visibility: string
-    visibilityPriority: string
-  }
-  type PageState = {
-    captureId: string
-    originalScrollX: number
-    originalScrollY: number
-    elements: CapturedElement[]
-    styleElement: HTMLStyleElement
-  }
-
   const stateKey = "__osbeFullPageCaptureState"
   const pageWindow = window as typeof window & {
-    [stateKey]?: PageState
+    [stateKey]?: CapturedPageState
   }
   const existingState = pageWindow[stateKey]
 
@@ -308,7 +313,7 @@ function preparePageForCapture(captureId: string) {
   `
   document.documentElement.append(styleElement)
 
-  const elements: CapturedElement[] = []
+  const elements: CapturedPageElement[] = []
   for (const element of document.querySelectorAll<HTMLElement>("body *")) {
     const computedStyle = getComputedStyle(element)
     if (
@@ -364,20 +369,9 @@ function preparePageForCapture(captureId: string) {
 }
 
 async function positionPageForCapture(requestedY: number) {
-  type CapturedElement = {
-    element: HTMLElement
-    documentTop: number
-    position: "fixed" | "sticky"
-    visibility: string
-    visibilityPriority: string
-  }
-  type PageState = {
-    elements: CapturedElement[]
-  }
-
   const stateKey = "__osbeFullPageCaptureState"
   const pageWindow = window as typeof window & {
-    [stateKey]?: PageState
+    [stateKey]?: CapturedPageState
   }
 
   window.scrollTo(0, requestedY)
@@ -427,21 +421,9 @@ async function positionPageForCapture(requestedY: number) {
 }
 
 function restorePageAfterCapture() {
-  type CapturedElement = {
-    element: HTMLElement
-    visibility: string
-    visibilityPriority: string
-  }
-  type PageState = {
-    originalScrollX: number
-    originalScrollY: number
-    elements: CapturedElement[]
-    styleElement: HTMLStyleElement
-  }
-
   const stateKey = "__osbeFullPageCaptureState"
   const pageWindow = window as typeof window & {
-    [stateKey]?: PageState
+    [stateKey]?: CapturedPageState
   }
   const pageState = pageWindow[stateKey]
 

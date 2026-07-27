@@ -46,7 +46,7 @@ PRIVATE BY DESIGN
 
 Capture starts only when you invoke it. Page pixels, title, URL, and dimensions are processed locally in memory. There is no account, analytics, advertising, remote service, or capture history, and nothing is sent to OSBE.
 
-OSBE Full Page Capture is open source.
+Open Source Browser Extensions (OSBE) Full Page Capture is open source.
 ```
 
 ### Category

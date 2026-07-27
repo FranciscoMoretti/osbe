@@ -24,26 +24,19 @@ import {
 import iconUrl from "data-base64:../../assets/icon.png"
 
 import {
-  canCreateSingleCanvas,
-  createDownloadBaseName,
-  createPdfSlices
-} from "~/lib/capture-math"
+  downloadPdfCapture,
+  downloadPngCapture
+} from "~/lib/capture-export"
+import {
+  assembleCapture,
+  type CaptureSegment
+} from "~/lib/capture-image"
+import { createDownloadBaseName } from "~/lib/capture-math"
 import type {
   CaptureChunk,
   CaptureMessage,
   CaptureMetadata
 } from "~/lib/capture-types"
-
-const MAX_SEGMENT_HEIGHT = 16_000
-const MAX_SEGMENT_AREA = 64_000_000
-
-interface CaptureSegment {
-  blob: Blob
-  height: number
-  startY: number
-  url: string
-  width: number
-}
 
 type CapturePhase =
   | "waiting"
@@ -117,6 +110,7 @@ function CaptureResultPage() {
 
       if (message.type === "capture-error") {
         complete = true
+        port.disconnect()
         setError(message.message)
         setPhase("error")
         return
@@ -124,6 +118,7 @@ function CaptureResultPage() {
 
       if (message.type === "capture-complete") {
         complete = true
+        port.disconnect()
         setFrameCount(message.frameCount)
         setProgress(100)
         setPhase("processing")
@@ -204,24 +199,7 @@ function CaptureResultPage() {
     setExporting("png")
 
     try {
-      if (segments.length === 1) {
-        downloadBlob(segments[0].blob, `${baseName}.png`)
-        return
-      }
-
-      const { default: JSZip } = await import("jszip")
-      const zip = new JSZip()
-      const digits = String(segments.length).length
-
-      for (const [index, segment] of segments.entries()) {
-        zip.file(
-          `${baseName}-part-${String(index + 1).padStart(digits, "0")}.png`,
-          segment.blob
-        )
-      }
-
-      const blob = await zip.generateAsync({ type: "blob" })
-      downloadBlob(blob, `${baseName}-png-parts.zip`)
+      await downloadPngCapture(segments, baseName)
     } finally {
       setExporting(null)
     }
@@ -232,7 +210,7 @@ function CaptureResultPage() {
     setExporting("pdf")
 
     try {
-      await exportPdf(segments, baseName)
+      await downloadPdfCapture(segments, baseName)
     } finally {
       setExporting(null)
     }
@@ -390,7 +368,7 @@ function CaptureResultPage() {
 
             <section
               aria-label="Full-page capture preview"
-              className="mx-auto w-fit max-w-full overflow-hidden rounded-sm border bg-background shadow-xl"
+              className="mx-auto w-fit max-w-full overflow-hidden rounded-sm border bg-background shadow-sm"
             >
               {segments.map((segment, index) => (
                 <img
@@ -410,241 +388,6 @@ function CaptureResultPage() {
       </main>
     </div>
   )
-}
-
-async function assembleCapture(
-  chunks: CaptureChunk[],
-  metadata: CaptureMetadata,
-  finalDocumentHeight: number
-) {
-  if (!chunks.length) {
-    throw new Error("No page images were received.")
-  }
-
-  const frames = await Promise.all(
-    chunks.map(async (chunk) => {
-      const blob = await fetch(chunk.dataUrl).then((response) =>
-        response.blob()
-      )
-      const bitmap = await createImageBitmap(blob)
-      return { bitmap, chunk }
-    })
-  )
-
-  try {
-    const outputWidth = frames[0].bitmap.width
-    const scale = outputWidth / metadata.viewportWidth
-    const outputHeight = Math.max(
-      1,
-      Math.round(finalDocumentHeight * scale)
-    )
-    const segmentHeight = getSafeSegmentHeight(
-      outputWidth,
-      outputHeight
-    )
-    const segments: CaptureSegment[] = []
-
-    for (
-      let segmentStart = 0;
-      segmentStart < outputHeight;
-      segmentStart += segmentHeight
-    ) {
-      const height = Math.min(
-        segmentHeight,
-        outputHeight - segmentStart
-      )
-      const canvas = document.createElement("canvas")
-      canvas.width = outputWidth
-      canvas.height = height
-      const context = canvas.getContext("2d", { alpha: false })
-
-      if (!context) {
-        throw new Error("This browser could not create the capture image.")
-      }
-
-      context.fillStyle = "#ffffff"
-      context.fillRect(0, 0, outputWidth, height)
-
-      for (const { bitmap, chunk } of frames) {
-        const frameStart = Math.round(chunk.scrollY * scale)
-        const frameEnd = Math.min(
-          outputHeight,
-          frameStart + bitmap.height
-        )
-        const overlapStart = Math.max(segmentStart, frameStart)
-        const overlapEnd = Math.min(segmentStart + height, frameEnd)
-
-        if (overlapStart >= overlapEnd) continue
-
-        const sourceY = overlapStart - frameStart
-        const overlapHeight = overlapEnd - overlapStart
-        context.drawImage(
-          bitmap,
-          0,
-          sourceY,
-          bitmap.width,
-          overlapHeight,
-          0,
-          overlapStart - segmentStart,
-          outputWidth,
-          overlapHeight
-        )
-      }
-
-      const blob = await canvasToBlob(canvas, "image/png")
-      const url = URL.createObjectURL(blob)
-      segments.push({
-        blob,
-        height,
-        startY: segmentStart,
-        url,
-        width: outputWidth
-      })
-      canvas.width = 1
-      canvas.height = 1
-    }
-
-    return segments
-  } finally {
-    for (const { bitmap } of frames) {
-      bitmap.close()
-    }
-  }
-}
-
-function getSafeSegmentHeight(width: number, totalHeight: number) {
-  if (width <= 0 || width > 32_767) {
-    throw new Error("The captured page is too wide for a browser image.")
-  }
-
-  if (canCreateSingleCanvas(width, totalHeight)) {
-    return totalHeight
-  }
-
-  return Math.max(
-    1,
-    Math.min(
-      MAX_SEGMENT_HEIGHT,
-      32_767,
-      Math.floor(MAX_SEGMENT_AREA / width)
-    )
-  )
-}
-
-async function exportPdf(
-  segments: CaptureSegment[],
-  baseName: string
-) {
-  const { jsPDF } = await import("jspdf")
-  const outputWidth = segments[0].width
-  const outputHeight = segments.reduce(
-    (height, segment) => height + segment.height,
-    0
-  )
-  const pdf = new jsPDF({
-    compress: true,
-    format: "a4",
-    orientation: "portrait",
-    unit: "pt"
-  })
-  const pageWidth = pdf.internal.pageSize.getWidth()
-  const pageHeight = pdf.internal.pageSize.getHeight()
-  const slices = createPdfSlices(
-    outputWidth,
-    outputHeight,
-    pageWidth,
-    pageHeight
-  )
-  const bitmaps = await Promise.all(
-    segments.map((segment) => createImageBitmap(segment.blob))
-  )
-
-  try {
-    for (const [pageIndex, slice] of slices.entries()) {
-      if (pageIndex > 0) pdf.addPage()
-
-      const canvas = document.createElement("canvas")
-      canvas.width = outputWidth
-      canvas.height = slice.sourceHeight
-      const context = canvas.getContext("2d", { alpha: false })
-
-      if (!context) {
-        throw new Error("This browser could not create a PDF page.")
-      }
-
-      context.fillStyle = "#ffffff"
-      context.fillRect(0, 0, canvas.width, canvas.height)
-
-      for (const [segmentIndex, segment] of segments.entries()) {
-        const segmentEnd = segment.startY + segment.height
-        const sliceEnd = slice.sourceY + slice.sourceHeight
-        const overlapStart = Math.max(segment.startY, slice.sourceY)
-        const overlapEnd = Math.min(segmentEnd, sliceEnd)
-
-        if (overlapStart >= overlapEnd) continue
-
-        const overlapHeight = overlapEnd - overlapStart
-        context.drawImage(
-          bitmaps[segmentIndex],
-          0,
-          overlapStart - segment.startY,
-          outputWidth,
-          overlapHeight,
-          0,
-          overlapStart - slice.sourceY,
-          outputWidth,
-          overlapHeight
-        )
-      }
-
-      const renderedHeight =
-        (slice.sourceHeight / outputWidth) * pageWidth
-      pdf.addImage(
-        canvas.toDataURL("image/jpeg", 0.92),
-        "JPEG",
-        0,
-        0,
-        pageWidth,
-        renderedHeight,
-        undefined,
-        "FAST"
-      )
-      canvas.width = 1
-      canvas.height = 1
-    }
-
-    pdf.save(`${baseName}.pdf`)
-  } finally {
-    for (const bitmap of bitmaps) {
-      bitmap.close()
-    }
-  }
-}
-
-function canvasToBlob(
-  canvas: HTMLCanvasElement,
-  type: string,
-  quality?: number
-) {
-  return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (blob) =>
-        blob
-          ? resolve(blob)
-          : reject(new Error("The capture image could not be encoded.")),
-      type,
-      quality
-    )
-  })
-}
-
-function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const anchor = document.createElement("a")
-  anchor.download = filename
-  anchor.href = url
-  anchor.click()
-  setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }
 
 function getDisplayHost(url: string) {
