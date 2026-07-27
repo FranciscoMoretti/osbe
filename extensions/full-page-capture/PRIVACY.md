@@ -59,4 +59,3 @@ extension, or uninstall it at any time.
 Questions and support requests can be submitted at:
 
 https://github.com/FranciscoMoretti/osbe/issues
-

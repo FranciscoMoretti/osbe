@@ -1,8 +1,11 @@
 # OSBE Full Page Capture
 
-OSBE Full Page Capture is a user-invoked Chrome MV3 extension that captures an
-entire webpage—not only the visible viewport—and exports it as PNG or PDF. It is
-built on the shared OSBE Plasmo, Tailwind CSS, and shadcn/ui foundation.
+Open Source Browser Extensions (OSBE) Full Page Capture is a user-invoked Chrome
+MV3 extension that captures an entire webpage—not only the visible viewport—and
+exports it as PNG or PDF. It is built on the shared OSBE Plasmo, Tailwind CSS,
+and shadcn/ui foundation. Its
+[source code](https://github.com/FranciscoMoretti/osbe/tree/main/extensions/full-page-capture)
+is public and can be reviewed, built, or forked.
 
 ## How It Works
 
@@ -97,3 +100,14 @@ extensions/full-page-capture/build/chrome-mv3-prod.zip
   PNGs.
 - The submission workflow delegates to the repository's reusable extension
   workflow.
+
+## Extension Surfaces
+
+- The background worker owns the toolbar action, scroll/capture cadence,
+  temporary page scripting, and result-tab lifecycle.
+- There is no popup; clicking the toolbar icon starts capture directly.
+- Temporary page helpers are injected only for an invoked capture. There is no
+  persistent content script.
+- The result tab receives viewport images, assembles the preview, and performs
+  local PNG, ZIP, and PDF exports.
+- There is no offscreen document.
