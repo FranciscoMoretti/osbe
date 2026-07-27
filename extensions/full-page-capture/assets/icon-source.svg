@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="OSBE Full Page Capture icon">
   <rect x="20" y="20" width="472" height="472" rx="96" fill="#e0f2fe"/>
   <rect x="20" y="20" width="472" height="472" rx="96" fill="none" stroke="#bfdbfe" stroke-width="18"/>
-  <path d="M144 104h224c22 0 40 18 40 40v224c0 22-18 40-40 40H144c-22 0-40-18-40-40V144c0-22 18-40 40-40Z" fill="#fff" stroke="#0f172a" stroke-width="28"/>
-  <path d="M120 176h272M164 224h106M164 270h78" fill="none" stroke="#0f172a" stroke-width="24" stroke-linecap="round"/>
-  <path d="M314 214v142m-56-50 56 58 56-58" fill="none" stroke="#ff4d3d" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M188 116h-78v78M324 396h78v-78" fill="none" stroke="#0f172a" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 116v244m-100-88 100 104 100-104" fill="none" stroke="#ff4d3d" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
