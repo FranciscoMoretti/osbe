@@ -12,6 +12,7 @@ OSBE builds small, transparent browser extensions that users can inspect, reason
 
 - `extensions/markdown-clipper` - OSBE Markdown clipper built with Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `extensions/site-blocker` - OSBE site blocker built with the same Plasmo, Tailwind CSS, and shadcn/ui conventions.
+- `extensions/full-page-capture` - OSBE full-page PNG and PDF capture extension built on the same shared foundation.
 - `packages/ui` - shared OSBE theme, utility, and shadcn/ui source components.
 - `packages/config` - shared Plasmo TypeScript, Tailwind, and PostCSS policy.
 - `extensions/catalog.json` - registry used by extension commands and validation.
@@ -35,6 +36,7 @@ Run an extension:
 ```bash
 pnpm extension dev markdown-clipper
 pnpm extension dev site-blocker
+pnpm extension dev full-page-capture
 ```
 
 Load the generated development extension from:

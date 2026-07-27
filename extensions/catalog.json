@@ -1,6 +1,12 @@
 {
   "extensions": [
     {
+      "slug": "full-page-capture",
+      "packageName": "@osbe/full-page-capture",
+      "workflow": "submit-full-page-capture.yml",
+      "secretName": "FULL_PAGE_CAPTURE_SUBMIT_KEYS"
+    },
+    {
       "slug": "markdown-clipper",
       "packageName": "@osbe/markdown-clipper",
       "workflow": "submit.yml",
