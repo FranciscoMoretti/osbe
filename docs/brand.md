@@ -295,7 +295,7 @@ Brand and extension icon system:
 - Inverted OSBE base: dark ink tile plus a simple white open/source mark.
 - Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
 - Site Blocker: glass tile plus a simple browser/page shape with a large red block sign over the page.
-- Full Page Capture: glass tile plus a tall browser/page shape with a large coral downward capture arrow.
+- Full Page Capture: glass tile plus one oversized coral downward arrow bracketed by two minimal navy capture corners; do not enclose it in a browser or page frame.
 - Future extensions: same glass tile, same lighting, same border radius, unique inner symbol.
 
 Icon rules:
