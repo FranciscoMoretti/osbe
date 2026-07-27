@@ -88,7 +88,7 @@ Avoid:
 2. OSBE extensions are open source and inspectable.
 3. Each extension is narrowly scoped and permission-conscious.
 4. Users can install, review, self-build, clone, or fork.
-5. Markdown Clipper is the first example; more focused tools will follow.
+5. Each published extension demonstrates the same transparent, focused model.
 
 ## Markdown Clipper Copy
 
@@ -274,6 +274,8 @@ Canonical icons:
 
 ![OSBE Site Blocker icon](../extensions/site-blocker/assets/icon.png)
 
+![OSBE Full Page Capture icon](../extensions/full-page-capture/assets/icon.png)
+
 Good concepts:
 
 - A rounded-square liquid-glass app tile with one simple high-contrast symbol inside
@@ -293,6 +295,7 @@ Brand and extension icon system:
 - Inverted OSBE base: dark ink tile plus a simple white open/source mark.
 - Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
 - Site Blocker: glass tile plus a simple browser/page shape with a large red block sign over the page.
+- Full Page Capture: glass tile plus a tall browser/page shape with a large coral downward capture arrow.
 - Future extensions: same glass tile, same lighting, same border radius, unique inner symbol.
 
 Icon rules:

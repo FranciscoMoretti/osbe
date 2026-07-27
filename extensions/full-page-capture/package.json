@@ -1,0 +1,52 @@
+{
+  "name": "@osbe/full-page-capture",
+  "displayName": "OSBE Full Page Capture",
+  "version": "0.0.1",
+  "description": "Capture complete web pages as full-height PNG images or paginated PDF files.",
+  "author": "Fran",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "test": "tsx --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@osbe/config": "workspace:*",
+    "@osbe/ui": "workspace:*",
+    "jspdf": "^4.2.1",
+    "jszip": "^3.10.1",
+    "lucide-react": "catalog:",
+    "plasmo": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "tsx": "^4.23.0",
+    "typescript": "catalog:"
+  },
+  "manifest": {
+    "permissions": [
+      "activeTab",
+      "scripting"
+    ],
+    "action": {
+      "default_title": "Capture full page"
+    },
+    "commands": {
+      "_execute_action": {
+        "description": "Capture full page",
+        "suggested_key": {
+          "default": "Alt+Shift+P",
+          "mac": "MacCtrl+Shift+P"
+        }
+      }
+    }
+  }
+}

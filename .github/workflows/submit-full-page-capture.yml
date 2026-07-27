@@ -1,0 +1,16 @@
+name: "Submit OSBE Full Page Capture to Web Store"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: submit-full-page-capture
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    uses: ./.github/workflows/_submit-extension.yml
+    with:
+      extension: full-page-capture
+    secrets:
+      submit_keys: ${{ secrets.FULL_PAGE_CAPTURE_SUBMIT_KEYS }}

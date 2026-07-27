@@ -77,6 +77,14 @@ The generated extension is a working branded development baseline. A real produc
 - permission and host-permission justifications;
 - focused tests for valuable product seams.
 
+The popup is a default shell, not a requirement. For a one-click tool, delete
+`src/popup.tsx`, define `manifest.action.default_title`, and handle
+`chrome.action.onClicked` in `src/background.ts`. Long-running actions can open
+an inactive extension result tab, keep the source tab active while work runs,
+then activate the result when complete. Use an explicit ready handshake before
+streaming data to a newly opened result tab so its UI listener cannot miss the
+first message.
+
 `pnpm extension validate <slug>` checks the release structure and rejects incomplete store assets such as a missing screenshot.
 
 ## Metadata and permissions
