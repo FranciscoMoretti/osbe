@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@osbe/config": "workspace:*",
+    "@osbe/extension-kit": "workspace:*",
     "@osbe/ui": "workspace:*",
     "lucide-react": "catalog:",
     "plasmo": "catalog:",
@@ -27,7 +28,5 @@
     "postcss": "catalog:",
     "typescript": "catalog:"
   },
-  "manifest": {
-    "permissions": []
-  }
+  "manifest": {{manifest}}
 }

@@ -1,3 +1,5 @@
+import { executeInTab, ProtectedPageError } from "@osbe/extension-kit/tabs"
+
 import type { ClipImage, ClipMode, ClipPayload } from "~lib/clip-types"
 
 export async function requestClipFromTab(
@@ -7,17 +9,17 @@ export async function requestClipFromTab(
   includeTemplate = true
 ) {
   try {
-    const [injection] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: createClipInPage,
-      args: [mode, includeImages, includeTemplate]
-    })
+    const result = await executeInTab(tabId, createClipInPage, [
+      mode,
+      includeImages,
+      includeTemplate
+    ])
 
-    if (!injection?.result) {
+    if (!result) {
       throw new Error("The page did not return clipped content.")
     }
 
-    return injection.result
+    return result
   } catch (error) {
     throw userFacingError(error)
   }
@@ -25,13 +27,9 @@ export async function requestClipFromTab(
 
 export async function copyMarkdownToTab(tabId: number, markdown: string) {
   try {
-    const [injection] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: copyMarkdownInPage,
-      args: [markdown]
-    })
+    const result = await executeInTab(tabId, copyMarkdownInPage, [markdown])
 
-    if (!injection?.result?.copied) {
+    if (!result?.copied) {
       throw new Error("Chrome rejected the clipboard write for this page.")
     }
   } catch (error) {
@@ -44,13 +42,9 @@ export async function showNoticeInTab(
   message: string,
   level: "success" | "error"
 ) {
-  await chrome.scripting
-    .executeScript({
-      target: { tabId },
-      func: showNoticeInPage,
-      args: [message, level]
-    })
-    .catch(() => undefined)
+  await executeInTab(tabId, showNoticeInPage, [message, level]).catch(
+    () => undefined
+  )
 }
 
 function createClipInPage(
@@ -527,11 +521,7 @@ function userFacingError(error: unknown) {
     )
   }
 
-  if (
-    message.includes("Cannot access contents of") ||
-    message.includes("Cannot access a chrome://") ||
-    message.includes("The extensions gallery cannot be scripted")
-  ) {
+  if (error instanceof ProtectedPageError) {
     return new Error(
       "Chrome does not allow extensions to clip this page. Try a normal web page and reload it if needed."
     )

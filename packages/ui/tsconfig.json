@@ -2,7 +2,15 @@
   "extends": "@osbe/config/tsconfig.plasmo.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "#components": ["./src/components"],
+      "#components/*": ["./src/components/*"],
+      "#hooks": ["./src/hooks"],
+      "#hooks/*": ["./src/hooks/*"],
+      "#lib": ["./src/lib"],
+      "#lib/*": ["./src/lib/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

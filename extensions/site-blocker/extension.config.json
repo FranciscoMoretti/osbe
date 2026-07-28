@@ -1,0 +1,67 @@
+{
+  "$schema": "../../schemas/extension.schema.json",
+  "schemaVersion": 1,
+  "slug": "site-blocker",
+  "packageName": "@osbe/site-blocker",
+  "displayName": "OSBE Site Blocker",
+  "surface": "dashboard",
+  "summary": "Block distracting websites and allow temporary access when you need it.",
+  "singlePurpose": "Block websites chosen by the user and manage temporary access to those websites from a local dashboard.",
+  "permissions": [
+    {
+      "name": "activeTab",
+      "justification": "Reads the current tab URL only when the user opens the extension popup. This lets the popup show whether the current website matches an active local block rule. The URL is not stored or transmitted."
+    },
+    {
+      "name": "alarms",
+      "justification": "Checks once per minute for expired temporary-access timers so blocking can resume automatically when the selected duration ends."
+    },
+    {
+      "name": "declarativeNetRequest",
+      "justification": "Creates local dynamic rules that redirect top-level navigation for user-selected websites to the extension's local blocked page. Rules are created only from websites in the user's block list."
+    },
+    {
+      "name": "favicon",
+      "justification": "Displays a favicon beside each website so rules are easier to identify. The dashboard requests the listed site's own /favicon.ico with no referrer and falls back to Chrome's locally cached favicon. It does not use an OSBE or centralized favicon service."
+    },
+    {
+      "name": "storage",
+      "justification": "Stores the user's block list, enabled states, temporary-access timers, global pause setting, and short-lived verification challenge in chrome.storage.local. This information stays in the user's Chrome profile."
+    },
+    {
+      "name": "webNavigation",
+      "justification": "Observes top-frame navigation events locally so blocked sites are still redirected when a browser-restored, cached, or client-side navigation does not produce the main-frame request handled by the declarative rule. Navigation URLs are not stored or transmitted."
+    }
+  ],
+  "hostPermissions": [
+    {
+      "name": "<all_urls>",
+      "justification": "The user can add any website to the block list. Access to all URLs is required so Chrome's declarativeNetRequest engine can redirect navigation for the exact domains and subdomains chosen by the user. The extension does not read page content or run content scripts on websites."
+    }
+  ],
+  "dataUsage": ["webHistory"],
+  "remoteCode": {
+    "used": false,
+    "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
+  },
+  "store": {
+    "category": "Productivity",
+    "language": "English",
+    "visibility": "public",
+    "pricing": "free",
+    "screenshots": [
+      {
+        "file": "store-assets/screenshots/dashboard-1280x800.png",
+        "title": "Manage blocking rules from a local dashboard"
+      }
+    ],
+    "promoTiles": []
+  },
+  "release": {
+    "workflow": "submit-site-blocker.yml",
+    "secretName": "SITE_BLOCKER_SUBMIT_KEYS"
+  },
+  "smoke": {
+    "page": "options.html"
+  }
+}

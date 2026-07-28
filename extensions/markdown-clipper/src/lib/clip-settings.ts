@@ -1,3 +1,5 @@
+import { createStoredState } from "@osbe/extension-kit/storage"
+
 export type ClipOptions = {
   includeImages: boolean
   includeTemplate: boolean
@@ -9,15 +11,18 @@ export const DEFAULT_CLIP_OPTIONS: ClipOptions = {
 }
 
 const CLIP_OPTIONS_STORAGE_KEY = "osbe-markdown-clipper-options"
+const clipOptionsStore = createStoredState({
+  defaults: DEFAULT_CLIP_OPTIONS,
+  key: CLIP_OPTIONS_STORAGE_KEY,
+  normalize: normalizeClipOptions
+})
 
 export async function getStoredClipOptions() {
-  const result = await getStorageValue(CLIP_OPTIONS_STORAGE_KEY)
-
-  return normalizeClipOptions(result)
+  return clipOptionsStore.read()
 }
 
 export async function saveStoredClipOptions(options: ClipOptions) {
-  await setStorageValue(CLIP_OPTIONS_STORAGE_KEY, normalizeClipOptions(options))
+  await clipOptionsStore.write(options)
 }
 
 function normalizeClipOptions(value: unknown): ClipOptions {
@@ -35,32 +40,6 @@ function normalizeClipOptions(value: unknown): ClipOptions {
         ? value.includeTemplate
         : DEFAULT_CLIP_OPTIONS.includeTemplate
   }
-}
-
-function getStorageValue(key: string) {
-  return new Promise<unknown>((resolve) => {
-    chrome.storage.local.get([key], (result) => {
-      if (chrome.runtime.lastError) {
-        resolve(undefined)
-        return
-      }
-
-      resolve(result[key])
-    })
-  })
-}
-
-function setStorageValue(key: string, value: unknown) {
-  return new Promise<void>((resolve, reject) => {
-    chrome.storage.local.set({ [key]: value }, () => {
-      if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message))
-        return
-      }
-
-      resolve()
-    })
-  })
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

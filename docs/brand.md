@@ -311,7 +311,7 @@ Icon rules:
 - Use coral red sparingly for one high-attention element: the OSBE node or a functional badge such as block/stop or clip/attach. Never use it as general decoration.
 - Keep `docs/assets/osbe-icon-source.svg` as the canonical OSBE master mark; generate raster brand assets from it rather than tracing generated PNGs independently.
 - Do not use a puzzle piece as the main symbol; it is too generic for OSBE extension products.
-- Maintain one canonical `assets/icon-source.svg` per extension and generate runtime and store icons from it with `pnpm extension artwork <slug>`.
+- Maintain one canonical `assets/icon-source.svg` per extension and generate runtime and store icons from it with `pnpm extension assets <slug>`.
 - Treat browser-toolbar icons and store artwork separately: toolbar icons should be simpler, flatter, and higher contrast; store artwork can use richer liquid-glass rendering.
 
 ## Extension Quality Principles

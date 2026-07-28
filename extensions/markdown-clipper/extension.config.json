@@ -1,0 +1,75 @@
+{
+  "$schema": "../../schemas/extension.schema.json",
+  "schemaVersion": 1,
+  "slug": "markdown-clipper",
+  "packageName": "@osbe/markdown-clipper",
+  "displayName": "OSBE Markdown Clipper",
+  "surface": "popup",
+  "summary": "One-click Markdown clipper. Save pages and selections as clean Markdown with images, frontmatter, preview, copy, and download.",
+  "singlePurpose": "Convert the current webpage or selected content into Markdown and let the user preview, copy, or download the result.",
+  "permissions": [
+    {
+      "name": "activeTab",
+      "justification": "Temporarily accesses the current tab only after the user clicks the extension or selects an extension context menu action, so the page can be converted to Markdown."
+    },
+    {
+      "name": "contextMenus",
+      "justification": "Adds right-click actions so users can clip selected webpage content as Markdown."
+    },
+    {
+      "name": "downloads",
+      "justification": "Saves user-requested Markdown files or ZIP files containing Markdown and local image assets."
+    },
+    {
+      "name": "offscreen",
+      "justification": "Creates Blob URLs for Markdown and ZIP downloads because Manifest V3 service workers cannot create DOM Blob object URLs."
+    },
+    {
+      "name": "scripting",
+      "justification": "Runs the Markdown clipping script only after the user invokes the extension on the current tab."
+    },
+    {
+      "name": "storage",
+      "justification": "Stores the user's Images and Template clipping preferences so popup and context menu actions use the same options."
+    }
+  ],
+  "hostPermissions": [],
+  "dataUsage": ["webHistory", "websiteContent"],
+  "remoteCode": {
+    "used": false,
+    "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
+  },
+  "store": {
+    "category": "Productivity",
+    "language": "English",
+    "visibility": "public",
+    "pricing": "free",
+    "screenshots": [
+      {
+        "file": "store-assets/screenshots/screenshot-1-popup-1280x800.png",
+        "title": "Clip the current page"
+      },
+      {
+        "file": "store-assets/screenshots/screenshot-2-selection-menu-1280x800.png",
+        "title": "Clip a selection from the context menu"
+      },
+      {
+        "file": "store-assets/screenshots/screenshot-3-markdown-output-1280x800.png",
+        "title": "Preview, copy, or download Markdown"
+      }
+    ],
+    "promoTiles": [
+      {
+        "file": "store-assets/small-promo-440x280.png",
+        "kind": "small"
+      }
+    ]
+  },
+  "release": {
+    "workflow": "submit.yml",
+    "secretName": "SUBMIT_KEYS"
+  },
+  "smoke": {
+    "page": "popup.html"
+  }
+}

@@ -1,10 +1,10 @@
+import { respondWith } from "@osbe/extension-kit/messaging"
 import JSZip from "jszip"
 
 import {
   OFFSCREEN_DOWNLOAD_MESSAGE,
   OFFSCREEN_REVOKE_MESSAGE,
   type ClipPayload,
-  type ExtensionResponse,
   type OffscreenDownloadRequest
 } from "~lib/clip-types"
 
@@ -23,25 +23,11 @@ chrome.runtime.onMessage.addListener(
       return false
     }
 
-    createDownloadUrl(message.payload)
-      .then((download) => {
-        const response: ExtensionResponse<{ url: string; filename: string }> = {
-          ok: true,
-          data: download
-        }
-
-        sendResponse(response)
-      })
-      .catch((error) => {
-        const response: ExtensionResponse = {
-          ok: false,
-          error: error instanceof Error ? error.message : "Download failed"
-        }
-
-        sendResponse(response)
-      })
-
-    return true
+    return respondWith(
+      sendResponse,
+      () => createDownloadUrl(message.payload),
+      "Download failed"
+    )
   }
 )
 

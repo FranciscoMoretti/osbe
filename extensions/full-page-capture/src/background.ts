@@ -1,8 +1,7 @@
+import { executeInTab, ProtectedPageError } from "@osbe/extension-kit/tabs"
+
 import { getNextScrollY } from "./lib/capture-math"
-import type {
-  CaptureMessage,
-  CaptureMetadata
-} from "./lib/capture-types"
+import type { CaptureMessage, CaptureMetadata } from "./lib/capture-types"
 import {
   positionPageForCapture,
   preparePageForCapture,
@@ -14,10 +13,7 @@ const CAPTURE_INTERVAL_MS = 600
 const PREVIEW_CONNECTION_TIMEOUT_MS = 15_000
 const activeCaptures = new Set<number>()
 const previewPorts = new Map<string, chrome.runtime.Port>()
-const previewWaiters = new Map<
-  string,
-  (port: chrome.runtime.Port) => void
->()
+const previewWaiters = new Map<string, (port: chrome.runtime.Port) => void>()
 
 chrome.runtime.onConnect.addListener((port) => {
   if (!port.name.startsWith("capture:")) return
@@ -83,11 +79,9 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
     previewTabId = previewTab.id
     port = await waitForPreviewConnection(captureId)
 
-    const metadata = await runInPage(
-      tabId,
-      preparePageForCapture,
+    const metadata = await executeInTab(tabId, preparePageForCapture, [
       captureId
-    )
+    ])
     pagePrepared = true
 
     const captureMetadata: CaptureMetadata = {
@@ -113,9 +107,7 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
     let reachedDocumentEnd = false
 
     while (frameCount < MAX_CAPTURE_FRAMES) {
-      const activeTab = (
-        await chrome.tabs.query({ active: true, windowId })
-      )[0]
+      const activeTab = (await chrome.tabs.query({ active: true, windowId }))[0]
 
       if (activeTab?.id !== tabId) {
         throw new Error(
@@ -123,11 +115,9 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
         )
       }
 
-      const position = await runInPage(
-        tabId,
-        positionPageForCapture,
+      const position = await executeInTab(tabId, positionPageForCapture, [
         requestedY
-      )
+      ])
       finalDocumentHeight = position.documentHeight
 
       const captureDelay = Math.max(
@@ -204,15 +194,17 @@ async function captureFullPage(tab: chrome.tabs.Tab) {
     }
   } finally {
     if (pagePrepared) {
-      await runInPage(tabId, restorePageAfterCapture).catch(() => undefined)
+      await executeInTab(tabId, restorePageAfterCapture, []).catch(
+        () => undefined
+      )
     }
 
     previewPorts.delete(captureId)
 
     if (previewTabId) {
-      await chrome.tabs.update(previewTabId, { active: true }).catch(
-        () => undefined
-      )
+      await chrome.tabs
+        .update(previewTabId, { active: true })
+        .catch(() => undefined)
     }
   }
 }
@@ -241,33 +233,11 @@ function postMessage(port: chrome.runtime.Port, message: CaptureMessage) {
   port.postMessage(message)
 }
 
-async function runInPage<TArgs extends unknown[], TResult>(
-  tabId: number,
-  func: (...args: TArgs) => TResult | Promise<TResult>,
-  ...args: TArgs
-): Promise<TResult> {
-  const [result] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func,
-    args
-  })
-
-  if (!result) {
-    throw new Error("The page did not return capture information.")
-  }
-
-  return result.result as TResult
-}
-
 function getCaptureErrorMessage(error: unknown) {
   const detail =
     error instanceof Error ? error.message : "The page could not be captured."
 
-  if (
-    detail.includes("Cannot access") ||
-    detail.includes("The extensions gallery cannot be scripted") ||
-    detail.includes("Missing host permission")
-  ) {
+  if (error instanceof ProtectedPageError) {
     return "Chrome does not allow extensions to capture this protected page. Try a regular website instead."
   }
 

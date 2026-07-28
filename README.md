@@ -15,7 +15,8 @@ OSBE builds small, transparent browser extensions that users can inspect, reason
 - `extensions/full-page-capture` - OSBE full-page PNG and PDF capture extension built on the same shared foundation.
 - `packages/ui` - shared OSBE theme, utility, and shadcn/ui source components.
 - `packages/config` - shared Plasmo TypeScript, Tailwind, and PostCSS policy.
-- `extensions/catalog.json` - registry used by extension commands and validation.
+- `packages/extension-kit` - typed messaging, storage, tab, and scripting helpers shared by extension runtimes.
+- `extensions/*/extension.config.json` - discoverable product, store, permission, release, and smoke-test metadata.
 
 ## Development
 
@@ -53,9 +54,11 @@ Build every workspace that has a `build` script:
 pnpm build
 ```
 
-Build or package one extension through the catalog:
+Build, verify, or package one extension:
 
 ```bash
+pnpm extension check markdown-clipper
+pnpm extension smoke markdown-clipper
 pnpm extension build markdown-clipper
 pnpm extension package markdown-clipper
 pnpm extension publish markdown-clipper
@@ -73,10 +76,13 @@ Use the scaffold script:
 
 ```bash
 pnpm new:extension my-extension "OSBE My Extension"
+pnpm new:extension page-tool "OSBE Page Tool" --surface action-result
+pnpm new:extension settings-tool "OSBE Settings Tool" --surface dashboard
 pnpm install
 pnpm extension dev my-extension
 ```
 
-The generator registers the package, creates the branded runtime/store baseline,
-and adds a thin workflow that uses the shared submission workflow. See
+Extensions are discovered from their local metadata, so there is no registry to
+edit. The generator creates the selected branded UI surface, runtime/store
+baseline, and a thin workflow that uses the shared submission workflow. See
 `docs/create-extension.md` for the product-specific release checklist.

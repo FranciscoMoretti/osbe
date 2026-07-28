@@ -11,19 +11,6 @@
 
   body {
     @apply m-0 bg-background text-foreground;
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
-  }
-
-  button,
-  input,
-  select {
-    font: inherit;
   }
 }
 
@@ -428,22 +415,6 @@
     @apply grid gap-3 md:grid-cols-2;
   }
 
-  .osbe-popup-shell {
-    @apply w-[382px] overflow-hidden bg-background text-foreground;
-  }
-
-  .osbe-popup-frame {
-    @apply p-4;
-  }
-
-  .osbe-status-card {
-    @apply rounded-lg border bg-card p-4;
-  }
-
-  .osbe-status-icon {
-    @apply flex size-10 items-center justify-center rounded-lg border;
-  }
-
   .osbe-blocked-page {
     @apply flex min-h-screen items-center justify-center px-5 py-10;
     background: radial-gradient(
@@ -502,6 +473,5 @@
     .osbe-inline-actions {
       @apply justify-end;
     }
-
   }
 }

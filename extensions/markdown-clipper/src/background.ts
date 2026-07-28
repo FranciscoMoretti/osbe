@@ -1,11 +1,15 @@
+import {
+  respondWith,
+  sendExtensionRequest
+} from "@osbe/extension-kit/messaging"
+
 import { getStoredClipOptions } from "~lib/clip-settings"
 import {
   DOWNLOAD_MESSAGE,
   OFFSCREEN_DOWNLOAD_MESSAGE,
   OFFSCREEN_REVOKE_MESSAGE,
   type ClipPayload,
-  type DownloadRequest,
-  type ExtensionResponse
+  type DownloadRequest
 } from "~lib/clip-types"
 import {
   copyMarkdownToTab,
@@ -64,25 +68,11 @@ chrome.runtime.onMessage.addListener(
       return false
     }
 
-    downloadClip(message.payload)
-      .then((filename) => {
-        const response: ExtensionResponse<{ filename: string }> = {
-          ok: true,
-          data: { filename }
-        }
-
-        sendResponse(response)
-      })
-      .catch((error) => {
-        const response: ExtensionResponse = {
-          ok: false,
-          error: error instanceof Error ? error.message : "Download failed"
-        }
-
-        sendResponse(response)
-      })
-
-    return true
+    return respondWith(
+      sendResponse,
+      async () => ({ filename: await downloadClip(message.payload) }),
+      "Download failed"
+    )
   }
 )
 
@@ -125,34 +115,31 @@ async function copyMarkdown(tabId: number, markdown: string, imageCount = 0) {
 async function downloadClip(payload: ClipPayload) {
   await ensureOffscreenDocument()
 
-  const response = await chrome.runtime.sendMessage<
+  const response = await sendExtensionRequest<
     { type: typeof OFFSCREEN_DOWNLOAD_MESSAGE; payload: ClipPayload },
-    ExtensionResponse<{ url: string; filename: string }>
-  >({
-    type: OFFSCREEN_DOWNLOAD_MESSAGE,
-    payload
-  })
-
-  if (!response) {
-    throw new Error("The download document did not respond.")
-  }
-
-  if (response.ok === false) {
-    throw new Error(response.error)
-  }
+    { url: string; filename: string }
+  >(
+    {
+      type: OFFSCREEN_DOWNLOAD_MESSAGE,
+      payload
+    },
+    {
+      missingResponseMessage: "The download document did not respond."
+    }
+  )
 
   await chrome.downloads.download({
-    url: response.data.url,
-    filename: response.data.filename,
+    url: response.url,
+    filename: response.filename,
     saveAs: true
   })
 
   chrome.runtime.sendMessage({
     type: OFFSCREEN_REVOKE_MESSAGE,
-    url: response.data.url
+    url: response.url
   })
 
-  return response.data.filename
+  return response.filename
 }
 
 async function ensureOffscreenDocument() {

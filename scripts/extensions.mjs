@@ -1,39 +1,92 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process"
+import { access, readFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import { smokeExtensionInChrome } from "./lib/browser-smoke.mjs"
 import {
   findExtension,
   generateExtensionIcons,
-  readCatalog,
+  readExtensionRegistry,
   validateExtension
 } from "./lib/extensions.mjs"
+import {
+  bumpVersion,
+  sha256File,
+  updatePackageVersion
+} from "./lib/lifecycle.mjs"
+import { generateStoreAssets } from "./lib/store-assets.mjs"
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   ".."
 )
-const [command = "list", slug] = process.argv.slice(2)
-const catalog = await readCatalog(repoRoot)
+const [command = "list", slug, ...flags] = process.argv.slice(2)
+const registry = await readExtensionRegistry(repoRoot)
 
-if (command === "list") {
-  for (const extension of catalog.extensions) {
-    console.log(`${extension.slug}\t${extension.packageName}`)
+try {
+  if (command === "list") {
+    for (const extension of registry.extensions) {
+      console.log(
+        `${extension.slug}\t${extension.packageName}\t${extension.surface}`
+      )
+    }
+  } else if (command === "validate") {
+    const extensions = slug ? [requireExtension(slug)] : registry.extensions
+    await validateExtensions(extensions)
+    console.log(`Validated ${extensions.length} OSBE extension(s).`)
+  } else {
+    const extension = requireExtension(slug)
+
+    if (command === "assets" || command === "artwork") {
+      await generateExtensionIcons(repoRoot, extension)
+      await generateStoreAssets(repoRoot, extension)
+      console.log(`Generated store assets for ${extension.slug}.`)
+    } else if (command === "check") {
+      await checkExtension(extension)
+    } else if (command === "smoke") {
+      await runPackageCommand(extension, "build")
+      const result = await smokeExtensionInChrome(repoRoot, extension)
+      console.log(
+        `Chrome loaded ${result.pageUrl} (${result.title || "untitled"}).`
+      )
+    } else if (command === "release") {
+      await releaseExtension(extension, flags)
+    } else if (command === "status") {
+      await printStatus(extension)
+    } else if (command === "publish") {
+      await runCommand("gh", [
+        "workflow",
+        "run",
+        extension.release.workflow,
+        "--ref",
+        "main"
+      ])
+    } else if (
+      ["dev", "build", "package", "test", "typecheck"].includes(command)
+    ) {
+      await runPackageCommand(extension, command)
+    } else {
+      throw new Error(
+        "Usage: pnpm extension <list|validate|assets|dev|build|package|test|typecheck|check|smoke|release|status|publish> [slug]"
+      )
+    }
   }
-  process.exit(0)
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error)
+  process.exitCode = 1
 }
 
-if (command === "validate") {
-  const extensions = slug
-    ? [findExtension(catalog, slug)].filter(Boolean)
-    : catalog.extensions
-
-  if (extensions.length === 0) {
-    console.error(`Unknown extension: ${slug}`)
-    process.exit(1)
+function requireExtension(extensionSlug) {
+  const extension = findExtension(registry, extensionSlug)
+  if (!extension) {
+    throw new Error(`Unknown extension: ${extensionSlug ?? "(missing slug)"}`)
   }
+  return extension
+}
 
+async function validateExtensions(extensions) {
   const errors = (
     await Promise.all(
       extensions.map((extension) => validateExtension(repoRoot, extension))
@@ -41,60 +94,134 @@ if (command === "validate") {
   ).flat()
 
   if (errors.length > 0) {
-    for (const error of errors) {
-      console.error(`- ${error}`)
-    }
-    process.exit(1)
+    throw new Error(errors.map((error) => `- ${error}`).join("\n"))
   }
-
-  console.log(`Validated ${extensions.length} OSBE extension(s).`)
-  process.exit(0)
 }
 
-if (command === "artwork") {
-  const extension = findExtension(catalog, slug)
-  if (!extension) {
-    console.error(`Unknown extension: ${slug ?? "(missing slug)"}`)
-    process.exit(1)
+async function checkExtension(extension) {
+  await validateExtensions([extension])
+  await runPackageCommand(extension, "test")
+  await runPackageCommand(extension, "typecheck")
+  await runPackageCommand(extension, "build")
+  console.log(`Checked ${extension.slug}.`)
+}
+
+async function releaseExtension(extension, flags) {
+  const releaseTypes = ["patch", "minor", "major"].filter((releaseType) =>
+    flags.includes(`--${releaseType}`)
+  )
+  if (releaseTypes.length !== 1) {
+    throw new Error(
+      "Release requires exactly one of --patch, --minor, or --major."
+    )
+  }
+
+  const packagePath = path.join(
+    repoRoot,
+    "extensions",
+    extension.slug,
+    "package.json"
+  )
+  const packageJson = JSON.parse(await readFile(packagePath, "utf8"))
+  const nextVersion = bumpVersion(packageJson.version, releaseTypes[0])
+
+  if (flags.includes("--dry-run")) {
+    console.log(
+      `${extension.displayName}: ${packageJson.version} -> ${nextVersion}`
+    )
+    return
   }
 
   await generateExtensionIcons(repoRoot, extension)
-  console.log(`Generated runtime and store icons for ${extension.slug}.`)
-  process.exit(0)
-}
+  await generateStoreAssets(repoRoot, extension)
+  await validateExtensions([extension])
+  await runPackageCommand(extension, "test")
+  await runPackageCommand(extension, "typecheck")
 
-if (!["dev", "build", "package", "publish", "test"].includes(command)) {
-  console.error(
-    "Usage: pnpm extension <list|validate|artwork|dev|build|package|publish|test> [slug]"
-  )
-  process.exit(1)
-}
-
-const extension = findExtension(catalog, slug)
-if (!extension) {
-  console.error(`Unknown extension: ${slug ?? "(missing slug)"}`)
-  process.exit(1)
-}
-
-const child =
-  command === "publish"
-    ? spawn("gh", ["workflow", "run", extension.workflow, "--ref", "main"], {
-        cwd: repoRoot,
-        stdio: "inherit"
-      })
-    : spawn(
-        "pnpm",
-        ["--filter", extension.packageName, "--if-present", command],
-        {
-          cwd: repoRoot,
-          stdio: "inherit"
-        }
-      )
-
-child.on("exit", (code, signal) => {
-  if (signal) {
-    process.kill(process.pid, signal)
-  } else {
-    process.exit(code ?? 1)
+  const update = await updatePackageVersion(packagePath, releaseTypes[0])
+  try {
+    await runPackageCommand(extension, "build")
+    await runPackageCommand(extension, "package")
+  } catch (error) {
+    await update.restore()
+    throw error
   }
-})
+
+  const zipPath = packageZipPath(extension)
+  const checksum = await sha256File(zipPath)
+  console.log(
+    `Prepared ${extension.displayName} ${update.nextVersion}: ${zipPath}`
+  )
+  console.log(`SHA-256 ${checksum}`)
+  console.log(
+    `After committing and merging the version bump, run: pnpm extension publish ${extension.slug}`
+  )
+}
+
+async function printStatus(extension) {
+  const packagePath = path.join(
+    repoRoot,
+    "extensions",
+    extension.slug,
+    "package.json"
+  )
+  const packageJson = JSON.parse(await readFile(packagePath, "utf8"))
+  const zipPath = packageZipPath(extension)
+  let artifact = "not packaged"
+
+  try {
+    await access(zipPath)
+    artifact = `${zipPath} (${await sha256File(zipPath)})`
+  } catch {
+    // A missing artifact is a useful status, not an error.
+  }
+
+  console.log(`${extension.displayName} ${packageJson.version}`)
+  console.log(`Surface: ${extension.surface}`)
+  console.log(`Workflow: ${extension.release.workflow}`)
+  console.log(`Artifact: ${artifact}`)
+  if (extension.store.storeId) {
+    console.log(
+      `Chrome Web Store: https://chromewebstore.google.com/detail/${extension.store.storeId}`
+    )
+  }
+}
+
+function packageZipPath(extension) {
+  return path.join(
+    repoRoot,
+    "extensions",
+    extension.slug,
+    "build",
+    "chrome-mv3-prod.zip"
+  )
+}
+
+function runPackageCommand(extension, packageCommand) {
+  return runCommand("pnpm", [
+    "--filter",
+    extension.packageName,
+    "--if-present",
+    packageCommand
+  ])
+}
+
+function runCommand(executable, argumentsList) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(executable, argumentsList, {
+      cwd: repoRoot,
+      stdio: "inherit"
+    })
+
+    child.once("error", reject)
+    child.once("exit", (code, signal) => {
+      if (signal) {
+        reject(new Error(`${executable} stopped with signal ${signal}`))
+      } else if (code === 0) {
+        resolve()
+      } else {
+        reject(new Error(`${executable} exited with code ${code ?? 1}`))
+      }
+    })
+  })
+}

@@ -1,75 +1,46 @@
+import { sendExtensionRequest } from "@osbe/extension-kit/messaging"
+import {
+  createBrowserStorageAdapter,
+  createStoredState
+} from "@osbe/extension-kit/storage"
+
 import { normalizeDomain, validateDomain } from "./matcher"
 import {
   DEFAULT_STATE,
   REFRESH_BLOCKING_RULES_MESSAGE,
   type AppState,
   type BlockingRulesStatus,
-  type BlockRule,
-  type ExtensionMessageResponse
+  type BlockRule
 } from "./types"
 
 const STORAGE_KEY = "osbe-site-blocker-state"
 const FALLBACK_STORAGE_KEY = "osbe-site-blocker-dev-state"
+const stateStore = createStoredState({
+  adapter: createBrowserStorageAdapter({
+    fallbackEventName: "osbe-site-blocker-state-changed",
+    fallbackKey: FALLBACK_STORAGE_KEY
+  }),
+  defaults: DEFAULT_STATE,
+  key: STORAGE_KEY,
+  normalize: normalizeState
+})
 
 export async function readState(): Promise<AppState> {
-  if (hasChromeStorage()) {
-    const result = await chrome.storage.local.get(STORAGE_KEY)
-    return normalizeState(result[STORAGE_KEY])
-  }
-
-  const stored = localStorage.getItem(FALLBACK_STORAGE_KEY)
-  return normalizeState(stored ? JSON.parse(stored) : null)
+  return stateStore.read()
 }
 
 export async function writeState(state: AppState) {
-  const nextState = normalizeState(state)
+  const nextState = await stateStore.write(state)
 
-  if (hasChromeStorage()) {
-    await chrome.storage.local.set({ [STORAGE_KEY]: nextState })
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
     await refreshBlockingRules()
-    return
   }
 
-  localStorage.setItem(FALLBACK_STORAGE_KEY, JSON.stringify(nextState))
-  window.dispatchEvent(new CustomEvent("osbe-site-blocker-state-changed"))
+  return nextState
 }
 
 export function subscribeToStateChanges(callback: () => void) {
-  if (hasChromeStorage()) {
-    const listener = (
-      changes: Record<string, chrome.storage.StorageChange>
-    ) => {
-      if (changes[STORAGE_KEY]) {
-        callback()
-      }
-    }
-
-    const storageChanged = chrome.storage.onChanged
-
-    if (!storageChanged) {
-      return () => {}
-    }
-
-    try {
-      storageChanged.addListener(listener)
-    } catch {
-      // A blocked tab can outlive an extension update or reload.
-      return () => {}
-    }
-
-    return () => {
-      try {
-        storageChanged.removeListener(listener)
-      } catch {
-        // The extension context may have been invalidated after subscribing.
-      }
-    }
-  }
-
-  const listener = () => callback()
-  window.addEventListener("osbe-site-blocker-state-changed", listener)
-  return () =>
-    window.removeEventListener("osbe-site-blocker-state-changed", listener)
+  return stateStore.subscribe(callback)
 }
 
 export async function refreshBlockingRules() {
@@ -78,16 +49,10 @@ export async function refreshBlockingRules() {
   }
 
   try {
-    const response = await chrome.runtime.sendMessage<
+    return await sendExtensionRequest<
       { type: typeof REFRESH_BLOCKING_RULES_MESSAGE },
-      ExtensionMessageResponse<BlockingRulesStatus>
+      BlockingRulesStatus
     >({ type: REFRESH_BLOCKING_RULES_MESSAGE })
-
-    if (response?.ok === false) {
-      throw new Error(response.error)
-    }
-
-    return response?.data || null
   } catch {
     // MV3 service workers may be asleep during local UI edits. Storage changes
     // and alarms still refresh rules when the worker wakes.
@@ -148,8 +113,4 @@ function normalizeState(value: unknown): AppState {
     },
     rules
   }
-}
-
-function hasChromeStorage() {
-  return typeof chrome !== "undefined" && Boolean(chrome.storage?.local)
 }

@@ -1,0 +1,7 @@
+{
+  "extends": "@osbe/config/tsconfig.plasmo.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts"]
+}

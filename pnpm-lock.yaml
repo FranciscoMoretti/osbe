@@ -39,6 +39,9 @@ catalogs:
     '@types/react-dom':
       specifier: 18.2.18
       version: 18.2.18
+    ajv:
+      specifier: ^8.20.0
+      version: 8.20.0
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
@@ -72,6 +75,9 @@ catalogs:
     tailwindcss:
       specifier: 3.4.1
       version: 3.4.1
+    tsx:
+      specifier: ^4.23.0
+      version: 4.23.0
     typescript:
       specifier: 5.3.3
       version: 5.3.3
@@ -85,6 +91,9 @@ importers:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 'catalog:'
         version: 4.1.1(@vue/compiler-sfc@3.3.4)(prettier@3.2.4)
+      ajv:
+        specifier: 'catalog:'
+        version: 8.20.0
       prettier:
         specifier: 'catalog:'
         version: 3.2.4
@@ -97,6 +106,9 @@ importers:
       '@osbe/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@osbe/extension-kit':
+        specifier: workspace:*
+        version: link:../../packages/extension-kit
       '@osbe/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -138,7 +150,7 @@ importers:
         specifier: 'catalog:'
         version: 8.4.33
       tsx:
-        specifier: ^4.23.0
+        specifier: 'catalog:'
         version: 4.23.0
       typescript:
         specifier: 'catalog:'
@@ -149,6 +161,9 @@ importers:
       '@osbe/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@osbe/extension-kit':
+        specifier: workspace:*
+        version: link:../../packages/extension-kit
       '@osbe/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -195,6 +210,9 @@ importers:
       '@osbe/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@osbe/extension-kit':
+        specifier: workspace:*
+        version: link:../../packages/extension-kit
       '@osbe/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -233,7 +251,7 @@ importers:
         specifier: 'catalog:'
         version: 8.4.33
       tsx:
-        specifier: ^4.23.0
+        specifier: 'catalog:'
         version: 4.23.0
       typescript:
         specifier: 'catalog:'
@@ -244,6 +262,25 @@ importers:
       plasmo:
         specifier: 'catalog:'
         version: 0.90.5(@swc/core@1.15.33(@swc/helpers@0.5.21))(@swc/helpers@0.5.21)(@types/node@20.11.5)(postcss@8.4.33)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+
+  packages/extension-kit:
+    dependencies:
+      '@osbe/config':
+        specifier: workspace:*
+        version: link:../config
+    devDependencies:
+      '@types/chrome':
+        specifier: 'catalog:'
+        version: 0.0.258
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.11.5
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.3.3
 
   packages/ui:
     dependencies:
@@ -2395,6 +2432,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  ajv@8.20.0:
+    resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
+
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
     engines: {node: '>=8'}
@@ -2794,6 +2834,9 @@ packages:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
 
+  fast-deep-equal@3.1.3:
+    resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
+
   fast-glob@3.3.2:
     resolution: {integrity: sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==}
     engines: {node: '>=8.6.0'}
@@ -2804,6 +2847,9 @@ packages:
 
   fast-png@6.4.0:
     resolution: {integrity: sha512-kAqZq1TlgBjZcLr5mcN6NP5Rv4V2f22z00c3g8vRrwkcqjerx7BEhPbOnWCPqaHUl2XWQBJQvOT/FQhdMT7X/Q==}
+
+  fast-uri@3.1.4:
+    resolution: {integrity: sha512-8JnbkQ4juDyvYs4mgFGQqg4yCYtFDtUtmp2QIQq11ZZe5CFQ5wcqm1rqDgAh/QdMySuBnPzMUiJUNZG5N/AiQw==}
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
@@ -3103,6 +3149,9 @@ packages:
   json-schema-to-ts@3.1.1:
     resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
     engines: {node: '>=16'}
+
+  json-schema-traverse@1.0.0:
+    resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
 
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
@@ -3698,6 +3747,10 @@ packages:
   registry-url@6.0.1:
     resolution: {integrity: sha512-+crtS5QjFRqFCoQmvGduwYWEBng99ZvmFvF+cUJkGYF1L1BfU8C6Zp9T7f5vPAwyLkUExpvK+ANVZmGU49qi4Q==}
     engines: {node: '>=12'}
+
+  require-from-string@2.0.2:
+    resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
+    engines: {node: '>=0.10.0'}
 
   resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}
@@ -6353,6 +6406,13 @@ snapshots:
 
   acorn@8.16.0: {}
 
+  ajv@8.20.0:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-uri: 3.1.4
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+
   ansi-escapes@4.3.2:
     dependencies:
       type-fest: 0.21.3
@@ -6779,6 +6839,8 @@ snapshots:
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
 
+  fast-deep-equal@3.1.3: {}
+
   fast-glob@3.3.2:
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -6800,6 +6862,8 @@ snapshots:
       '@types/pako': 2.0.4
       iobuffer: 5.4.0
       pako: 2.2.0
+
+  fast-uri@3.1.4: {}
 
   fastq@1.20.1:
     dependencies:
@@ -7050,6 +7114,8 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.2
       ts-algebra: 2.0.0
+
+  json-schema-traverse@1.0.0: {}
 
   json5@2.2.3: {}
 
@@ -7671,6 +7737,8 @@ snapshots:
   registry-url@6.0.1:
     dependencies:
       rc: 1.2.8
+
+  require-from-string@2.0.2: {}
 
   resolve-alpn@1.2.1: {}
 

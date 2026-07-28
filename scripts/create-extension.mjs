@@ -3,22 +3,40 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { generateExtensionIcons, readCatalog } from "./lib/extensions.mjs"
+import {
+  generateExtensionIcons,
+  readExtensionRegistry
+} from "./lib/extensions.mjs"
+import { createSurfaceDefinition } from "./lib/surfaces.mjs"
 
 const repoRoot = process.env.OSBE_REPO_ROOT
   ? path.resolve(process.env.OSBE_REPO_ROOT)
   : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const templateRoot = path.join(repoRoot, "templates", "extension")
+const surfaceTemplatesRoot = path.join(
+  repoRoot,
+  "templates",
+  "extension-surfaces"
+)
 const workflowTemplate = path.join(
   repoRoot,
   "templates",
   "submit-extension.yml"
 )
-const slug = process.argv[2]
-const displayName = process.argv.slice(3).join(" ")
+const argumentsList = process.argv.slice(2)
+const slug = argumentsList[0]
+const surfaceFlagIndex = argumentsList.indexOf("--surface")
+const surface =
+  surfaceFlagIndex === -1 ? "popup" : argumentsList[surfaceFlagIndex + 1]
+const displayName = argumentsList
+  .slice(1, surfaceFlagIndex === -1 ? undefined : surfaceFlagIndex)
+  .join(" ")
+const surfaceDefinition = createSurfaceDefinition(surface, displayName)
 
 if (!slug || !displayName) {
-  console.error('Usage: pnpm new:extension <kebab-name> "OSBE Display Name"')
+  console.error(
+    'Usage: pnpm new:extension <kebab-name> "OSBE Display Name" [--surface popup|action-result|dashboard]'
+  )
   process.exit(1)
 }
 
@@ -32,11 +50,24 @@ if (!displayName.startsWith("OSBE ")) {
   process.exit(1)
 }
 
+if (!surfaceDefinition) {
+  console.error("Surface must be popup, action-result, or dashboard")
+  process.exit(1)
+}
+
 const extensionRoot = path.join(repoRoot, "extensions", slug)
 const workflowName = `submit-${slug}.yml`
 const workflowPath = path.join(repoRoot, ".github", "workflows", workflowName)
 const secretName = `${slug.toUpperCase().replaceAll("-", "_")}_SUBMIT_KEYS`
-const values = { slug, displayName, secretName }
+const values = {
+  slug,
+  displayName,
+  manifest: JSON.stringify(surfaceDefinition.manifest, null, 2),
+  permissions: JSON.stringify(surfaceDefinition.permissions, null, 2),
+  secretName,
+  smokePage: surfaceDefinition.smokePage,
+  surface
+}
 
 function render(content) {
   return Object.entries(values).reduce(
@@ -62,9 +93,9 @@ async function renderDirectory(source, destination) {
   }
 }
 
-const catalog = await readCatalog(repoRoot)
-if (catalog.extensions.some((extension) => extension.slug === slug)) {
-  console.error(`Extension already exists in catalog: ${slug}`)
+const registry = await readExtensionRegistry(repoRoot)
+if (registry.extensions.some((extension) => extension.slug === slug)) {
+  console.error(`Extension already exists: ${slug}`)
   process.exit(1)
 }
 
@@ -79,24 +110,14 @@ try {
 }
 
 await renderDirectory(templateRoot, extensionRoot)
+await renderDirectory(path.join(surfaceTemplatesRoot, surface), extensionRoot)
 await generateExtensionIcons(repoRoot, { slug })
 
 const workflow = render(await readFile(workflowTemplate, "utf8"))
 await writeFile(workflowPath, workflow, { flag: "wx" })
 
-catalog.extensions.push({
-  slug,
-  packageName: `@osbe/${slug}`,
-  workflow: workflowName,
-  secretName
-})
-catalog.extensions.sort((left, right) => left.slug.localeCompare(right.slug))
-await writeFile(
-  path.join(repoRoot, "extensions", "catalog.json"),
-  `${JSON.stringify(catalog, null, 2)}\n`
-)
-
 console.log(`Created extensions/${slug}`)
+console.log(`Surface: ${surface}`)
 console.log(`Registered .github/workflows/${workflowName}`)
 console.log(`Run: pnpm install`)
 console.log(`Then: pnpm extension dev ${slug}`)
