@@ -61,13 +61,14 @@ import iconUrl from "data-base64:../assets/icon.png"
 import {
   createDefaultState,
   createPresetId,
-  isValidWindowSize,
-  MAX_WINDOW_SIZE,
-  MIN_WINDOW_SIZE,
+  isValidResizeSize,
+  MAX_RESIZE_SIZE,
+  MIN_RESIZE_SIZE,
   movePreset,
   restoreDefaultPresets,
   type PresetState,
-  type WindowPreset
+  type ResizePreset,
+  type ResizeTarget
 } from "~/lib/presets"
 import {
   readPresetState,
@@ -75,14 +76,14 @@ import {
   writePresetState
 } from "~/lib/storage"
 import {
-  readCurrentWindowSize,
+  readCurrentWindowMetrics,
   resizeCurrentWindow,
-  type WindowSize
+  type WindowMetrics
 } from "~/lib/windows"
 
 type EditorState = {
   key: number
-  preset?: WindowPreset
+  preset?: ResizePreset
 }
 
 type Notice = {
@@ -92,7 +93,9 @@ type Notice = {
 
 function IndexPopup() {
   const [state, setState] = useState<PresetState>(createDefaultState())
-  const [currentSize, setCurrentSize] = useState<WindowSize | null>(null)
+  const [currentMetrics, setCurrentMetrics] = useState<WindowMetrics | null>(
+    null
+  )
   const [editor, setEditor] = useState<EditorState | null>(null)
   const [notice, setNotice] = useState<Notice | null>(null)
   const [busyPresetId, setBusyPresetId] = useState<string | null>(null)
@@ -107,9 +110,9 @@ function IndexPopup() {
 
   async function refreshCurrentSize() {
     try {
-      setCurrentSize(await readCurrentWindowSize())
+      setCurrentMetrics(await readCurrentWindowMetrics())
     } catch {
-      setCurrentSize(null)
+      setCurrentMetrics(null)
     }
   }
 
@@ -118,15 +121,15 @@ function IndexPopup() {
     setState(savedState)
   }
 
-  async function applyPreset(preset: WindowPreset) {
+  async function applyPreset(preset: ResizePreset) {
     setBusyPresetId(preset.id)
     setNotice(null)
 
     try {
-      const nextSize = await resizeCurrentWindow(preset)
-      setCurrentSize(nextSize)
+      const nextMetrics = await resizeCurrentWindow(preset)
+      setCurrentMetrics(nextMetrics)
       setNotice({
-        message: `Window resized to ${nextSize.width} × ${nextSize.height}.`,
+        message: `${getResizeTargetName(preset.target)} resized to ${preset.width} × ${preset.height}.`,
         tone: "success"
       })
     } catch (error) {
@@ -143,7 +146,7 @@ function IndexPopup() {
   }
 
   async function savePreset(
-    nextPreset: WindowPreset,
+    nextPreset: ResizePreset,
     resizeAfterSave: boolean
   ) {
     const editing = Boolean(editor?.preset)
@@ -202,7 +205,7 @@ function IndexPopup() {
           name="Window Resizer"
           size="sm"
         />
-        <CurrentWindowPanel size={currentSize} />
+        <CurrentWindowPanel metrics={currentMetrics} />
         <div aria-hidden="true" className="ruler-edge" />
       </header>
 
@@ -240,8 +243,8 @@ function IndexPopup() {
                 canMoveUp={index > 0}
                 index={index}
                 isCurrent={
-                  currentSize?.width === preset.width &&
-                  currentSize.height === preset.height
+                  currentMetrics?.[preset.target]?.width === preset.width &&
+                  currentMetrics[preset.target]?.height === preset.height
                 }
                 key={preset.id}
                 onApply={() => applyPreset(preset)}
@@ -294,7 +297,7 @@ function IndexPopup() {
       </footer>
 
       <PresetEditor
-        currentSize={currentSize}
+        currentMetrics={currentMetrics}
         editor={editor}
         key={editor?.key ?? "closed"}
         onClose={() => setEditor(null)}
@@ -304,9 +307,9 @@ function IndexPopup() {
   )
 }
 
-function CurrentWindowPanel({ size }: { size: WindowSize | null }) {
-  const width = size?.width ?? 16
-  const height = size?.height ?? 10
+function CurrentWindowPanel({ metrics }: { metrics: WindowMetrics | null }) {
+  const width = metrics?.window.width ?? 16
+  const height = metrics?.window.height ?? 10
 
   return (
     <div className="instrument-display mt-4">
@@ -316,17 +319,22 @@ function CurrentWindowPanel({ size }: { size: WindowSize | null }) {
           <span className="instrument-label">Current outer frame</span>
         </div>
         <div className="mt-1 flex items-baseline gap-2 text-primary-foreground">
-          {size ? (
+          {metrics ? (
             <>
-              <span className="instrument-value">{size.width}</span>
+              <span className="instrument-value">{metrics.window.width}</span>
               <span className="instrument-multiply">×</span>
-              <span className="instrument-value">{size.height}</span>
+              <span className="instrument-value">{metrics.window.height}</span>
               <span className="instrument-unit">px</span>
             </>
           ) : (
             <span className="instrument-loading">Reading window…</span>
           )}
         </div>
+        {metrics?.viewport ? (
+          <div className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary-foreground/55">
+            Viewport {metrics.viewport.width} × {metrics.viewport.height}
+          </div>
+        ) : null}
       </div>
       <ViewportGlyph height={height} inverse width={width} />
     </div>
@@ -344,7 +352,7 @@ type PresetRowProps = {
   onEdit(): void
   onMoveDown(): void
   onMoveUp(): void
-  preset: WindowPreset
+  preset: ResizePreset
 }
 
 function PresetRow({
@@ -360,7 +368,6 @@ function PresetRow({
   onMoveUp,
   preset
 }: PresetRowProps) {
-  const device = getPresetDevice(preset)
   const rowStyle = {
     animationDelay: `${index * 18 + 35}ms`
   }
@@ -390,7 +397,7 @@ function PresetRow({
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-bold">{preset.name}</div>
           <div className="mt-0.5 truncate text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-            {busy ? "Resizing…" : getPresetLabel(preset, device)}
+            {busy ? "Resizing…" : getPresetLabel(preset)}
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
@@ -475,25 +482,26 @@ function ViewportGlyph({
 }
 
 type PresetEditorProps = {
-  currentSize: WindowSize | null
+  currentMetrics: WindowMetrics | null
   editor: EditorState | null
   onClose(): void
-  onSave(preset: WindowPreset, resizeAfterSave: boolean): Promise<void>
+  onSave(preset: ResizePreset, resizeAfterSave: boolean): Promise<void>
 }
 
 function PresetEditor({
-  currentSize,
+  currentMetrics,
   editor,
   onClose,
   onSave
 }: PresetEditorProps) {
   const preset = editor?.preset
+  const [target, setTarget] = useState<ResizeTarget>(preset?.target ?? "window")
   const [name, setName] = useState(preset?.name ?? "Custom")
   const [width, setWidth] = useState(
-    String(preset?.width ?? currentSize?.width ?? 1280)
+    String(preset?.width ?? currentMetrics?.window.width ?? 1280)
   )
   const [height, setHeight] = useState(
-    String(preset?.height ?? currentSize?.height ?? 800)
+    String(preset?.height ?? currentMetrics?.window.height ?? 800)
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<{
@@ -514,12 +522,12 @@ function PresetEditor({
     }
 
     if (
-      !isValidWindowSize(normalizedWidth) ||
-      !isValidWindowSize(normalizedHeight)
+      !isValidResizeSize(normalizedWidth) ||
+      !isValidResizeSize(normalizedHeight)
     ) {
       setError({
         field: "dimensions",
-        message: `Width and height must be whole numbers from ${MIN_WINDOW_SIZE} to ${MAX_WINDOW_SIZE}.`
+        message: `Width and height must be whole numbers from ${MIN_RESIZE_SIZE} to ${MAX_RESIZE_SIZE}.`
       })
       return
     }
@@ -533,7 +541,8 @@ function PresetEditor({
           id: preset?.id ?? createPresetId(),
           name: normalizedName,
           width: normalizedWidth,
-          height: normalizedHeight
+          height: normalizedHeight,
+          target
         },
         resizeAfterSave
       )
@@ -551,6 +560,17 @@ function PresetEditor({
     void save(false)
   }
 
+  function selectTarget(nextTarget: ResizeTarget) {
+    setTarget(nextTarget)
+
+    const currentTargetSize = currentMetrics?.[nextTarget]
+
+    if (!preset && currentTargetSize) {
+      setWidth(String(currentTargetSize.width))
+      setHeight(String(currentTargetSize.height))
+    }
+  }
+
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={Boolean(editor)}>
       <DialogContent className="w-[396px] gap-0 overflow-hidden p-0">
@@ -560,14 +580,17 @@ function PresetEditor({
               {preset ? "Edit custom size" : "New custom size"}
             </DialogTitle>
             <DialogDescription>
-              Set the complete Chrome window frame, including browser chrome.
+              Choose whether the dimensions apply to the browser window or the
+              page viewport.
             </DialogDescription>
           </DialogHeader>
         </div>
 
         <div className="dialog-measurement mx-5">
           <div>
-            <div className="instrument-label">Preview</div>
+            <div className="instrument-label">
+              {getResizeTargetName(target)} preview
+            </div>
             <div className="mt-1 flex items-baseline gap-1.5">
               <span className="dialog-measurement-value">{width || "—"}</span>
               <span className="instrument-multiply">×</span>
@@ -591,8 +614,30 @@ function PresetEditor({
               />
             </Field>
 
+            <FieldSet className="gap-0">
+              <FieldLegend variant="label">Resize target</FieldLegend>
+              <div className="grid grid-cols-2 gap-2" role="radiogroup">
+                <ResizeTargetOption
+                  checked={target === "window"}
+                  description="Outer frame"
+                  label="Window"
+                  onChange={() => selectTarget("window")}
+                  value="window"
+                />
+                <ResizeTargetOption
+                  checked={target === "viewport"}
+                  description="Page area"
+                  label="Viewport"
+                  onChange={() => selectTarget("viewport")}
+                  value="viewport"
+                />
+              </div>
+            </FieldSet>
+
             <FieldSet>
-              <FieldLegend className="sr-only">Window dimensions</FieldLegend>
+              <FieldLegend className="sr-only">
+                {getResizeTargetName(target)} dimensions
+              </FieldLegend>
               <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2">
                 <Field data-invalid={error?.field === "dimensions"}>
                   <FieldLabel htmlFor="preset-width">Width</FieldLabel>
@@ -600,8 +645,8 @@ function PresetEditor({
                     aria-invalid={error?.field === "dimensions"}
                     id="preset-width"
                     inputMode="numeric"
-                    max={MAX_WINDOW_SIZE}
-                    min={MIN_WINDOW_SIZE}
+                    max={MAX_RESIZE_SIZE}
+                    min={MIN_RESIZE_SIZE}
                     onChange={(event) => setWidth(event.target.value)}
                     type="number"
                     value={width}
@@ -616,8 +661,8 @@ function PresetEditor({
                     aria-invalid={error?.field === "dimensions"}
                     id="preset-height"
                     inputMode="numeric"
-                    max={MAX_WINDOW_SIZE}
-                    min={MIN_WINDOW_SIZE}
+                    max={MAX_RESIZE_SIZE}
+                    min={MIN_RESIZE_SIZE}
                     onChange={(event) => setHeight(event.target.value)}
                     type="number"
                     value={height}
@@ -657,15 +702,64 @@ function PresetEditor({
   )
 }
 
-function getPresetDevice(preset: WindowPreset) {
-  if (preset.width <= 480) return "Phone"
-  if (Math.min(preset.width, preset.height) <= 820) return "Tablet"
-  return "Computer"
+type ResizeTargetOptionProps = {
+  checked: boolean
+  description: string
+  label: string
+  onChange(): void
+  value: ResizeTarget
 }
 
-function getPresetLabel(preset: WindowPreset, device: string) {
+function ResizeTargetOption({
+  checked,
+  description,
+  label,
+  onChange,
+  value
+}: ResizeTargetOptionProps) {
+  return (
+    <label
+      className={cn(
+        "flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 transition-colors",
+        checked
+          ? "border-brand-blue bg-accent text-accent-foreground"
+          : "bg-card hover:bg-muted/60"
+      )}>
+      <input
+        checked={checked}
+        className="sr-only"
+        name="resize-target"
+        onChange={onChange}
+        type="radio"
+        value={value}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          "flex size-4 items-center justify-center rounded-full border",
+          checked ? "border-brand-blue" : "border-muted-foreground/50"
+        )}>
+        {checked ? (
+          <span className="size-2 rounded-full bg-brand-blue" />
+        ) : null}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-xs font-bold">{label}</span>
+        <span className="block text-[10px] text-muted-foreground">
+          {description}
+        </span>
+      </span>
+    </label>
+  )
+}
+
+function getPresetLabel(preset: ResizePreset) {
   const orientation = preset.width > preset.height ? "landscape" : "portrait"
-  return `${device} · ${orientation}`
+  return `${getResizeTargetName(preset.target)} · ${orientation}`
+}
+
+function getResizeTargetName(target: ResizeTarget) {
+  return target === "viewport" ? "Viewport" : "Window"
 }
 
 function getViewportGlyphSize(width: number, height: number) {

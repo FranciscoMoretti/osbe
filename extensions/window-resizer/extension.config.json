@@ -5,12 +5,20 @@
   "packageName": "@osbe/window-resizer",
   "displayName": "OSBE Window Resizer",
   "surface": "popup",
-  "summary": "Resize the current Chrome window from built-in device presets or your own saved sizes.",
-  "singlePurpose": "Resize the current Chrome browser window to a user-selected saved width and height.",
+  "summary": "Resize the current Chrome window or page viewport from built-in presets or your own saved sizes.",
+  "singlePurpose": "Resize the current Chrome browser window or active page viewport to a user-selected saved width and height.",
   "permissions": [
     {
       "name": "storage",
       "justification": "Stores the user's custom window-size presets and preferred preset order locally on their device."
+    },
+    {
+      "name": "activeTab",
+      "justification": "Temporarily accesses the current tab after the user opens the extension so viewport-targeted presets can measure the page area."
+    },
+    {
+      "name": "scripting",
+      "justification": "Runs a small local measurement function in the active tab to read its viewport width and height; it does not read or modify page content."
     }
   ],
   "hostPermissions": [],
@@ -28,8 +36,8 @@
       {
         "file": "store-assets/screenshots/window-resizer-1280x800.png",
         "source": "store-assets/source/window-resizer-popup.png",
-        "title": "Resize a Chrome window with one click from built-in presets.",
-        "description": "The popup shows the current browser size, built-in presets, and controls for creating and managing custom sizes."
+        "title": "Resize a Chrome window or viewport with one click.",
+        "description": "The popup shows current window and viewport sizes, built-in presets, and controls for creating and managing custom sizes."
       }
     ],
     "promoTiles": []

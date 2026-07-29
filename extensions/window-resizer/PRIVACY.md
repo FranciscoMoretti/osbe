@@ -1,22 +1,28 @@
 # OSBE Window Resizer Privacy Policy
 
-OSBE Window Resizer resizes the current Chrome browser window to a
-user-selected width and height. It runs entirely on the user's device.
+OSBE Window Resizer resizes the current Chrome browser window or active page
+viewport to a user-selected width and height. It runs entirely on the user's
+device.
 
 ## Data handled
 
-The extension reads the current browser window dimensions so it can prefill a
-new custom preset and display the current size. It stores custom preset names,
-dimensions, and ordering locally through Chrome's extension storage.
+The extension reads the current browser window and active page viewport
+dimensions so it can prefill a new custom preset, display the current sizes,
+and compensate for browser chrome when a viewport target is selected. It stores
+custom preset names, dimensions, targets, and ordering locally through Chrome's
+extension storage.
 
-The extension does not read page content, browsing history, tab URLs, personal
-information, authentication information, or communications.
+For viewport-targeted presets, the extension runs a small local measurement
+function in the active tab that reads only `window.innerWidth` and
+`window.innerHeight`. It does not read page content, browsing history, tab URLs,
+personal information, authentication information, or communications.
 
 ## Local storage
 
-Preset data is stored only in `chrome.storage.local` on the user's device. It is
-not synced by OSBE. Users can edit or delete individual presets, restore the
-built-in defaults, or remove all extension data by uninstalling the extension.
+Preset data, including each preset's window or viewport target, is stored only
+in `chrome.storage.local` on the user's device. It is not synced by OSBE. Users
+can edit or delete individual presets, restore the built-in defaults, or remove
+all extension data by uninstalling the extension.
 
 ## Transmission and sharing
 

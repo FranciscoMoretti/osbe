@@ -6,22 +6,27 @@ your own saved sizes.
 ## Features
 
 - Six built-in defaults for mobile, tablet, laptop, and desktop testing
-- Custom named width and height presets, prefilled from the current window
+- Window and viewport resize targets on every preset
+- Custom named width and height presets, prefilled from the selected target
 - Edit, delete, and reorder controls inside the popup
 - One-click reset back to the built-in defaults
 - Local-only preset storage with no account, sync, analytics, or remote code
 
-The selected dimensions apply to the complete Chrome window, including its
-frame. Applying a preset returns maximized or fullscreen windows to their normal
-state so Chrome can use the requested bounds.
+Window-targeted dimensions apply to the complete Chrome frame. Viewport-targeted
+dimensions apply to the active page area; the extension measures the difference
+between the viewport and outer frame, then compensates for that browser chrome
+when resizing. Applying either target returns maximized or fullscreen windows to
+their normal state so Chrome can use the requested bounds.
 
 ## Architecture and browser access
 
-The extension is popup-only. It has no background service worker, content
-scripts, offscreen documents, or host permissions. The popup calls Chrome's
-`windows` API only when opened or when the user selects a preset; that API does
-not require a manifest permission. The only requested permission is `storage`,
-used to keep preset names, dimensions, and ordering in `chrome.storage.local`.
+The extension is popup-only. It has no background service worker, persistent
+content scripts, offscreen documents, or host permissions. The popup calls
+Chrome's `windows` API when opened or when the user selects a preset.
+Viewport-targeted presets use `activeTab` and `scripting` to run a small local
+measurement function that reads only `window.innerWidth` and
+`window.innerHeight` from the active page. `storage` keeps preset names,
+dimensions, targets, and ordering in `chrome.storage.local`.
 
 ## Development
 

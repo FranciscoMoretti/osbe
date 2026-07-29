@@ -2,7 +2,7 @@
   "name": "@osbe/window-resizer",
   "displayName": "OSBE Window Resizer",
   "version": "0.0.1",
-  "description": "Resize the current Chrome window from built-in device presets or your own saved sizes.",
+  "description": "Resize the current Chrome window or page viewport from built-in presets or your own saved sizes.",
   "author": "Fran",
   "scripts": {
     "dev": "plasmo dev",
@@ -32,7 +32,9 @@
   },
   "manifest": {
     "permissions": [
-      "storage"
+      "storage",
+      "activeTab",
+      "scripting"
     ]
   }
 }

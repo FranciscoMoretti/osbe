@@ -2,8 +2,8 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import {
-  DEFAULT_PRESETS,
   createDefaultState,
+  DEFAULT_PRESETS,
   movePreset,
   normalizePresetState,
   restoreDefaultPresets
@@ -24,13 +24,35 @@ test("normalizes saved presets and drops invalid or duplicate entries", () => {
     presets: [
       { id: "custom", name: "  QA size  ", width: 1280, height: 800 },
       { id: "custom", name: "Duplicate", width: 1440, height: 900 },
+      {
+        id: "viewport",
+        name: "Viewport",
+        width: 1024,
+        height: 768,
+        target: "viewport"
+      },
       { id: "too-small", name: "Invalid", width: 200, height: 800 }
     ]
   })
 
   assert.deepEqual(state, {
     version: 1,
-    presets: [{ id: "custom", name: "QA size", width: 1280, height: 800 }]
+    presets: [
+      {
+        id: "custom",
+        name: "QA size",
+        width: 1280,
+        height: 800,
+        target: "window"
+      },
+      {
+        id: "viewport",
+        name: "Viewport",
+        width: 1024,
+        height: 768,
+        target: "viewport"
+      }
+    ]
   })
 })
 
@@ -45,8 +67,20 @@ test("moves a preset without mutating the existing order", () => {
 
 test("restores built-ins without deleting custom presets", () => {
   const restored = restoreDefaultPresets([
-    { id: "mobile", name: "Edited mobile", width: 400, height: 900 },
-    { id: "qa", name: "QA workspace", width: 1280, height: 800 }
+    {
+      id: "mobile",
+      name: "Edited mobile",
+      width: 400,
+      height: 900,
+      target: "viewport"
+    },
+    {
+      id: "qa",
+      name: "QA workspace",
+      width: 1280,
+      height: 800,
+      target: "viewport"
+    }
   ])
 
   assert.deepEqual(restored.slice(0, DEFAULT_PRESETS.length), DEFAULT_PRESETS)
@@ -54,6 +88,7 @@ test("restores built-ins without deleting custom presets", () => {
     id: "qa",
     name: "QA workspace",
     width: 1280,
-    height: 800
+    height: 800,
+    target: "viewport"
   })
 })
