@@ -1,0 +1,38 @@
+{
+  "name": "@osbe/window-resizer",
+  "displayName": "OSBE Window Resizer",
+  "version": "0.0.1",
+  "description": "Resize the current Chrome window from built-in device presets or your own saved sizes.",
+  "author": "Fran",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "test": "tsx --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@osbe/config": "workspace:*",
+    "@osbe/extension-kit": "workspace:*",
+    "@osbe/ui": "workspace:*",
+    "lucide-react": "catalog:",
+    "plasmo": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  },
+  "manifest": {
+    "permissions": [
+      "storage"
+    ]
+  }
+}

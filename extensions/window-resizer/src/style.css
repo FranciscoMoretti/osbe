@@ -1,0 +1,21 @@
+@import "@osbe/ui/theme.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply m-0 bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .dimension-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.38) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.38) 1px, transparent 1px);
+    background-position: -1px -1px;
+    background-size: 16px 16px;
+  }
+}
