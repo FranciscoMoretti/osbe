@@ -8,11 +8,11 @@
     "dev": "plasmo dev",
     "build": "plasmo build",
     "package": "plasmo package",
-    "typecheck": "tsc --noEmit --pretty false",
-    "generate:store-assets": "python3 scripts/generate-store-assets.py"
+    "typecheck": "tsc --noEmit --pretty false"
   },
   "dependencies": {
     "@osbe/config": "workspace:*",
+    "@osbe/extension-kit": "workspace:*",
     "@osbe/ui": "workspace:*",
     "jszip": "^3.10.1",
     "lucide-react": "catalog:",

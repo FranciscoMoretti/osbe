@@ -1,0 +1,16 @@
+name: "Submit OSBE Window Resizer to Web Store"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: submit-window-resizer
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    uses: ./.github/workflows/_submit-extension.yml
+    with:
+      extension: window-resizer
+    secrets:
+      submit_keys: ${{ secrets.WINDOW_RESIZER_SUBMIT_KEYS }}

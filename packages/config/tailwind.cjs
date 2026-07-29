@@ -8,6 +8,18 @@ const theme = {
       ring: "hsl(var(--ring))",
       background: "hsl(var(--background))",
       foreground: "hsl(var(--foreground))",
+      brand: {
+        amber: "hsl(var(--brand-amber))",
+        blue: "hsl(var(--brand-blue))",
+        cyan: "hsl(var(--brand-cyan))",
+        glass: "hsl(var(--brand-glass))",
+        "glass-border": "hsl(var(--brand-glass-border))",
+        glow: "hsl(var(--brand-glow))",
+        green: "hsl(var(--brand-green))",
+        ink: "hsl(var(--brand-ink))",
+        paper: "hsl(var(--brand-paper))",
+        red: "hsl(var(--brand-red))"
+      },
       primary: {
         DEFAULT: "hsl(var(--primary))",
         foreground: "hsl(var(--primary-foreground))"

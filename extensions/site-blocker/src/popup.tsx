@@ -9,16 +9,15 @@ import { useEffect, useMemo, useState } from "react"
 
 import "~style.css"
 
+import { getActiveTab, openOptionsPage } from "@osbe/extension-kit/tabs"
 import { Button } from "@osbe/ui/components/button"
+import { ExtensionBrand } from "@osbe/ui/components/extension-brand"
+import { PopupShell, StatusPanel } from "@osbe/ui/components/extension-shell"
 import iconUrl from "data-base64:../assets/icon.png"
 
 import { findMatchingRule } from "~/lib/matcher"
 import { readState, subscribeToStateChanges } from "~/lib/storage"
-import {
-  DEFAULT_STATE,
-  OPEN_DASHBOARD_MESSAGE,
-  type AppState
-} from "~/lib/types"
+import { DEFAULT_STATE, type AppState } from "~/lib/types"
 
 function IndexPopup() {
   const [state, setState] = useState<AppState>(DEFAULT_STATE)
@@ -45,59 +44,48 @@ function IndexPopup() {
 
   const status = state.settings.paused
     ? {
-        icon: <PauseCircle className="h-5 w-5 text-amber-700" />,
+        icon: <PauseCircle className="h-5 w-5" />,
         label: "Blocking paused",
-        detail: "All dashboard rules are temporarily paused."
+        detail: "All dashboard rules are temporarily paused.",
+        tone: "warning" as const
       }
     : match?.reason === "blocked"
       ? {
-          icon: <ShieldAlert className="h-5 w-5 text-red-700" />,
+          icon: <ShieldAlert className="h-5 w-5" />,
           label: "This site is blocked",
-          detail: `${match.rule.domain} includes this website.`
+          detail: `${match.rule.domain} includes this website.`,
+          tone: "error" as const
         }
       : {
-          icon: <ShieldCheck className="h-5 w-5 text-emerald-700" />,
+          icon: <ShieldCheck className="h-5 w-5" />,
           label: "Blocking active",
           detail: loaded
             ? "No active rule blocks the current tab."
-            : "Reading local rule state..."
+            : "Reading local rule state...",
+          tone: loaded ? ("success" as const) : ("neutral" as const)
         }
 
   return (
-    <main className="osbe-popup-shell">
-      <div className="osbe-popup-frame">
-        <header className="osbe-brand mb-4">
-          <div className="osbe-brand-icon h-10 w-10">
-            <img alt="" aria-hidden="true" src={iconUrl} />
-          </div>
-          <div className="min-w-0">
-            <h1 className="truncate text-base font-bold leading-5">
-              Site Blocker
-            </h1>
-            <p className="text-xs font-medium leading-4 text-muted-foreground">
-              Dashboard-managed rules
-            </p>
-          </div>
-        </header>
+    <PopupShell className="w-[382px] overflow-hidden">
+      <ExtensionBrand
+        className="mb-4"
+        description="Dashboard-managed rules"
+        iconSrc={iconUrl}
+        name="Site Blocker"
+      />
 
-        <section className="osbe-status-card">
-          <div className="flex items-start gap-3">
-            <div className="osbe-status-icon">{status.icon}</div>
-            <div className="min-w-0">
-              <h2 className="text-sm font-bold leading-5">{status.label}</h2>
-              <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                {status.detail}
-              </p>
-            </div>
-          </div>
-        </section>
+      <StatusPanel
+        description={status.detail}
+        icon={status.icon}
+        title={status.label}
+        tone={status.tone}
+      />
 
-        <Button className="mt-4 w-full" onClick={openDashboard} type="button">
-          <ExternalLink />
-          Open dashboard
-        </Button>
-      </div>
-    </main>
+      <Button className="mt-4 w-full" onClick={openDashboard} type="button">
+        <ExternalLink data-icon="inline-start" />
+        Open dashboard
+      </Button>
+    </PopupShell>
   )
 }
 
@@ -106,31 +94,14 @@ async function getCurrentTabUrl() {
     return window.location.href
   }
 
-  const [tab] = await chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  })
+  const tab = await getActiveTab()
 
   return tab?.url || ""
 }
 
 async function openDashboard() {
-  if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
-    try {
-      await chrome.runtime.sendMessage({ type: OPEN_DASHBOARD_MESSAGE })
-      window.close()
-      return
-    } catch {
-      window.open(
-        chrome.runtime.getURL("options.html"),
-        "_blank",
-        "noopener,noreferrer"
-      )
-      return
-    }
-  }
-
-  window.open("/options.html", "_blank", "noopener,noreferrer")
+  await openOptionsPage()
+  window.close()
 }
 
 export default IndexPopup

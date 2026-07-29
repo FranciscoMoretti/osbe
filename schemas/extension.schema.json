@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FranciscoMoretti/osbe/blob/main/schemas/extension.schema.json",
+  "title": "OSBE extension definition",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "slug",
+    "packageName",
+    "displayName",
+    "surface",
+    "summary",
+    "singlePurpose",
+    "permissions",
+    "hostPermissions",
+    "dataUsage",
+    "remoteCode",
+    "store",
+    "release",
+    "smoke"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "packageName": {
+      "type": "string",
+      "pattern": "^@osbe/[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "displayName": {
+      "type": "string",
+      "pattern": "^OSBE "
+    },
+    "surface": {
+      "enum": ["popup", "action-result", "dashboard"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 132
+    },
+    "singlePurpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/permission" }
+    },
+    "hostPermissions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/permission" }
+    },
+    "dataUsage": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "personallyIdentifiableInformation",
+          "healthInformation",
+          "financialAndPaymentInformation",
+          "authenticationInformation",
+          "personalCommunications",
+          "location",
+          "webHistory",
+          "userActivity",
+          "websiteContent"
+        ]
+      }
+    },
+    "remoteCode": {
+      "type": "object",
+      "required": ["used", "justification"],
+      "properties": {
+        "used": { "const": false },
+        "justification": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "store": {
+      "type": "object",
+      "required": [
+        "category",
+        "language",
+        "visibility",
+        "pricing",
+        "screenshots"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "Accessibility",
+            "Blogging",
+            "Developer Tools",
+            "Fun",
+            "News & Weather",
+            "Photos",
+            "Productivity",
+            "Search Tools",
+            "Shopping",
+            "Social & Communication",
+            "Sports"
+          ]
+        },
+        "language": { "type": "string", "minLength": 1 },
+        "visibility": { "enum": ["public", "unlisted", "private"] },
+        "pricing": { "enum": ["free", "in-app-purchases"] },
+        "storeId": {
+          "type": "string",
+          "pattern": "^[a-p]{32}$"
+        },
+        "screenshots": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/storeImage" }
+        },
+        "promoTiles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/promoTile" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "required": ["workflow", "secretName"],
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "pattern": "^submit-.+\\.yml$|^submit\\.yml$"
+        },
+        "secretName": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "smoke": {
+      "type": "object",
+      "required": ["page"],
+      "properties": {
+        "page": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "permission": {
+      "type": "object",
+      "required": ["name", "justification"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "justification": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "storeImage": {
+      "type": "object",
+      "required": ["file"],
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "promoTile": {
+      "type": "object",
+      "required": ["file", "kind"],
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "kind": { "enum": ["small", "marquee"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

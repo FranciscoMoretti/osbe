@@ -15,6 +15,7 @@ catalog:
   "@types/node": "20.11.5"
   "@types/react": "18.2.48"
   "@types/react-dom": "18.2.18"
+  "ajv": "^8.20.0"
   "class-variance-authority": "^0.7.1"
   "clsx": "^2.1.1"
   "lucide-react": "^0.468.0"
@@ -26,6 +27,7 @@ catalog:
   "sharp": "^0.33.5"
   "tailwind-merge": "^2.6.0"
   "tailwindcss": "3.4.1"
+  "tsx": "^4.23.0"
   "typescript": "5.3.3"
 
 onlyBuiltDependencies:

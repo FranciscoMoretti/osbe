@@ -4,14 +4,11 @@ import { useEffect, useMemo, useState } from "react"
 
 import "~style.css"
 
+import { openOptionsPage } from "@osbe/extension-kit/tabs"
 import { Button } from "@osbe/ui/components/button"
 
 import { readState, subscribeToStateChanges } from "~/lib/storage"
-import {
-  DEFAULT_STATE,
-  OPEN_DASHBOARD_MESSAGE,
-  type AppState
-} from "~/lib/types"
+import { DEFAULT_STATE, type AppState } from "~/lib/types"
 
 function BlockedPage() {
   const [state, setState] = useState<AppState>(DEFAULT_STATE)
@@ -86,21 +83,7 @@ function BlockedPage() {
 }
 
 async function openDashboard() {
-  if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
-    try {
-      await chrome.runtime.sendMessage({ type: OPEN_DASHBOARD_MESSAGE })
-      return
-    } catch {
-      window.open(
-        chrome.runtime.getURL("options.html"),
-        "_blank",
-        "noopener,noreferrer"
-      )
-      return
-    }
-  }
-
-  window.open("/options.html", "_blank", "noopener,noreferrer")
+  await openOptionsPage()
 }
 
 export default BlockedPage

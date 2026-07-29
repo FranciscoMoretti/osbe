@@ -1,188 +1,211 @@
 # Create an OSBE Extension
 
-OSBE extensions are catalogued Plasmo packages that consume shared brand UI and build policy. Creating another extension should add product behavior, artwork, copy, and permissions—not another copy of the toolchain.
+OSBE extensions are self-describing Plasmo packages built on shared runtime,
+UI, configuration, store-asset, and release foundations. A new extension should
+mostly contain its product behavior, product copy, and product artwork.
 
-## Generate the extension
+## Choose a surface
 
-From the repository root:
+Generate the closest starting shape:
 
 ```bash
-pnpm new:extension link-cleaner "OSBE Link Cleaner"
+# Compact toolbar experience (default)
+pnpm new:extension link-cleaner "OSBE Link Cleaner" --surface popup
+
+# Toolbar click starts work and opens a result tab
+pnpm new:extension page-archive "OSBE Page Archive" --surface action-result
+
+# Compact popup plus a full options dashboard
+pnpm new:extension tab-manager "OSBE Tab Manager" --surface dashboard
+```
+
+Then install once at the repository root and start the extension:
+
+```bash
 pnpm install
 pnpm extension dev link-cleaner
 ```
 
-The generator creates and registers:
+The generator creates:
 
-- a Plasmo package under `extensions/link-cleaner`;
-- shared `@osbe/ui` and `@osbe/config` dependencies;
-- a popup using the shared OSBE theme and Button;
-- runtime and temporary store icons based on the OSBE base icon;
-- README, privacy, listing, permission, and submission-key templates;
-- a Chrome Web Store workflow backed by the reusable submission workflow;
-- an entry in `extensions/catalog.json`.
+- a package under `extensions/<slug>`;
+- the selected branded surface using `@osbe/ui`;
+- `@osbe/extension-kit` and shared build-policy dependencies;
+- `extension.config.json`, which makes the package discoverable automatically;
+- neutral runtime and store icons from the same SVG source;
+- privacy, listing, screenshot, and submission-key templates;
+- a thin Chrome Web Store workflow backed by the reusable workflow.
 
-It intentionally requests no browser permissions. Add only the capabilities the product actually needs.
+It requests no permissions for popup or dashboard extensions. The
+action-result archetype starts with `activeTab` and a placeholder justification.
+Keep only capabilities required by the product.
 
-## Extension commands
+## What is shared
 
-Commands resolve packages through `extensions/catalog.json`; adding an extension does not add root package scripts.
+Use `@osbe/ui` for shadcn primitives, the OSBE theme, and the branded shells:
+
+```tsx
+import { Button } from "@osbe/ui/components/button"
+import {
+  ExtensionPageHeader,
+  PopupShell,
+  StatusPanel
+} from "@osbe/ui/components/extension-shell"
+```
+
+Use `@osbe/extension-kit` rather than rewriting Chrome API plumbing:
+
+```ts
+import {
+  failure,
+  respondWith,
+  sendExtensionRequest,
+  success
+} from "@osbe/extension-kit/messaging"
+import {
+  createBrowserStorageAdapter,
+  createStoredState
+} from "@osbe/extension-kit/storage"
+import {
+  executeInTab,
+  getActiveTab,
+  openOptionsPage
+} from "@osbe/extension-kit/tabs"
+```
+
+Shared Tailwind, PostCSS, and TypeScript policy lives in `packages/config`.
+Product-specific components and behavior stay in the extension.
+
+Canonical shadcn source components live in `packages/ui/src/components`. Add
+them from the shared package so both source and dependencies have one owner:
+
+```bash
+pnpm dlx shadcn@2.3.0 add dialog --cwd packages/ui
+```
+
+Extension `components.json` and TypeScript aliases also resolve `@osbe/ui`
+directly to that source for shadcn tooling. Do not keep a local
+`src/components/ui` copy. Extend shared variants centrally or compose shared
+primitives into a product component locally.
+
+## Metadata is the source of truth
+
+Each extension owns `extension.config.json`. It contains:
+
+- identity and surface archetype;
+- package summary and single purpose;
+- permissions, host permissions, and their store justifications;
+- handled data categories and remote-code declaration;
+- store category, visibility, assets, and optional store ID;
+- release workflow and secret name;
+- the extension page used by automated Chrome smoke tests.
+
+The extension CLI discovers these files directly. Keep `package.json`,
+the manifest permissions, and `store-assets/chrome-web-store-listing.md` aligned;
+validation rejects drift between them.
+
+## Day-to-day commands
 
 ```bash
 pnpm extension list
 pnpm extension dev link-cleaner
-pnpm extension build link-cleaner
-pnpm extension package link-cleaner
-pnpm extension publish link-cleaner
 pnpm extension test link-cleaner
-pnpm extension validate link-cleaner
+pnpm extension typecheck link-cleaner
+pnpm extension build link-cleaner
+pnpm extension check link-cleaner
 ```
 
-The `test` command runs product tests when that extension defines them; a newly generated extension has no placeholder test suite.
+`check` validates metadata and assets, runs product tests and typechecking, and
+builds production output. New extensions need focused tests only where a
+behavioral seam is valuable.
 
-Run the complete repository check with:
+Run the full repository check with:
 
 ```bash
 pnpm check
 ```
 
-## Shared UI ownership
-
-Canonical shadcn/ui source components live in `packages/ui/src/components`. Extensions import them directly:
-
-```tsx
-import { Button } from "@osbe/ui/components/button"
-```
-
-The repository currently uses Tailwind CSS v3. Run the Tailwind-v3-compatible shadcn CLI from an extension directory. Its `components.json` routes UI primitives and utilities to `packages/ui`, while product-specific modules remain in the extension.
-
-```bash
-cd extensions/link-cleaner
-pnpm dlx shadcn@2.3.0 add dialog
-```
-
-Do not create local copies of shared primitives. Extend their variants centrally or compose them into product-specific modules locally.
-
-The shared theme is `packages/ui/src/styles/theme.css`. Product CSS belongs in the extension and imports that theme. Shared Tailwind, PostCSS, and Plasmo TypeScript policy lives in `packages/config`.
-
-## Product work required before release
-
-The generated extension is a working branded development baseline. A real product still needs:
-
-- product behavior and product-specific modules;
-- a final product icon at `assets/icon.png`;
-- a 128×128 store icon and real 1280×800 screenshots;
-- feature-led store copy;
-- a precise privacy policy;
-- permission and host-permission justifications;
-- focused tests for valuable product seams.
-
-The popup is a default shell, not a requirement. For a one-click tool, delete
-`src/popup.tsx`, define `manifest.action.default_title`, and handle
-`chrome.action.onClicked` in `src/background.ts`. Long-running actions can open
-an inactive extension result tab, keep the source tab active while work runs,
-then activate the result when complete. Use an explicit ready handshake before
-streaming data to a newly opened result tab so its UI listener cannot miss the
-first message.
-
-`pnpm extension validate <slug>` checks the release structure and rejects incomplete store assets such as a missing screenshot.
-
-## Metadata and permissions
-
-Plasmo builds the manifest from the extension `package.json`.
-
-- `displayName` must follow `OSBE [Function]`.
-- `description` is the Chrome package summary and must be 132 characters or fewer.
-- `version` must be greater than the version already published.
-- `manifest.permissions` must be explicit, even when empty.
-- Broad host permissions require a product-specific justification.
-
-Prefer user-invoked capabilities such as `activeTab` when they can support the product. Record one justification per permission in the extension README and store listing.
-
 ## Icons and store assets
 
-Plasmo reads the installed extension icon from:
-
-```text
-extensions/link-cleaner/assets/icon.png
-```
-
-Every extension also owns one editable source:
+Edit the single icon source:
 
 ```text
 extensions/link-cleaner/assets/icon-source.svg
 ```
 
-The scaffold starts with the neutral OSBE mark. Replace only its inner symbol
-with a product-specific mark, then generate both required PNGs together:
+Keep the OSBE tile geometry and make the product symbol legible at 16px. Then
+render both runtime and 128px store icons:
 
 ```bash
-pnpm extension artwork link-cleaner
+pnpm extension assets link-cleaner
 ```
 
-Chrome Web Store artwork is separate:
+Store screenshots may either be committed final PNGs or declare a raw `source`
+in `extension.config.json`. The shared asset pipeline frames declared sources as
+1280×800, removes alpha, and validates every committed screenshot. Promotional
+tiles declare `kind: "small"` (440×280) or `"marquee"` (1400×560).
 
-```text
-store-assets/
-  README.md
-  chrome-web-store-listing.md
-  store-icon-128.png
-  screenshots/
-```
+## Browser verification
 
-The artwork command renders `icon.png` and `store-icon-128.png` from the same
-canonical SVG, so those surfaces cannot drift. Keep the pale tile, border,
-padding, navy functional ink, and transparent corners. Prefer one primary
-symbol; when a second concept is essential, use one simple functional badge at
-least one quarter of the tile height. Avoid colored underlays, decorative
-shadows, and details that disappear at `16px`. Screenshots should show the real
-workflow and contain no alpha channel.
-
-## Validation and packaging
-
-Before submission:
+Build and load the production extension in a clean headless Chrome profile:
 
 ```bash
-pnpm extension validate link-cleaner
-pnpm extension build link-cleaner
-pnpm extension package link-cleaner
+pnpm extension smoke link-cleaner
 ```
 
-Inspect `build/chrome-mv3-prod/manifest.json`, then load `build/chrome-mv3-prod` locally. Confirm the popup, icon, requested permissions, background behavior, and product workflow.
+The smoke page comes from `extension.config.json`, so popup, action-result, and
+dashboard extensions all use the same command. This confirms that Chrome accepts
+the manifest and can open the product's primary extension surface. Manually test
+the main user workflow when it depends on live page interaction.
 
-## Automated Chrome submission
+## Release
 
-Each extension has a small caller workflow. Build, validation, packaging, and upload behavior live once in `.github/workflows/_submit-extension.yml`.
+Prepare a versioned package:
 
-The generated workflow expects a repository secret named from the slug, for example:
-
-```text
-LINK_CLEANER_SUBMIT_KEYS
+```bash
+pnpm extension release link-cleaner --patch
 ```
 
-Use `submit-keys.example.json` as the shape of that secret. Never commit real credentials.
+This validates, tests, typechecks, bumps the package version, builds, packages,
+and prints the ZIP checksum. Use `--minor` or `--major` when appropriate. Preview
+the version change without writing files:
 
-The shared workflow submits code packages only. Chrome Web Store listing content, screenshots, privacy answers, and permission declarations still need to be completed in the Developer Dashboard.
+```bash
+pnpm extension release link-cleaner --patch --dry-run
+```
 
-Chrome considers reading, clipping, or scraping website content to be handling
-user data even when the extension processes it only on the user's device. The
-dashboard's Privacy practices tab must therefore match the extension's actual
-behavior, link to the published privacy policy, justify every requested
-permission, disclose each handled data category, and complete the Limited Use
-certifications before the submission API can publish a release.
+Inspect local release state with:
+
+```bash
+pnpm extension status link-cleaner
+```
+
+After the version bump is committed and merged, trigger the extension's
+submission workflow:
+
+```bash
+pnpm extension publish link-cleaner
+```
+
+The generated workflow expects `<SLUG>_SUBMIT_KEYS`; use
+`submit-keys.example.json` for its shape and never commit credentials.
+
+The workflow uploads code packages. Chrome Web Store listing content,
+screenshots, privacy declarations, regional distribution, and permission
+answers still belong in the Developer Dashboard. Those answers must match the
+committed metadata and listing document.
 
 ## Release checklist
 
-- Final single-purpose behavior is implemented.
-- Permissions are minimal and justified.
-- Package summary is 1–132 characters.
-- Version exceeds the published version.
-- Runtime and store icons are product-specific.
+- The single-purpose behavior is complete.
+- Permissions are minimal and each has a precise justification.
+- The package summary is 1–132 characters.
+- The version exceeds the published version.
+- The product icon is recognizable at 16px, 24px, and 32px.
 - Runtime and store icons were regenerated from `assets/icon-source.svg`.
-- The icon remains recognizable at `16px`, `24px`, and `32px`.
-- At least one real 1280×800 screenshot is present.
-- Store listing and privacy copy are final.
-- `pnpm extension validate <slug>` passes.
-- Product tests pass.
-- Production build and package succeed.
-- The unpacked production extension has been checked in Chrome.
+- At least one real screenshot is present and contains no alpha channel.
+- Store listing and privacy copy match `extension.config.json`.
+- `pnpm extension check <slug>` passes.
+- `pnpm extension smoke <slug>` loads the production extension in Chrome.
+- The main product workflow has received a focused manual check.
+- `pnpm extension package <slug>` produces the expected ZIP.

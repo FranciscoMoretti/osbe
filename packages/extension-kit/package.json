@@ -1,0 +1,24 @@
+{
+  "name": "@osbe/extension-kit",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "tsx --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "exports": {
+    "./messaging": "./src/messaging.ts",
+    "./storage": "./src/storage.ts",
+    "./tabs": "./src/tabs.ts"
+  },
+  "dependencies": {
+    "@osbe/config": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

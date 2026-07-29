@@ -7,7 +7,7 @@ on:
     paths:
       - ".github/workflows/_submit-extension.yml"
       - ".github/workflows/submit.yml"
-      - "extensions/catalog.json"
+      - "extensions/markdown-clipper/extension.config.json"
       - "extensions/markdown-clipper/**"
       - "package.json"
       - "pnpm-lock.yaml"

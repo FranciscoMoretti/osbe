@@ -1,3 +1,5 @@
+import { respondWith } from "@osbe/extension-kit/messaging"
+
 import {
   clearExpiredState,
   getInstalledBlockingRulesStatus,
@@ -7,7 +9,6 @@ import { createNavigationEnforcer } from "./lib/navigation"
 import { readState } from "./lib/storage"
 import {
   GET_BLOCKING_RULES_STATUS_MESSAGE,
-  OPEN_DASHBOARD_MESSAGE,
   REFRESH_BLOCKING_RULES_MESSAGE
 } from "./lib/types"
 
@@ -139,42 +140,20 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 })
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message?.type === OPEN_DASHBOARD_MESSAGE) {
-    if (chrome.runtime.openOptionsPage) {
-      chrome.runtime.openOptionsPage()
-    } else {
-      chrome.tabs.create({ url: chrome.runtime.getURL("options.html") })
-    }
-    sendResponse({ ok: true })
-    return false
-  }
-
   if (message?.type === REFRESH_BLOCKING_RULES_MESSAGE) {
-    refreshAndEnforceBlockingRules()
-      .then((status) => sendResponse({ ok: true, data: status }))
-      .catch((error) => {
-        console.error("OSBE Site Blocker manual refresh failed", error)
-        sendResponse({
-          ok: false,
-          error: error instanceof Error ? error.message : "Refresh failed"
-        })
-      })
-
-    return true
+    return respondWith(
+      sendResponse,
+      refreshAndEnforceBlockingRules,
+      "Refresh failed"
+    )
   }
 
   if (message?.type === GET_BLOCKING_RULES_STATUS_MESSAGE) {
-    getInstalledBlockingRulesStatus()
-      .then((status) => sendResponse({ ok: true, data: status }))
-      .catch((error) => {
-        console.error("OSBE Site Blocker status check failed", error)
-        sendResponse({
-          ok: false,
-          error: error instanceof Error ? error.message : "Status check failed"
-        })
-      })
-
-    return true
+    return respondWith(
+      sendResponse,
+      getInstalledBlockingRulesStatus,
+      "Status check failed"
+    )
   }
 
   return false

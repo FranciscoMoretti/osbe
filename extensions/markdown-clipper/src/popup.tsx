@@ -19,18 +19,17 @@ import iconUrl from "url:../assets/icon.png"
 
 import "~style.css"
 
+import { sendExtensionRequest } from "@osbe/extension-kit/messaging"
+import { getActiveTab } from "@osbe/extension-kit/tabs"
 import { Button } from "@osbe/ui/components/button"
+import { ExtensionBrand } from "@osbe/ui/components/extension-brand"
 
 import {
   DEFAULT_CLIP_OPTIONS,
   getStoredClipOptions,
   saveStoredClipOptions
 } from "~lib/clip-settings"
-import {
-  DOWNLOAD_MESSAGE,
-  type ClipPayload,
-  type ExtensionResponse
-} from "~lib/clip-types"
+import { DOWNLOAD_MESSAGE, type ClipPayload } from "~lib/clip-types"
 import { copyMarkdownToTab, requestClipFromTab } from "~lib/request-clip"
 
 type Status = "idle" | "busy" | "done" | "error"
@@ -70,10 +69,7 @@ function IndexPopup() {
     setMessage("Reading the current tab...")
 
     try {
-      const [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      })
+      const tab = await getActiveTab()
 
       if (!tab?.id) {
         throw new Error("No active tab found.")
@@ -190,24 +186,16 @@ function IndexPopup() {
     setMessage("Preparing the download...")
 
     try {
-      const downloadResponse = await chrome.runtime.sendMessage<
+      const downloadResponse = await sendExtensionRequest<
         { type: typeof DOWNLOAD_MESSAGE; payload: ClipPayload },
-        ExtensionResponse<{ filename: string }>
+        { filename: string }
       >({
         type: DOWNLOAD_MESSAGE,
         payload: { ...clip, title, markdown }
       })
 
-      if (!downloadResponse) {
-        throw new Error("The download could not be created.")
-      }
-
-      if (downloadResponse.ok === false) {
-        throw new Error(downloadResponse.error)
-      }
-
       setStatus("done")
-      setMessage(`Downloaded ${downloadResponse.data.filename}.`)
+      setMessage(`Downloaded ${downloadResponse.filename}.`)
     } catch (error) {
       setStatus("error")
       setMessage(
@@ -222,15 +210,13 @@ function IndexPopup() {
     <div className="clipper-shell" data-theme={theme}>
       <main className="clipper-frame">
         <header className="clipper-header">
-          <div className="clipper-brand">
-            <img
-              alt=""
-              aria-hidden="true"
-              className="clipper-icon-frame"
-              src={iconUrl}
-            />
-            <h1 className="clipper-title">Markdown Clipper</h1>
-          </div>
+          <ExtensionBrand
+            appearance="inherit"
+            className="gap-2"
+            iconSrc={iconUrl}
+            name="Markdown Clipper"
+            size="sm"
+          />
 
           <div className="clipper-toolbar" aria-label="Popup tools">
             <IconButton

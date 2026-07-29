@@ -20,17 +20,11 @@ import {
   CardHeader,
   CardTitle
 } from "@osbe/ui/components/card"
-
+import { ExtensionPageHeader } from "@osbe/ui/components/extension-shell"
 import iconUrl from "data-base64:../../assets/icon.png"
 
-import {
-  downloadPdfCapture,
-  downloadPngCapture
-} from "~/lib/capture-export"
-import {
-  assembleCapture,
-  type CaptureSegment
-} from "~/lib/capture-image"
+import { downloadPdfCapture, downloadPngCapture } from "~/lib/capture-export"
+import { assembleCapture, type CaptureSegment } from "~/lib/capture-image"
 import { createDownloadBaseName } from "~/lib/capture-math"
 import type {
   CaptureChunk,
@@ -38,18 +32,10 @@ import type {
   CaptureMetadata
 } from "~/lib/capture-types"
 
-type CapturePhase =
-  | "waiting"
-  | "capturing"
-  | "processing"
-  | "ready"
-  | "error"
+type CapturePhase = "waiting" | "capturing" | "processing" | "ready" | "error"
 
 function CaptureResultPage() {
-  const params = useMemo(
-    () => new URLSearchParams(window.location.search),
-    []
-  )
+  const params = useMemo(() => new URLSearchParams(window.location.search), [])
   const captureId = params.get("capture")
   const initialError = params.get("error")
   const chunksRef = useRef<CaptureChunk[]>([])
@@ -63,9 +49,7 @@ function CaptureResultPage() {
   const [progress, setProgress] = useState(0)
   const [frameCount, setFrameCount] = useState(0)
   const [error, setError] = useState(initialError ?? "")
-  const [exporting, setExporting] = useState<"png" | "pdf" | null>(
-    null
-  )
+  const [exporting, setExporting] = useState<"png" | "pdf" | null>(null)
 
   useEffect(() => {
     if (!captureId || initialError) {
@@ -100,9 +84,7 @@ function CaptureResultPage() {
         setProgress(
           Math.min(
             100,
-            Math.round(
-              (message.capturedHeight / message.documentHeight) * 100
-            )
+            Math.round((message.capturedHeight / message.documentHeight) * 100)
           )
         )
         return
@@ -143,9 +125,7 @@ function CaptureResultPage() {
               return
             }
 
-            segmentUrlsRef.current = nextSegments.map(
-              (segment) => segment.url
-            )
+            segmentUrlsRef.current = nextSegments.map((segment) => segment.url)
             setSegments(nextSegments)
             setPhase("ready")
           })
@@ -188,10 +168,7 @@ function CaptureResultPage() {
   )
 
   const baseName = metadata
-    ? createDownloadBaseName(
-        metadata.title,
-        new Date(metadata.capturedAt)
-      )
+    ? createDownloadBaseName(metadata.title, new Date(metadata.capturedAt))
     : "full-page-capture"
 
   const downloadPng = async () => {
@@ -222,36 +199,15 @@ function CaptureResultPage() {
 
   return (
     <div className="min-h-screen bg-muted/40">
-      <header className="sticky top-0 z-20 border-b border-primary-foreground/15 bg-primary text-primary-foreground shadow-sm">
-        <div className="mx-auto flex min-h-16 max-w-[1600px] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-primary-foreground/15 bg-primary-foreground/10">
-              <img
-                alt=""
-                className="h-8 w-8"
-                height="32"
-                src={iconUrl}
-                width="32"
-              />
-            </div>
-            <div className="min-w-0">
-              <h1 className="truncate text-base font-bold sm:text-lg">
-                OSBE Full Page Capture
-              </h1>
-              <p className="truncate text-xs text-primary-foreground/70 sm:text-sm">
-                {pageHost}
-              </p>
-            </div>
-          </div>
-
-          {phase === "ready" ? (
-            <div className="flex items-center gap-2">
+      <ExtensionPageHeader
+        actions={
+          phase === "ready" ? (
+            <>
               <Button
                 className="border-primary-foreground/25 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
                 disabled={exporting !== null}
                 onClick={() => void downloadPng()}
-                variant="outline"
-              >
+                variant="outline">
                 {exporting === "png" ? (
                   <LoaderCircle data-icon className="animate-spin" />
                 ) : (
@@ -262,8 +218,7 @@ function CaptureResultPage() {
               <Button
                 className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
                 disabled={exporting !== null}
-                onClick={() => void downloadPdf()}
-              >
+                onClick={() => void downloadPdf()}>
                 {exporting === "pdf" ? (
                   <LoaderCircle data-icon className="animate-spin" />
                 ) : (
@@ -271,10 +226,13 @@ function CaptureResultPage() {
                 )}
                 Download PDF
               </Button>
-            </div>
-          ) : null}
-        </div>
-      </header>
+            </>
+          ) : null
+        }
+        description={pageHost}
+        iconSrc={iconUrl}
+        name="OSBE Full Page Capture"
+      />
 
       <main className="mx-auto max-w-[1600px] p-4 sm:p-6">
         {phase === "error" ? (
@@ -321,8 +279,7 @@ function CaptureResultPage() {
                 aria-valuemin={0}
                 aria-valuenow={progress}
                 className="h-2 overflow-hidden rounded-full bg-secondary"
-                role="progressbar"
-              >
+                role="progressbar">
                 <div
                   className="h-full rounded-full bg-primary transition-[width]"
                   style={{ width: `${progress}%` }}
@@ -368,8 +325,7 @@ function CaptureResultPage() {
 
             <section
               aria-label="Full-page capture preview"
-              className="mx-auto w-fit max-w-full overflow-hidden rounded-sm border bg-background shadow-sm"
-            >
+              className="mx-auto w-fit max-w-full overflow-hidden rounded-sm border bg-background shadow-sm">
               {segments.map((segment, index) => (
                 <img
                   alt={
@@ -401,10 +357,7 @@ function getDisplayHost(url: string) {
 function formatDimensions(segments: CaptureSegment[]) {
   if (!segments.length) return ""
   const width = segments[0].width
-  const height = segments.reduce(
-    (total, segment) => total + segment.height,
-    0
-  )
+  const height = segments.reduce((total, segment) => total + segment.height, 0)
   return `${width.toLocaleString()} × ${height.toLocaleString()} px`
 }
 

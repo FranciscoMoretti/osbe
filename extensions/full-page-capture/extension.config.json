@@ -1,0 +1,47 @@
+{
+  "$schema": "../../schemas/extension.schema.json",
+  "schemaVersion": 1,
+  "slug": "full-page-capture",
+  "packageName": "@osbe/full-page-capture",
+  "displayName": "OSBE Full Page Capture",
+  "surface": "action-result",
+  "summary": "Capture complete web pages as full-height PNG images or paginated PDF files.",
+  "singlePurpose": "Capture the full height of the current webpage and let the user download the result as PNG or PDF.",
+  "permissions": [
+    {
+      "name": "activeTab",
+      "justification": "Grants temporary access to the current page only after the user clicks the extension icon or invokes its shortcut. This access is required to capture visible tab images while scrolling, without requesting persistent access to all websites. The captured pixels and page URL are processed locally and are not transmitted."
+    },
+    {
+      "name": "scripting",
+      "justification": "Runs temporary helpers in the user-invoked page to measure its full height, scroll between viewports, avoid repeating fixed or sticky elements, and restore the original scroll position. The extension does not install a persistent content script and does not run until the user invokes a capture."
+    }
+  ],
+  "hostPermissions": [],
+  "dataUsage": ["webHistory", "websiteContent"],
+  "remoteCode": {
+    "used": false,
+    "justification": "The extension does not use remote code. All executable JavaScript and CSS, including image stitching, ZIP creation, and PDF generation, is included in the submitted package."
+  },
+  "store": {
+    "category": "Productivity",
+    "language": "English",
+    "visibility": "public",
+    "pricing": "free",
+    "storeId": "balnbaioojcljaepfbnmcalphndfnfjm",
+    "screenshots": [
+      {
+        "file": "store-assets/screenshots/capture-preview-1280x800.png",
+        "title": "Preview and export the full page"
+      }
+    ],
+    "promoTiles": []
+  },
+  "release": {
+    "workflow": "submit-full-page-capture.yml",
+    "secretName": "FULL_PAGE_CAPTURE_SUBMIT_KEYS"
+  },
+  "smoke": {
+    "page": "tabs/capture.html?error=OSBE%20smoke%20test"
+  }
+}

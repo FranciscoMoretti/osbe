@@ -25,6 +25,7 @@ import {
 
 import "~style.css"
 
+import { sendExtensionRequest } from "@osbe/extension-kit/messaging"
 import { Alert, AlertDescription, AlertTitle } from "@osbe/ui/components/alert"
 import { Button } from "@osbe/ui/components/button"
 import {
@@ -78,8 +79,7 @@ import {
   DEFAULT_STATE,
   GET_BLOCKING_RULES_STATUS_MESSAGE,
   REFRESH_BLOCKING_RULES_MESSAGE,
-  type BlockingRulesStatus,
-  type ExtensionMessageResponse
+  type BlockingRulesStatus
 } from "~/lib/types"
 import { createId } from "~/lib/utils"
 
@@ -187,18 +187,12 @@ function OptionsPage() {
     }
 
     try {
-      const response = await chrome.runtime.sendMessage<
+      const response = await sendExtensionRequest<
         typeof message,
-        ExtensionMessageResponse<BlockingRulesStatus>
+        BlockingRulesStatus
       >(message)
 
-      if (response?.ok === false) {
-        setBlockingRulesStatus(null)
-        setBlockingRulesError(response.error)
-        return
-      }
-
-      setBlockingRulesStatus(response?.data || null)
+      setBlockingRulesStatus(response)
       setBlockingRulesError("")
     } catch (error) {
       setBlockingRulesStatus(null)

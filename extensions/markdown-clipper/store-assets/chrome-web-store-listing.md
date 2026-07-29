@@ -40,3 +40,94 @@ Whether you are saving API docs, collecting research, turning reference pages in
 ## Privacy
 
 OSBE Markdown Clipper runs only when you invoke it from the popup or context menu. It uses current-tab access to read the page or selection, convert it to Markdown, and copy or download the result. It does not declare broad host permissions.
+
+## Store Metadata
+
+### Category
+
+```text
+Productivity
+```
+
+### Language
+
+```text
+English
+```
+
+## Privacy Practices
+
+### Single Purpose
+
+```text
+Convert the current webpage or selected content into Markdown and let the user preview, copy, or download the result.
+```
+
+### Permission Justifications
+
+#### activeTab
+
+```text
+Temporarily accesses the current tab only after the user clicks the extension or selects an extension context menu action, so the page can be converted to Markdown.
+```
+
+#### contextMenus
+
+```text
+Adds right-click actions so users can clip selected webpage content as Markdown.
+```
+
+#### downloads
+
+```text
+Saves user-requested Markdown files or ZIP files containing Markdown and local image assets.
+```
+
+#### offscreen
+
+```text
+Creates Blob URLs for Markdown and ZIP downloads because Manifest V3 service workers cannot create DOM Blob object URLs.
+```
+
+#### scripting
+
+```text
+Runs the Markdown clipping script only after the user invokes the extension on the current tab.
+```
+
+#### storage
+
+```text
+Stores the user's Images and Template clipping preferences so popup and context menu actions use the same options.
+```
+
+### Remote Code
+
+Select `No` and use:
+
+```text
+The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package.
+```
+
+### Data Types
+
+Select:
+
+```text
+Web history
+Website content
+```
+
+### Distribution
+
+Visibility:
+
+```text
+Public
+```
+
+Pricing:
+
+```text
+Free
+```

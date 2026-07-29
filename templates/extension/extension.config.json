@@ -1,0 +1,37 @@
+{
+  "$schema": "../../schemas/extension.schema.json",
+  "schemaVersion": 1,
+  "slug": "{{slug}}",
+  "packageName": "@osbe/{{slug}}",
+  "displayName": "{{displayName}}",
+  "surface": "{{surface}}",
+  "summary": "{{displayName}} browser extension.",
+  "singlePurpose": "TODO: Describe the one narrow purpose of this extension.",
+  "permissions": {{permissions}},
+  "hostPermissions": [],
+  "dataUsage": [],
+  "remoteCode": {
+    "used": false,
+    "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
+  },
+  "store": {
+    "category": "Productivity",
+    "language": "English",
+    "visibility": "public",
+    "pricing": "free",
+    "screenshots": [
+      {
+        "file": "store-assets/screenshots/{{slug}}-1280x800.png",
+        "title": "TODO: Describe the product workflow shown here."
+      }
+    ],
+    "promoTiles": []
+  },
+  "release": {
+    "workflow": "submit-{{slug}}.yml",
+    "secretName": "{{secretName}}"
+  },
+  "smoke": {
+    "page": "{{smokePage}}"
+  }
+}

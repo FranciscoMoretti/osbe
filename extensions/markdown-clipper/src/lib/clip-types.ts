@@ -29,7 +29,3 @@ export type OffscreenDownloadRequest = {
   type: typeof OFFSCREEN_DOWNLOAD_MESSAGE
   payload: ClipPayload
 }
-
-export type ExtensionResponse<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; error: string }

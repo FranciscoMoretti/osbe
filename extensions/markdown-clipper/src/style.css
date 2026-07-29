@@ -7,13 +7,6 @@
 @layer base {
   body {
     @apply bg-transparent text-foreground;
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
     margin: 0;
   }
 }
@@ -68,18 +61,6 @@
     @apply flex items-center justify-between px-4 py-3;
     background: var(--header-surface);
     color: var(--header-text);
-  }
-
-  .clipper-brand {
-    @apply flex min-w-0 items-center gap-2;
-  }
-
-  .clipper-icon-frame {
-    @apply h-8 w-8 shrink-0 rounded-md object-contain;
-  }
-
-  .clipper-title {
-    @apply truncate text-lg font-bold leading-6 tracking-normal;
   }
 
   .clipper-toolbar {

@@ -37,16 +37,6 @@ export type BlockingRulesMatchTest = {
   error?: string
 }
 
-export type ExtensionMessageResponse<T = unknown> =
-  | {
-      ok: true
-      data: T
-    }
-  | {
-      ok: false
-      error: string
-    }
-
 export const DEFAULT_SETTINGS: Settings = {
   paused: false
 }
@@ -56,7 +46,6 @@ export const DEFAULT_STATE: AppState = {
   settings: DEFAULT_SETTINGS
 }
 
-export const OPEN_DASHBOARD_MESSAGE = "osbe-site-blocker/open-dashboard"
 export const REFRESH_BLOCKING_RULES_MESSAGE =
   "osbe-site-blocker/refresh-blocking-rules"
 export const GET_BLOCKING_RULES_STATUS_MESSAGE =

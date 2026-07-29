@@ -4,6 +4,7 @@
   "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
     "paths": {
+      "@osbe/ui/*": ["../../packages/ui/src/*"],
       "~*": ["./src/*"]
     },
     "baseUrl": "."
