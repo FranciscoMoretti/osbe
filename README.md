@@ -14,6 +14,7 @@ OSBE builds small, transparent browser extensions that users can inspect, reason
 - `extensions/site-blocker` - OSBE site blocker built with the same Plasmo, Tailwind CSS, and shadcn/ui conventions.
 - `extensions/full-page-capture` - OSBE full-page PNG and PDF capture extension built on the same shared foundation.
 - `extensions/window-resizer` - OSBE one-click browser window resizer with local custom presets.
+- `extensions/youtube-shorts-remover` - OSBE automatic YouTube Shorts filter with no popup or settings.
 - `packages/ui` - shared OSBE theme, utility, and shadcn/ui source components.
 - `packages/config` - shared Plasmo TypeScript, Tailwind, and PostCSS policy.
 - `packages/extension-kit` - typed messaging, storage, tab, and scripting helpers shared by extension runtimes.
@@ -40,6 +41,7 @@ pnpm extension dev markdown-clipper
 pnpm extension dev site-blocker
 pnpm extension dev full-page-capture
 pnpm extension dev window-resizer
+pnpm extension dev youtube-shorts-remover
 ```
 
 Load the generated development extension from:
@@ -81,11 +83,14 @@ Use the scaffold script:
 pnpm new:extension my-extension "OSBE My Extension"
 pnpm new:extension page-tool "OSBE Page Tool" --surface action-result
 pnpm new:extension settings-tool "OSBE Settings Tool" --surface dashboard
+pnpm new:extension page-cleaner "OSBE Page Cleaner" \
+  --surface content-only \
+  --match "https://example.com/*"
 pnpm install
 pnpm extension dev my-extension
 ```
 
 Extensions are discovered from their local metadata, so there is no registry to
-edit. The generator creates the selected branded UI surface, runtime/store
-baseline, and a thin workflow that uses the shared submission workflow. See
+edit. The generator creates the selected branded UI or content-only surface,
+runtime/store baseline, and a thin workflow that uses the shared submission workflow. See
 `docs/create-extension.md` for the product-specific release checklist.

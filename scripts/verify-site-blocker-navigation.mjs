@@ -5,6 +5,14 @@ import { mkdtemp, rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
+import {
+  connectCdp,
+  evaluate,
+  fetchTargets,
+  stopProcess,
+  waitFor
+} from "./lib/chrome-cdp.mjs"
+
 const chromePath =
   process.env.CHROME_PATH ||
   [
@@ -50,7 +58,9 @@ try {
   const workerCdp = connectCdp(worker.webSocketDebuggerUrl)
   const pageCdp = connectCdp(page.webSocketDebuggerUrl)
 
-  await evaluate(workerCdp, `(async () => {
+  await evaluate(
+    workerCdp,
+    `(async () => {
     await chrome.storage.local.set({
       "osbe-site-blocker-state": {
         settings: { paused: false },
@@ -60,7 +70,8 @@ try {
       }
     })
     return true
-  })()`)
+  })()`
+  )
 
   await waitFor(async () => {
     const count = await evaluate(
@@ -70,13 +81,16 @@ try {
     return count > 0
   }, "Dynamic rule was not installed")
 
-  await evaluate(workerCdp, `(async () => {
+  await evaluate(
+    workerCdp,
+    `(async () => {
     const rules = await chrome.declarativeNetRequest.getDynamicRules()
     await chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: rules.map((rule) => rule.id)
     })
     return true
-  })()`)
+  })()`
+  )
 
   await pageCdp.command("Page.navigate", { url: "https://x.com/home" })
 
@@ -97,11 +111,6 @@ try {
   await rm(profilePath, { recursive: true, force: true })
 }
 
-async function fetchTargets(port) {
-  const response = await fetch(`http://127.0.0.1:${port}/json/list`)
-  return response.json()
-}
-
 async function waitForTargets(port) {
   return waitFor(async () => {
     try {
@@ -117,92 +126,4 @@ async function waitForTargets(port) {
       return null
     }
   }, "Chrome or the site blocker service worker did not start")
-}
-
-async function waitFor(check, message) {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    const result = await check()
-    if (result) return result
-    await delay(100)
-  }
-
-  throw new Error(message)
-}
-
-function connectCdp(url) {
-  const socket = new WebSocket(url)
-  const pending = new Map()
-  let nextId = 1
-
-  socket.addEventListener("message", (event) => {
-    const message = JSON.parse(event.data)
-    const request = pending.get(message.id)
-    if (!request) return
-
-    pending.delete(message.id)
-    clearTimeout(request.timeout)
-    if (message.error) request.reject(new Error(message.error.message))
-    else request.resolve(message.result)
-  })
-
-  return {
-    async command(method, params = {}) {
-      if (socket.readyState !== WebSocket.OPEN) {
-        await Promise.race([
-          new Promise((resolve, reject) => {
-            socket.addEventListener("open", resolve, { once: true })
-            socket.addEventListener("error", reject, { once: true })
-          }),
-          rejectAfter(5000, `CDP socket did not open for ${method}`)
-        ])
-      }
-
-      const id = nextId++
-      const response = new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          pending.delete(id)
-          reject(new Error(`CDP command timed out: ${method}`))
-        }, 5000)
-        pending.set(id, { reject, resolve, timeout })
-      })
-      socket.send(JSON.stringify({ id, method, params }))
-      return response
-    }
-  }
-}
-
-async function evaluate(cdp, expression) {
-  const result = await cdp.command("Runtime.evaluate", {
-    expression,
-    awaitPromise: true,
-    returnByValue: true
-  })
-
-  if (result.exceptionDetails) {
-    throw new Error(result.exceptionDetails.text)
-  }
-
-  return result.result.value
-}
-
-async function stopProcess(child) {
-  if (child.exitCode !== null) return
-
-  const exited = new Promise((resolve) => child.once("exit", resolve))
-  child.kill("SIGTERM")
-  await Promise.race([exited, delay(3000)])
-
-  if (child.exitCode === null) {
-    child.kill("SIGKILL")
-  }
-}
-
-function rejectAfter(milliseconds, message) {
-  return new Promise((_, reject) =>
-    setTimeout(() => reject(new Error(message)), milliseconds)
-  )
-}
-
-function delay(milliseconds) {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
