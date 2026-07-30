@@ -1,6 +1,7 @@
 const YOUTUBE_HOSTS = new Set(["www.youtube.com", "youtube.com"])
 
 export const SHORTS_STYLE_ID = "osbe-youtube-shorts-filter"
+export const SHORTS_FILTERED_ATTRIBUTE = "data-osbe-shorts-filtered"
 
 export const SHORTS_CONTAINER_SELECTORS = [
   "ytd-reel-shelf-renderer",
@@ -23,10 +24,15 @@ export const SHORTS_CONTAINER_SELECTORS = [
 ] as const
 
 export const SHORTS_FILTER_CSS = `
-${SHORTS_CONTAINER_SELECTORS.join(",\n")} {
+${SHORTS_CONTAINER_SELECTORS.join(",\n")},
+[${SHORTS_FILTERED_ATTRIBUTE}] {
   display: none !important;
 }
 `
+
+export function isShortsFilterLabel(label: string | null | undefined) {
+  return label?.trim().toLowerCase() === "shorts"
+}
 
 export function getShortsRedirect(href: string) {
   const url = new URL(href)

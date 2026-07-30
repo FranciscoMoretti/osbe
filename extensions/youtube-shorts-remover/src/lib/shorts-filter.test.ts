@@ -3,6 +3,7 @@ import test from "node:test"
 
 import {
   getShortsRedirect,
+  isShortsFilterLabel,
   SHORTS_CONTAINER_SELECTORS,
   SHORTS_FILTER_CSS
 } from "./shorts-filter"
@@ -59,7 +60,14 @@ test("covers navigation, shelves, cards, recommendations, and channel tabs", () 
   }
 })
 
-test("does not rely on localized labels or filter-chip order", () => {
+test("does not rely on filter-chip order", () => {
   assert.ok(!SHORTS_FILTER_CSS.includes("Shorts"))
   assert.ok(!SHORTS_FILTER_CSS.includes("nth-of-type"))
+})
+
+test("recognizes YouTube's Shorts search filter label", () => {
+  assert.equal(isShortsFilterLabel("Shorts"), true)
+  assert.equal(isShortsFilterLabel("  SHORTS  "), true)
+  assert.equal(isShortsFilterLabel("Videos"), false)
+  assert.equal(isShortsFilterLabel(undefined), false)
 })
