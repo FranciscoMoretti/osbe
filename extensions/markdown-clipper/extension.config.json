@@ -40,10 +40,18 @@
     "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
   },
   "store": {
-    "category": "Productivity",
+    "category": "Tools",
+    "description": "One-click Markdown web clipper for saving pages and selections as clean, portable Markdown.\n\nOSBE Markdown Clipper helps you capture useful web content for AI agents, LLM workflows, documentation, notes, research, and personal knowledge bases. Open the popup on any normal web page, review the generated Markdown, then copy it or download it.\n\nCLIPPING AND CONVERSION\n\n- Clip the current page into Markdown.\n- Clip selected content from the context menu.\n- Preserve headings, paragraphs, links, lists, tables, blockquotes, code blocks, and images.\n- Add optional frontmatter with title, source URL, and clipping timestamp.\n- Keep image links in Markdown or download page images alongside the Markdown file.\n\nPREVIEW, COPY, AND DOWNLOAD\n\n- Review generated Markdown directly in the popup.\n- Toggle between Markdown source and rich text preview.\n- Copy Markdown to the clipboard.\n- Download a .md file when images are off.\n- Download a .zip containing Markdown and local image assets when images are on.\n\nOSBE Markdown Clipper runs only when you invoke it from the popup or context menu. It does not declare broad host permissions.",
     "language": "English",
+    "homepageUrl": "https://github.com/FranciscoMoretti/osbe",
+    "supportUrl": "https://github.com/FranciscoMoretti/osbe/issues",
+    "privacyPolicyUrl": "https://github.com/FranciscoMoretti/osbe/blob/main/extensions/markdown-clipper/PRIVACY.md",
+    "matureContent": false,
     "visibility": "public",
     "pricing": "free",
+    "regions": "all",
+    "automaticPublish": true,
+    "storeId": "hijgngliofllfijnhkjdhjmeaicdplim",
     "screenshots": [
       {
         "file": "store-assets/screenshots/screenshot-1-popup-1280x800.png",
@@ -63,7 +71,11 @@
         "file": "store-assets/small-promo-440x280.png",
         "kind": "small"
       }
-    ]
+    ],
+    "review": {
+      "loginRequired": false,
+      "instructions": "1. Open a normal webpage containing headings, links, and body text.\n2. Open OSBE Markdown Clipper from the toolbar.\n3. Confirm the popup produces Markdown for the current page.\n4. Switch between source and preview.\n5. Copy the Markdown and confirm it reaches the clipboard.\n6. Download the result and confirm Chrome saves a .md file.\n7. Select text on the page, right-click it, and use the OSBE clipping action to confirm selection-only clipping."
+    }
   },
   "release": {
     "workflow": "submit.yml",

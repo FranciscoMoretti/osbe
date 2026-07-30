@@ -82,6 +82,22 @@ test("generates each supported extension archetype", async (context) => {
           )
         )
         assert.equal(definition.surface, archetype.surface)
+        assert.equal(definition.store.category, "Functionality & UI")
+        assert.equal(
+          definition.store.privacyPolicyUrl,
+          `https://github.com/FranciscoMoretti/osbe/blob/main/extensions/${archetype.slug}/PRIVACY.md`
+        )
+
+        const storeDossier = await readFile(
+          path.join(
+            extensionRoot,
+            "store-assets",
+            "chrome-web-store-listing.md"
+          ),
+          "utf8"
+        )
+        assert.match(storeDossier, /Generated from `extension\.config\.json`/)
+        assert.match(storeDossier, /Functionality & UI/)
 
         const iconSource = await readFile(
           path.join(extensionRoot, "assets", "icon-source.svg"),

@@ -3,6 +3,10 @@ import path from "node:path"
 import Ajv2020 from "ajv/dist/2020.js"
 import sharp from "sharp"
 
+import {
+  getPrivacyPolicyError,
+  renderStoreSubmission
+} from "./store-submission.mjs"
 import { SURFACE_REQUIRED_FILES } from "./surfaces.mjs"
 
 const extensionSchema = JSON.parse(
@@ -200,27 +204,10 @@ export async function validateExtension(repoRoot, extension) {
   )
   if (await exists(listingPath)) {
     const listing = await readFile(listingPath, "utf8")
-    const requiredListingCopy = [
-      extension.summary,
-      extension.singlePurpose,
-      extension.remoteCode.justification,
-      extension.store.category,
-      extension.store.language,
-      extension.store.visibility,
-      extension.store.pricing,
-      ...extension.permissions.map((permission) => permission.justification),
-      ...extension.hostPermissions.map(
-        (permission) => permission.justification
-      ),
-      ...extension.dataUsage.map(dataUsageLabel)
-    ]
-
-    for (const copy of requiredListingCopy) {
-      if (!listing.toLowerCase().includes(copy.toLowerCase())) {
-        errors.push(
-          `${extension.slug}: store listing is missing metadata copy: ${copy.slice(0, 60)}`
-        )
-      }
+    if (listing !== renderStoreSubmission(extension)) {
+      errors.push(
+        `${extension.slug}: store submission dossier is stale; run pnpm extension store-dossier ${extension.slug}`
+      )
     }
   }
 
@@ -428,6 +415,31 @@ function getExtensionSemanticErrors(extension) {
   ) {
     errors.push("singlePurpose is required")
   }
+  if (
+    !extension.store.description.trim() ||
+    extension.store.description.startsWith("TODO:")
+  ) {
+    errors.push("store.description is required")
+  }
+  if (
+    !extension.store.review.instructions.trim() ||
+    extension.store.review.instructions.startsWith("TODO:")
+  ) {
+    errors.push("store.review.instructions is required")
+  }
+  const privacyPolicyError = getPrivacyPolicyError(extension)
+  if (privacyPolicyError) errors.push(privacyPolicyError)
+  for (const field of ["homepageUrl", "supportUrl", "privacyPolicyUrl"]) {
+    if (!isAbsoluteHttpsUrl(extension.store[field])) {
+      errors.push(`store.${field} must be a complete absolute HTTPS URL`)
+    }
+  }
+  if (
+    !extension.remoteCode.justification.trim() ||
+    extension.remoteCode.justification.startsWith("TODO:")
+  ) {
+    errors.push("remoteCode.justification is required")
+  }
   for (const field of ["permissions", "hostPermissions"]) {
     for (const permission of extension[field]) {
       if (
@@ -450,6 +462,15 @@ function sameValues(left, right) {
   )
 }
 
+function isAbsoluteHttpsUrl(value) {
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" && Boolean(url.hostname)
+  } catch {
+    return false
+  }
+}
+
 async function renderExtensionIcons(source) {
   const sourceContents = await readFile(source)
   const [runtimeIcon, storeIcon] = await Promise.all([
@@ -458,20 +479,4 @@ async function renderExtensionIcons(source) {
   ])
 
   return { runtimeIcon, storeIcon }
-}
-
-function dataUsageLabel(value) {
-  const labels = {
-    authenticationInformation: "Authentication information",
-    financialAndPaymentInformation: "Financial and payment information",
-    healthInformation: "Health information",
-    location: "Location",
-    personalCommunications: "Personal communications",
-    personallyIdentifiableInformation: "Personally identifiable information",
-    userActivity: "User activity",
-    webHistory: "Web history",
-    websiteContent: "Website content"
-  }
-
-  return labels[value] ?? value
 }

@@ -63,6 +63,7 @@ pnpm extension check markdown-clipper
 pnpm extension smoke markdown-clipper
 pnpm extension build markdown-clipper
 pnpm extension package markdown-clipper
+pnpm extension store-preflight markdown-clipper
 pnpm extension publish markdown-clipper
 ```
 

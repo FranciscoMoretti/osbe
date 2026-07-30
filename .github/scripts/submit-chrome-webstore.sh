@@ -11,10 +11,16 @@ if [ -z "${ZIP_PATH:-}" ]; then
   exit 1
 fi
 
+if [ -z "${CONFIG_PATH:-}" ] || [ ! -f "$CONFIG_PATH" ]; then
+  echo "CONFIG_PATH must point to an extension.config.json file"
+  exit 1
+fi
+
 client_id="$(jq -r '.chrome.clientId' <<< "$SUBMIT_KEYS")"
 client_secret="$(jq -r '.chrome.clientSecret' <<< "$SUBMIT_KEYS")"
 refresh_token="$(jq -r '.chrome.refreshToken' <<< "$SUBMIT_KEYS")"
 extension_id="$(jq -r '.chrome.extId' <<< "$SUBMIT_KEYS")"
+expected_extension_id="$(jq -r '.store.storeId // empty' "$CONFIG_PATH")"
 
 for value_name in client_id client_secret refresh_token extension_id; do
   value="${!value_name}"
@@ -23,6 +29,16 @@ for value_name in client_id client_secret refresh_token extension_id; do
     exit 1
   fi
 done
+
+if [ -z "$expected_extension_id" ]; then
+  echo "$CONFIG_PATH is missing store.storeId; complete the first manual submission and persist the assigned ID"
+  exit 1
+fi
+
+if [ "$extension_id" != "$expected_extension_id" ]; then
+  echo "SUBMIT_KEYS chrome.extId does not match $CONFIG_PATH store.storeId"
+  exit 1
+fi
 
 token_response="$(mktemp)"
 token_status="$(

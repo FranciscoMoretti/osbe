@@ -2,13 +2,20 @@
 
 Upload these files in the Chrome Web Store Developer Dashboard.
 
-These files are generated from the canonical `../assets/icon-source.svg` mark
-by `python3 ../scripts/generate-store-assets.py`.
+Runtime and store icons are generated from the canonical
+`../assets/icon-source.svg` mark with:
+
+```bash
+pnpm extension assets markdown-clipper
+```
 
 ## Listing copy
 
 - Summary from package: `../package.json` `description`
-- Dashboard Description: `chrome-web-store-listing.md`
+- Copy-ready dashboard dossier: `chrome-web-store-listing.md`
+
+The dossier is generated from `extension.config.json`. Regenerate it with
+`pnpm extension store-dossier markdown-clipper`; do not edit it directly.
 
 ## Graphic assets
 

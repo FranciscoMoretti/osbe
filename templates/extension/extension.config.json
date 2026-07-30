@@ -15,17 +15,28 @@
     "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
   },
   "store": {
-    "category": "Productivity",
+    "category": "Functionality & UI",
+    "description": "TODO: Explain what the extension does, its main workflow, and why a user should install it.",
     "language": "English",
+    "homepageUrl": "https://github.com/FranciscoMoretti/osbe",
+    "supportUrl": "https://github.com/FranciscoMoretti/osbe/issues",
+    "privacyPolicyUrl": "https://github.com/FranciscoMoretti/osbe/blob/main/extensions/{{slug}}/PRIVACY.md",
+    "matureContent": false,
     "visibility": "public",
     "pricing": "free",
+    "regions": "all",
+    "automaticPublish": true,
     "screenshots": [
       {
         "file": "store-assets/screenshots/{{slug}}-1280x800.png",
         "title": "TODO: Describe the product workflow shown here."
       }
     ],
-    "promoTiles": []
+    "promoTiles": [],
+    "review": {
+      "loginRequired": false,
+      "instructions": "TODO: Give a reviewer a short numbered path through the primary workflow."
+    }
   },
   "release": {
     "workflow": "submit-{{slug}}.yml",

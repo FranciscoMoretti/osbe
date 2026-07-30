@@ -38,6 +38,7 @@ jobs:
         run: pnpm extension package "${{ inputs.extension }}"
       - name: Upload and submit extension
         env:
+          CONFIG_PATH: extensions/${{ inputs.extension }}/extension.config.json
           SUBMIT_KEYS: ${{ secrets.submit_keys }}
           ZIP_PATH: extensions/${{ inputs.extension }}/build/chrome-mv3-prod.zip
         run: .github/scripts/submit-chrome-webstore.sh

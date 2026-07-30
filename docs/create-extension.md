@@ -96,13 +96,24 @@ Each extension owns `extension.config.json`. It contains:
 - package summary and single purpose;
 - permissions, host permissions, and their store justifications;
 - handled data categories and remote-code declaration;
-- store category, visibility, assets, and optional store ID;
+- current Chrome Web Store category, full description, support/privacy URLs,
+  visibility, assets, review instructions, and optional store ID;
 - release workflow and secret name;
 - the extension page used by automated Chrome smoke tests.
 
-The extension CLI discovers these files directly. Keep `package.json`,
-the manifest permissions, and `store-assets/chrome-web-store-listing.md` aligned;
-validation rejects drift between them.
+The extension CLI discovers these files directly. `package.json` and manifest
+permissions must match the definition. The copy-ready
+`store-assets/chrome-web-store-listing.md` dossier is generated from the same
+definition, and validation rejects manual edits or stale output:
+
+```bash
+pnpm extension store-dossier link-cleaner
+```
+
+Chrome's current categories are grouped around Communication, Developer Tools,
+Education, Tools, Workflow & Planning, lifestyle categories, Accessibility,
+Functionality & UI, and Privacy & Security. The schema rejects retired category
+names such as `Productivity`.
 
 ## Day-to-day commands
 
@@ -113,6 +124,8 @@ pnpm extension test link-cleaner
 pnpm extension typecheck link-cleaner
 pnpm extension build link-cleaner
 pnpm extension check link-cleaner
+pnpm extension store-dossier link-cleaner
+pnpm extension store-preflight link-cleaner
 ```
 
 `check` validates metadata and assets, runs product tests and typechecking, and
@@ -144,6 +157,9 @@ Store screenshots may either be committed final PNGs or declare a raw `source`
 in `extension.config.json`. The shared asset pipeline frames declared sources as
 1280×800, removes alpha, and validates every committed screenshot. Promotional
 tiles declare `kind: "small"` (440×280) or `"marquee"` (1400×560).
+
+`assets` also refreshes the generated store dossier so artwork and submission
+copy remain synchronized.
 
 ## Browser verification
 
@@ -190,10 +206,44 @@ pnpm extension publish link-cleaner
 The generated workflow expects `<SLUG>_SUBMIT_KEYS`; use
 `submit-keys.example.json` for its shape and never commit credentials.
 
-The workflow uploads code packages. Chrome Web Store listing content,
-screenshots, privacy declarations, regional distribution, and permission
-answers still belong in the Developer Dashboard. Those answers must match the
-committed metadata and listing document.
+Before opening the dashboard or triggering an update, run:
+
+```bash
+pnpm extension store-preflight link-cleaner
+```
+
+The preflight checks schema and manifest parity, generated dossier freshness,
+asset dimensions and alpha rules, package presence, the canonical public GitHub
+privacy-policy URL, and whether a store ID has been assigned. It also opens the
+ZIP manifest and compares its version, permissions, and host permissions with
+the current package metadata. Use `--offline` only when network access is
+intentionally unavailable.
+
+### First submission
+
+Chrome assigns an item ID only after its first package is created in the
+Developer Dashboard. For a new extension:
+
+1. Merge the extension and privacy policy to `main`.
+2. Prepare and package the release.
+3. Run `store-preflight`; it will identify the first-submission path.
+4. Create the item in the OSBE publisher dashboard and copy values from the
+   generated dossier.
+5. Persist Chrome's assigned ID:
+
+   ```bash
+   pnpm extension store-id link-cleaner <32-character-store-id>
+   ```
+
+6. Commit the ID and regenerated dossier, and configure the workflow secret
+   using the same ID.
+
+Later releases use the reusable workflow. It now rejects a secret whose
+`chrome.extId` does not match the committed `store.storeId`.
+
+After every submission, verify the item reaches `Published`. New extensions
+default to automatic publication after approval; if that setting is disabled,
+publish the staged item within Chrome's 30-day window.
 
 ## Release checklist
 
@@ -204,8 +254,13 @@ committed metadata and listing document.
 - The product icon is recognizable at 16px, 24px, and 32px.
 - Runtime and store icons were regenerated from `assets/icon-source.svg`.
 - At least one real screenshot is present and contains no alpha channel.
-- Store listing and privacy copy match `extension.config.json`.
+- Store description, review instructions, current category, support links, and
+  privacy disclosures are complete in `extension.config.json`.
+- `pnpm extension store-dossier <slug>` has refreshed the generated dossier.
 - `pnpm extension check <slug>` passes.
 - `pnpm extension smoke <slug>` loads the production extension in Chrome.
 - The main product workflow has received a focused manual check.
 - `pnpm extension package <slug>` produces the expected ZIP.
+- `pnpm extension store-preflight <slug>` passes, including the public privacy
+  policy check.
+- The assigned store ID is committed after the first manual submission.

@@ -45,17 +45,29 @@
     "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
   },
   "store": {
-    "category": "Productivity",
+    "category": "Privacy & Security",
+    "description": "Block distracting websites with simple rules that stay in your browser.\n\nAdd a website once and OSBE Site Blocker blocks every page on that domain and its subdomains. Manage your list from a clear dashboard without creating an account.\n\nWHAT YOU CAN DO\n\n- Add, edit, disable, or remove blocked websites.\n- Pause all blocking without losing your list.\n- Allow access to one website for 5, 10, 15, or 30 minutes.\n- Create more-specific exceptions, such as blocking google.com while allowing mail.google.com.\n- Import and export your block list as a JSON file.\n- Check whether the current tab is blocked from the toolbar popup.\n- See which rule caused a page to be blocked.\n\nPRIVATE BY DESIGN\n\nYour block list and settings are stored locally in Chrome. OSBE Site Blocker has no account, analytics, advertising, or remote sync.\n\nOSBE Site Blocker is open source.",
     "language": "English",
+    "homepageUrl": "https://github.com/FranciscoMoretti/osbe",
+    "supportUrl": "https://github.com/FranciscoMoretti/osbe/issues",
+    "privacyPolicyUrl": "https://github.com/FranciscoMoretti/osbe/blob/main/extensions/site-blocker/PRIVACY.md",
+    "matureContent": false,
     "visibility": "public",
     "pricing": "free",
+    "regions": "all",
+    "automaticPublish": true,
+    "storeId": "fnlmommeiggegkgonapopokbcjgldfbe",
     "screenshots": [
       {
         "file": "store-assets/screenshots/dashboard-1280x800.png",
         "title": "Manage blocking rules from a local dashboard"
       }
     ],
-    "promoTiles": []
+    "promoTiles": [],
+    "review": {
+      "loginRequired": false,
+      "instructions": "1. Open the extension dashboard from the toolbar popup.\n2. Select “Add to Block List”, enter reddit.com, and select “Add site”.\n3. Open https://reddit.com in a new tab and confirm Chrome redirects to the local blocked page.\n4. Return to the dashboard and grant reddit.com temporary access for 5 minutes.\n5. Confirm reddit.com becomes accessible until the timer ends.\n6. Turn off global blocking and confirm rules remain listed but navigation is no longer blocked.\n7. Turn global blocking back on and confirm active rules resume blocking."
+    }
   },
   "release": {
     "workflow": "submit-site-blocker.yml",

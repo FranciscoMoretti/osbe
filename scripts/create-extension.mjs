@@ -7,6 +7,7 @@ import {
   generateExtensionIcons,
   readExtensionRegistry
 } from "./lib/extensions.mjs"
+import { writeStoreSubmission } from "./lib/store-submission.mjs"
 import { createSurfaceDefinition } from "./lib/surfaces.mjs"
 
 const repoRoot = process.env.OSBE_REPO_ROOT
@@ -112,6 +113,10 @@ try {
 await renderDirectory(templateRoot, extensionRoot)
 await renderDirectory(path.join(surfaceTemplatesRoot, surface), extensionRoot)
 await generateExtensionIcons(repoRoot, { slug })
+const extensionDefinition = JSON.parse(
+  await readFile(path.join(extensionRoot, "extension.config.json"), "utf8")
+)
+await writeStoreSubmission(repoRoot, extensionDefinition)
 
 const workflow = render(await readFile(workflowTemplate, "utf8"))
 await writeFile(workflowPath, workflow, { flag: "wx" })

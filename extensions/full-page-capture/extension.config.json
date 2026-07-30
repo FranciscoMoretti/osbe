@@ -24,10 +24,17 @@
     "justification": "The extension does not use remote code. All executable JavaScript and CSS, including image stitching, ZIP creation, and PDF generation, is included in the submitted package."
   },
   "store": {
-    "category": "Productivity",
+    "category": "Tools",
+    "description": "Capture an entire webpage in one click—not only the part visible on screen.\n\nOSBE Full Page Capture scrolls through the current page, creates one continuous preview, and lets you download the result as a lossless PNG or paginated PDF.\n\nHOW IT WORKS\n\n1. Open the page you want to capture.\n2. Click the extension icon.\n3. Keep that tab active while the extension scrolls through the page.\n4. Download the completed capture as PNG or PDF.\n\nBUILT FOR COMPLETE PAGES\n\n- Captures the full vertical page at the current viewport width.\n- Avoids repeating fixed and sticky page elements where possible.\n- Restores your original scroll position after capture.\n- Handles very tall pages by safely splitting PNG output into numbered parts.\n- Creates one paginated PDF even when PNG output must be split.\n- Supports an Alt+Shift+P keyboard shortcut (Control+Shift+P on macOS).\n\nPRIVATE BY DESIGN\n\nCapture starts only when you invoke it. Page pixels, title, URL, and dimensions are processed locally in memory. There is no account, analytics, advertising, remote service, or capture history, and nothing is sent to OSBE.\n\nOSBE Full Page Capture is open source.",
     "language": "English",
+    "homepageUrl": "https://github.com/FranciscoMoretti/osbe",
+    "supportUrl": "https://github.com/FranciscoMoretti/osbe/issues",
+    "privacyPolicyUrl": "https://github.com/FranciscoMoretti/osbe/blob/main/extensions/full-page-capture/PRIVACY.md",
+    "matureContent": false,
     "visibility": "public",
     "pricing": "free",
+    "regions": "all",
+    "automaticPublish": true,
     "storeId": "balnbaioojcljaepfbnmcalphndfnfjm",
     "screenshots": [
       {
@@ -35,7 +42,11 @@
         "title": "Preview and export the full page"
       }
     ],
-    "promoTiles": []
+    "promoTiles": [],
+    "review": {
+      "loginRequired": false,
+      "instructions": "1. Open a normal webpage that is taller than the browser viewport.\n2. Click the OSBE Full Page Capture toolbar icon.\n3. Keep the source tab active while the page scrolls automatically.\n4. Confirm the result tab opens and shows one continuous full-height preview.\n5. Download PNG and confirm Chrome saves an image.\n6. Download PDF and confirm Chrome saves a paginated PDF.\n7. Return to the source tab and confirm its original scroll position was restored.\n\nChrome does not allow extensions to capture chrome:// pages, the Chrome Web Store, or other protected browser surfaces."
+    }
   },
   "release": {
     "workflow": "submit-full-page-capture.yml",

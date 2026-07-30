@@ -89,30 +89,57 @@
       "type": "object",
       "required": [
         "category",
+        "description",
         "language",
+        "homepageUrl",
+        "supportUrl",
+        "privacyPolicyUrl",
+        "matureContent",
         "visibility",
         "pricing",
-        "screenshots"
+        "regions",
+        "automaticPublish",
+        "screenshots",
+        "promoTiles",
+        "review"
       ],
       "properties": {
         "category": {
           "enum": [
             "Accessibility",
-            "Blogging",
+            "Art & Design",
+            "Communication",
             "Developer Tools",
-            "Fun",
+            "Education",
+            "Entertainment",
+            "Functionality & UI",
+            "Games",
+            "Household",
+            "Just for Fun",
             "News & Weather",
-            "Photos",
-            "Productivity",
-            "Search Tools",
+            "Privacy & Security",
             "Shopping",
-            "Social & Communication",
-            "Sports"
+            "Social Media & Networking",
+            "Tools",
+            "Travel",
+            "Well-being",
+            "Workflow & Planning"
           ]
         },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
         "language": { "type": "string", "minLength": 1 },
+        "homepageUrl": { "type": "string", "pattern": "^https://" },
+        "supportUrl": { "type": "string", "pattern": "^https://" },
+        "privacyPolicyUrl": { "type": "string", "pattern": "^https://" },
+        "matureContent": { "type": "boolean" },
         "visibility": { "enum": ["public", "unlisted", "private"] },
         "pricing": { "enum": ["free", "in-app-purchases"] },
+        "regions": { "const": "all" },
+        "automaticPublish": { "type": "boolean" },
         "storeId": {
           "type": "string",
           "pattern": "^[a-p]{32}$"
@@ -126,6 +153,19 @@
         "promoTiles": {
           "type": "array",
           "items": { "$ref": "#/$defs/promoTile" }
+        },
+        "review": {
+          "type": "object",
+          "required": ["loginRequired", "instructions"],
+          "properties": {
+            "loginRequired": { "type": "boolean" },
+            "instructions": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 5000
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

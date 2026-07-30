@@ -17,6 +17,13 @@ import {
   updatePackageVersion
 } from "./lib/lifecycle.mjs"
 import { generateStoreAssets } from "./lib/store-assets.mjs"
+import {
+  chromeStoreDashboardUrl,
+  chromeStoreListingUrl,
+  createStorePreflightReport,
+  persistStoreId,
+  writeStoreSubmission
+} from "./lib/store-submission.mjs"
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -42,7 +49,22 @@ try {
     if (command === "assets" || command === "artwork") {
       await generateExtensionIcons(repoRoot, extension)
       await generateStoreAssets(repoRoot, extension)
+      await writeStoreSubmission(repoRoot, extension)
       console.log(`Generated store assets for ${extension.slug}.`)
+    } else if (command === "store-dossier") {
+      const destination = await writeStoreSubmission(repoRoot, extension)
+      console.log(`Generated ${destination}.`)
+    } else if (command === "store-preflight") {
+      await printStorePreflight(extension, flags)
+    } else if (command === "store-id") {
+      const storeId = flags[0]
+      if (!storeId) {
+        throw new Error(
+          `Usage: pnpm extension store-id ${extension.slug} <32-character-store-id>`
+        )
+      }
+      await persistStoreId(repoRoot, extension, storeId)
+      console.log(`Saved Chrome Web Store ID ${storeId} for ${extension.slug}.`)
     } else if (command === "check") {
       await checkExtension(extension)
     } else if (command === "smoke") {
@@ -56,6 +78,12 @@ try {
     } else if (command === "status") {
       await printStatus(extension)
     } else if (command === "publish") {
+      await validateExtensions([extension])
+      if (!extension.store.storeId) {
+        throw new Error(
+          `${extension.slug} needs its first manual submission. After Chrome assigns an ID, run: pnpm extension store-id ${extension.slug} <store-id>`
+        )
+      }
       await runCommand("gh", [
         "workflow",
         "run",
@@ -63,13 +91,20 @@ try {
         "--ref",
         "main"
       ])
+      console.log(`Triggered ${extension.release.workflow}.`)
+      console.log(`Dashboard: ${chromeStoreDashboardUrl(extension)}`)
+      console.log(
+        extension.store.automaticPublish
+          ? "Follow-up: verify the item reaches Published status; approval will publish it automatically."
+          : "Follow-up: publish the staged item within 30 days after approval."
+      )
     } else if (
       ["dev", "build", "package", "test", "typecheck"].includes(command)
     ) {
       await runPackageCommand(extension, command)
     } else {
       throw new Error(
-        "Usage: pnpm extension <list|validate|assets|dev|build|package|test|typecheck|check|smoke|release|status|publish> [slug]"
+        "Usage: pnpm extension <list|validate|assets|store-dossier|store-preflight|store-id|dev|build|package|test|typecheck|check|smoke|release|status|publish> [slug]"
       )
     }
   }
@@ -134,6 +169,7 @@ async function releaseExtension(extension, flags) {
 
   await generateExtensionIcons(repoRoot, extension)
   await generateStoreAssets(repoRoot, extension)
+  await writeStoreSubmission(repoRoot, extension)
   await validateExtensions([extension])
   await runPackageCommand(extension, "test")
   await runPackageCommand(extension, "typecheck")
@@ -155,6 +191,9 @@ async function releaseExtension(extension, flags) {
   console.log(`SHA-256 ${checksum}`)
   console.log(
     `After committing and merging the version bump, run: pnpm extension publish ${extension.slug}`
+  )
+  console.log(
+    `Before submission, run: pnpm extension store-preflight ${extension.slug}`
   )
 }
 
@@ -181,8 +220,28 @@ async function printStatus(extension) {
   console.log(`Workflow: ${extension.release.workflow}`)
   console.log(`Artifact: ${artifact}`)
   if (extension.store.storeId) {
-    console.log(
-      `Chrome Web Store: https://chromewebstore.google.com/detail/${extension.store.storeId}`
+    console.log(`Chrome Web Store ID: ${extension.store.storeId}`)
+    console.log(`Listing: ${chromeStoreListingUrl(extension.store.storeId)}`)
+    console.log(`Dashboard: ${chromeStoreDashboardUrl(extension)}`)
+  } else {
+    console.log("Chrome Web Store ID: not assigned (first submission)")
+    console.log(`Dashboard: ${chromeStoreDashboardUrl(extension)}`)
+  }
+}
+
+async function printStorePreflight(extension, flags) {
+  const validationErrors = await validateExtension(repoRoot, extension)
+  const result = await createStorePreflightReport(repoRoot, extension, {
+    online: !flags.includes("--offline"),
+    validationErrors
+  })
+
+  console.log(result.report)
+  if (result.errors.length > 0) {
+    throw new Error(
+      `Store preflight failed:\n${result.errors
+        .map((error) => `- ${error}`)
+        .join("\n")}`
     )
   }
 }
