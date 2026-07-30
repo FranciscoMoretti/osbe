@@ -14,7 +14,10 @@
       "justification": "Required to hide Shorts navigation, shelves, cards, and recommendations on YouTube and redirect direct Shorts routes."
     }
   ],
-  "dataUsage": ["webHistory", "websiteContent"],
+  "dataUsage": [
+    "webHistory",
+    "websiteContent"
+  ],
   "remoteCode": {
     "used": false,
     "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
@@ -41,7 +44,8 @@
     "review": {
       "loginRequired": false,
       "instructions": "1. Open https://www.youtube.com/results?search_query=javascript without signing in. 2. Confirm the left navigation has no Shorts entry and the results contain no visible Shorts shelf or Shorts cards. 3. Open any https://www.youtube.com/shorts/<video-id> URL and confirm it redirects to the YouTube home page. The extension has no popup or settings."
-    }
+    },
+    "storeId": "ggbofifdkhmddbcccefgdkhaglnbdino"
   },
   "release": {
     "workflow": "submit-youtube-shorts-remover.yml",

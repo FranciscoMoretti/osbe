@@ -5,11 +5,10 @@ Regenerate it with `pnpm extension store-dossier youtube-shorts-remover`.
 
 ## Submission Mode
 
-First submission: create the item manually in the developer dashboard, upload the package, then persist the assigned ID with:
+Existing item: `ggbofifdkhmddbcccefgdkhaglnbdino`
 
-```bash
-pnpm extension store-id youtube-shorts-remover <32-character-store-id>
-```
+- Public listing: https://chromewebstore.google.com/detail/ggbofifdkhmddbcccefgdkhaglnbdino
+- Developer dashboard: https://chrome.google.com/webstore/devconsole/cb34bb3b-8b83-4527-99df-ec17a12d952c/ggbofifdkhmddbcccefgdkhaglnbdino/edit
 
 ## Store Listing
 
