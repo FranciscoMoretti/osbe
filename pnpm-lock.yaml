@@ -309,6 +309,28 @@ importers:
         specifier: 'catalog:'
         version: 5.3.3
 
+  extensions/youtube-shorts-remover:
+    dependencies:
+      '@osbe/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      plasmo:
+        specifier: 'catalog:'
+        version: 0.90.5(@swc/core@1.15.33(@swc/helpers@0.5.21))(@swc/helpers@0.5.21)(@types/node@20.11.5)(postcss@8.4.33)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+    devDependencies:
+      '@types/chrome':
+        specifier: 'catalog:'
+        version: 0.0.258
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.11.5
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.3.3
+
   packages/config:
     dependencies:
       plasmo:

@@ -4,6 +4,15 @@ import { access, cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import os from "node:os"
 import path from "node:path"
 
+import {
+  connectCdp,
+  delay,
+  evaluate,
+  stopProcess,
+  waitFor,
+  waitForDevtoolsPort
+} from "./chrome-cdp.mjs"
+
 const CHROME_START_TIMEOUT_MS = 20_000
 
 export async function smokeExtensionInChrome(repoRoot, extension) {
@@ -36,7 +45,7 @@ export async function smokeExtensionInChrome(repoRoot, extension) {
     )
 
     const extensionId = extensionIdFromPublicKey(publicKey)
-    const pageUrl = `chrome-extension://${extensionId}/${extension.smoke.page}`
+    const pageUrl = getSmokePageUrl(extension.smoke.page, extensionId)
     const chromePath = await findChromeExecutable()
     const chrome = spawn(
       chromePath,
@@ -62,6 +71,20 @@ export async function smokeExtensionInChrome(repoRoot, extension) {
     try {
       const port = await waitForDevtoolsPort(chrome)
       const target = await waitForTarget(port, pageUrl)
+      if (extension.smoke.activationSelector) {
+        const cdp = connectCdp(target.webSocketDebuggerUrl)
+        await cdp.command("Runtime.enable")
+        await waitFor(
+          () =>
+            evaluate(
+              cdp,
+              `Boolean(document.querySelector(${JSON.stringify(
+                extension.smoke.activationSelector
+              )}))`
+            ),
+          `Chrome loaded ${pageUrl}, but the extension activation marker ${extension.smoke.activationSelector} did not appear`
+        )
+      }
 
       return {
         extensionId,
@@ -69,29 +92,16 @@ export async function smokeExtensionInChrome(repoRoot, extension) {
         title: target.title
       }
     } finally {
-      await stopChrome(chrome)
+      await stopProcess(chrome, { forceAfterMs: 2000 })
     }
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true })
   }
 }
 
-function stopChrome(chrome) {
-  if (chrome.exitCode !== null || chrome.signalCode !== null) {
-    return Promise.resolve()
-  }
-
-  return new Promise((resolve) => {
-    const forceTimeout = setTimeout(() => {
-      chrome.kill("SIGKILL")
-    }, 2_000)
-
-    chrome.once("exit", () => {
-      clearTimeout(forceTimeout)
-      resolve()
-    })
-    chrome.kill("SIGTERM")
-  })
+export function getSmokePageUrl(smokePage, extensionId) {
+  if (/^https?:\/\//.test(smokePage)) return smokePage
+  return `chrome-extension://${extensionId}/${smokePage}`
 }
 
 export function extensionIdFromPublicKey(publicKey) {
@@ -120,12 +130,7 @@ function createTestPublicKey() {
 async function findChromeExecutable() {
   const candidates = [
     process.env.CHROME_PATH,
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-    "/usr/bin/google-chrome",
-    "/usr/bin/google-chrome-stable",
-    "/usr/bin/chromium",
-    "/usr/bin/chromium-browser"
+    "/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
   ].filter(Boolean)
 
   for (const candidate of candidates) {
@@ -138,35 +143,8 @@ async function findChromeExecutable() {
   }
 
   throw new Error(
-    "Chrome was not found. Set CHROME_PATH to run the extension smoke test."
+    "Google Chrome for Testing was not found. Set CHROME_PATH to its executable; stable branded Chrome can ignore unpacked extensions."
   )
-}
-
-function waitForDevtoolsPort(chrome) {
-  return new Promise((resolve, reject) => {
-    let stderr = ""
-    const timeout = setTimeout(() => {
-      reject(new Error(`Chrome did not start DevTools.\n${stderr}`))
-    }, CHROME_START_TIMEOUT_MS)
-
-    chrome.stderr.setEncoding("utf8")
-    chrome.stderr.on("data", (chunk) => {
-      stderr += chunk
-      const match = stderr.match(
-        /DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)\//
-      )
-      if (!match) return
-
-      clearTimeout(timeout)
-      resolve(Number(match[1]))
-    })
-    chrome.once("exit", (code) => {
-      clearTimeout(timeout)
-      reject(
-        new Error(`Chrome exited before the smoke test started (${code}).`)
-      )
-    })
-  })
 }
 
 async function waitForTarget(port, pageUrl) {
@@ -180,14 +158,14 @@ async function waitForTarget(port, pageUrl) {
         (candidate) => candidate.type === "page" && candidate.url === pageUrl
       )
 
-      if (target && !target.title.startsWith("Error")) {
+      if (target?.title && !target.title.startsWith("Error")) {
         return target
       }
     } catch {
       // Chrome may expose the port before the first target is ready.
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 200))
+    await delay(200)
   }
 
   throw new Error(`Chrome did not load the extension page: ${pageUrl}`)

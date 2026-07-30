@@ -17,6 +17,11 @@ pnpm new:extension page-archive "OSBE Page Archive" --surface action-result
 
 # Compact popup plus a full options dashboard
 pnpm new:extension tab-manager "OSBE Tab Manager" --surface dashboard
+
+# Always-on behavior for specific pages, with no popup or options
+pnpm new:extension page-cleaner "OSBE Page Cleaner" \
+  --surface content-only \
+  --match "https://example.com/*"
 ```
 
 Then install once at the repository root and start the extension:
@@ -29,8 +34,9 @@ pnpm extension dev link-cleaner
 The generator creates:
 
 - a package under `extensions/<slug>`;
-- the selected branded surface using `@osbe/ui`;
-- `@osbe/extension-kit` and shared build-policy dependencies;
+- the selected branded UI surface, or a content-only script with no UI;
+- shared build-policy dependencies, plus `@osbe/extension-kit` for interactive
+  surfaces;
 - `extension.config.json`, which makes the package discoverable automatically;
 - neutral runtime and store icons from the same SVG source;
 - privacy, listing, screenshot, and submission-key templates;
@@ -38,7 +44,14 @@ The generator creates:
 
 It requests no permissions for popup or dashboard extensions. The
 action-result archetype starts with `activeTab` and a placeholder justification.
-Keep only capabilities required by the product.
+The content-only archetype creates only a page content script: no popup,
+settings, background worker, React UI dependencies, or Tailwind/shadcn files.
+Its required `--match` value configures the content script, manifest host
+permission, metadata justification placeholder, and browser smoke page
+together. The smoke page is a concrete URL derived from the match pattern and
+can be changed to a better representative page in `extension.config.json`.
+Repository validation detects later drift between the content script and
+host-permission metadata. Keep only capabilities required by the product.
 
 ## What is shared
 
@@ -166,13 +179,17 @@ copy remain synchronized.
 Build and load the production extension in a clean headless Chrome profile:
 
 ```bash
+CHROME_PATH="/path/to/Google Chrome for Testing" \
 pnpm extension smoke link-cleaner
 ```
 
 The smoke page comes from `extension.config.json`, so popup, action-result, and
 dashboard extensions all use the same command. This confirms that Chrome accepts
-the manifest and can open the product's primary extension surface. Manually test
-the main user workflow when it depends on live page interaction.
+the manifest and can open the product's primary extension surface. External
+content-only smoke pages must also declare an activation selector, so the
+command proves the content script executed. Stable branded Chrome is not used
+because it can ignore command-line unpacked extensions. Manually test the main
+user workflow when it depends on live page interaction.
 
 ## Release
 
@@ -258,7 +275,8 @@ publish the staged item within Chrome's 30-day window.
   privacy disclosures are complete in `extension.config.json`.
 - `pnpm extension store-dossier <slug>` has refreshed the generated dossier.
 - `pnpm extension check <slug>` passes.
-- `pnpm extension smoke <slug>` loads the production extension in Chrome.
+- `pnpm extension smoke <slug>` loads the production extension in Chrome for
+  Testing and proves content-only scripts activate.
 - The main product workflow has received a focused manual check.
 - `pnpm extension package <slug>` produces the expected ZIP.
 - `pnpm extension store-preflight <slug>` passes, including the public privacy

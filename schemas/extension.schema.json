@@ -35,7 +35,7 @@
       "pattern": "^OSBE "
     },
     "surface": {
-      "enum": ["popup", "action-result", "dashboard"]
+      "enum": ["popup", "action-result", "dashboard", "content-only"]
     },
     "summary": {
       "type": "string",
@@ -189,7 +189,8 @@
       "type": "object",
       "required": ["page"],
       "properties": {
-        "page": { "type": "string", "minLength": 1 }
+        "page": { "type": "string", "minLength": 1 },
+        "activationSelector": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
     }

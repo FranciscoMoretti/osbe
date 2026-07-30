@@ -1,0 +1,16 @@
+name: "Submit OSBE YouTube Shorts Remover to Web Store"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: submit-youtube-shorts-remover
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    uses: ./.github/workflows/_submit-extension.yml
+    with:
+      extension: youtube-shorts-remover
+    secrets:
+      submit_keys: ${{ secrets.YOUTUBE_SHORTS_REMOVER_SUBMIT_KEYS }}

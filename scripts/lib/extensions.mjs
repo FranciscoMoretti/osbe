@@ -7,7 +7,7 @@ import {
   getPrivacyPolicyError,
   renderStoreSubmission
 } from "./store-submission.mjs"
-import { SURFACE_REQUIRED_FILES } from "./surfaces.mjs"
+import { getSurfacePolicy } from "./surfaces.mjs"
 
 const extensionSchema = JSON.parse(
   await readFile(
@@ -18,22 +18,6 @@ const extensionSchema = JSON.parse(
 const validateExtensionSchema = new Ajv2020({
   allErrors: true
 }).compile(extensionSchema)
-
-const REQUIRED_FILES = [
-  "README.md",
-  "PRIVACY.md",
-  "assets/icon-source.svg",
-  "assets/icon.png",
-  "components.json",
-  "extension.config.json",
-  "postcss.config.js",
-  "store-assets/README.md",
-  "store-assets/chrome-web-store-listing.md",
-  "store-assets/store-icon-128.png",
-  "submit-keys.example.json",
-  "tailwind.config.js",
-  "tsconfig.json"
-]
 
 async function exists(file) {
   try {
@@ -110,6 +94,7 @@ export async function validateExtension(repoRoot, extension) {
   const extensionRoot = path.join(repoRoot, "extensions", extension.slug)
   const packagePath = path.join(extensionRoot, "package.json")
   const definitionErrors = getExtensionSemanticErrors(extension)
+  const surfacePolicy = getSurfacePolicy(extension.surface)
 
   errors.push(...definitionErrors.map((error) => `${extension.slug}: ${error}`))
 
@@ -154,14 +139,22 @@ export async function validateExtension(repoRoot, extension) {
     }
   }
 
-  for (const workspacePackage of [
-    "@osbe/config",
-    "@osbe/extension-kit",
-    "@osbe/ui"
-  ]) {
+  for (const workspacePackage of surfacePolicy.requiredWorkspaceDependencies) {
     if (packageJson.dependencies?.[workspacePackage] !== "workspace:*") {
       errors.push(
         `${extension.slug}: ${workspacePackage} must be a workspace dependency`
+      )
+    }
+  }
+
+  const allDependencies = {
+    ...packageJson.dependencies,
+    ...packageJson.devDependencies
+  }
+  for (const dependency of surfacePolicy.forbiddenDependencies) {
+    if (dependency in allDependencies) {
+      errors.push(
+        `${extension.slug}: ${extension.surface} surface must not depend on ${dependency}`
       )
     }
   }
@@ -191,9 +184,38 @@ export async function validateExtension(repoRoot, extension) {
     )
   }
 
-  for (const relativePath of REQUIRED_FILES) {
+  if (extension.surface === "content-only") {
+    const mainContentScriptPath = path.join(
+      extensionRoot,
+      "src",
+      "contents",
+      "main.ts"
+    )
+    if (await exists(mainContentScriptPath)) {
+      const mainContentScript = await readFile(mainContentScriptPath, "utf8")
+      const declaredMatches = getLiteralContentMatches(mainContentScript)
+      const configuredMatches = extension.hostPermissions.map(
+        (permission) => permission.name
+      )
+      if (!sameUnorderedValues(declaredMatches, configuredMatches)) {
+        errors.push(
+          `${extension.slug}: content-script matches must match extension.config.json hostPermissions`
+        )
+      }
+    }
+  }
+
+  for (const relativePath of surfacePolicy.requiredFiles) {
     if (!(await exists(path.join(extensionRoot, relativePath)))) {
       errors.push(`${extension.slug}: missing ${relativePath}`)
+    }
+  }
+
+  for (const relativePath of surfacePolicy.forbiddenFiles) {
+    if (await exists(path.join(extensionRoot, relativePath))) {
+      errors.push(
+        `${extension.slug}: ${extension.surface} surface must not include ${relativePath}`
+      )
     }
   }
 
@@ -207,14 +229,6 @@ export async function validateExtension(repoRoot, extension) {
     if (listing !== renderStoreSubmission(extension)) {
       errors.push(
         `${extension.slug}: store submission dossier is stale; run pnpm extension store-dossier ${extension.slug}`
-      )
-    }
-  }
-
-  for (const relativePath of SURFACE_REQUIRED_FILES[extension.surface] ?? []) {
-    if (!(await exists(path.join(extensionRoot, relativePath)))) {
-      errors.push(
-        `${extension.slug}: ${extension.surface} surface requires ${relativePath}`
       )
     }
   }
@@ -451,6 +465,14 @@ function getExtensionSemanticErrors(extension) {
       }
     }
   }
+  if (
+    /^https?:\/\//.test(extension.smoke.page) &&
+    !extension.smoke.activationSelector
+  ) {
+    errors.push(
+      "smoke.activationSelector is required when smoke.page is an external URL"
+    )
+  }
 
   return errors
 }
@@ -459,6 +481,22 @@ function sameValues(left, right) {
   return (
     left.length === right.length &&
     left.every((value, index) => value === right[index])
+  )
+}
+
+function sameUnorderedValues(left, right) {
+  return (
+    left.length === right.length && left.every((value) => right.includes(value))
+  )
+}
+
+function getLiteralContentMatches(source) {
+  const matchConfig = source.match(/matches\s*:\s*\[([^\]]*)\]/s)
+  if (!matchConfig) return []
+
+  return Array.from(
+    matchConfig[1].matchAll(/["']([^"']+)["']/g),
+    (match) => match[1]
   )
 }
 

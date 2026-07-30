@@ -57,7 +57,12 @@ Each extension should solve one clear problem and avoid broad permissions unless
 
 ### User-Controlled
 
-Extensions should run because the user invoked them. The user should understand when an extension reads page content, writes files, or changes browser state.
+Prefer behavior the user invokes directly. Always-on behavior is appropriate
+only when continuous filtering is the extension's clearly described single
+purpose, access is limited to named sites, no data is transmitted, and users
+can stop the behavior by disabling or uninstalling the extension. In every
+case, users should understand when an extension reads page content, writes
+files, or changes browser state.
 
 ### Forkable
 
@@ -276,6 +281,8 @@ Canonical icons:
 
 ![OSBE Full Page Capture icon](../extensions/full-page-capture/assets/icon.png)
 
+![OSBE YouTube Shorts Remover icon](../extensions/youtube-shorts-remover/assets/icon.png)
+
 Good concepts:
 
 - A rounded-square liquid-glass app tile with one simple high-contrast symbol inside
@@ -296,6 +303,7 @@ Brand and extension icon system:
 - Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
 - Site Blocker: glass tile plus a simple browser/page shape with a large red block sign over the page.
 - Full Page Capture: glass tile plus one oversized coral downward arrow bracketed by two minimal navy capture corners; do not enclose it in a browser or page frame.
+- YouTube Shorts Remover: glass tile plus one vertical short-form video card crossed by a large coral removal slash.
 - Future extensions: same glass tile, same lighting, same border radius, unique inner symbol.
 
 Icon rules:

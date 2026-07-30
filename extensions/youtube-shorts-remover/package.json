@@ -1,0 +1,30 @@
+{
+  "name": "@osbe/youtube-shorts-remover",
+  "displayName": "OSBE YouTube Shorts Remover",
+  "version": "0.0.1",
+  "description": "Remove YouTube Shorts from navigation, feeds, search results, recommendations, and direct viewing.",
+  "author": "Fran",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "test": "tsx --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@osbe/config": "workspace:*",
+    "plasmo": "catalog:"
+  },
+  "devDependencies": {
+    "@types/chrome": "catalog:",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  },
+  "manifest": {
+    "permissions": [],
+    "host_permissions": [
+      "https://www.youtube.com/*"
+    ]
+  }
+}

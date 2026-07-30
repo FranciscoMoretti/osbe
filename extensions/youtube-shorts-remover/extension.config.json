@@ -1,0 +1,54 @@
+{
+  "$schema": "../../schemas/extension.schema.json",
+  "schemaVersion": 1,
+  "slug": "youtube-shorts-remover",
+  "packageName": "@osbe/youtube-shorts-remover",
+  "displayName": "OSBE YouTube Shorts Remover",
+  "surface": "content-only",
+  "summary": "Remove YouTube Shorts from navigation, feeds, search results, recommendations, and direct viewing.",
+  "singlePurpose": "Remove YouTube Shorts surfaces so people can browse longer-form YouTube content without short-form distractions.",
+  "permissions": [],
+  "hostPermissions": [
+    {
+      "name": "https://www.youtube.com/*",
+      "justification": "Required to hide Shorts navigation, shelves, cards, and recommendations on YouTube and redirect direct Shorts routes."
+    }
+  ],
+  "dataUsage": ["webHistory", "websiteContent"],
+  "remoteCode": {
+    "used": false,
+    "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."
+  },
+  "store": {
+    "category": "Workflow & Planning",
+    "description": "Browse YouTube without short-form distractions.\n\nOSBE YouTube Shorts Remover works automatically whenever you visit YouTube. It removes the Shorts navigation entry, Shorts shelves, individual Shorts cards in feeds and search results, Shorts recommendations, and channel Shorts tabs. Direct Shorts pages are redirected away from the Shorts viewer.\n\nThere are no menus, accounts, settings, or usage tracking. Install the extension and it immediately keeps Shorts out of the YouTube experience.\n\nThe extension runs locally, requests access only to youtube.com, does not store or transmit browsing data, and contains no remote code. Its source code and permission rationale are public in the OSBE repository.",
+    "language": "English",
+    "homepageUrl": "https://github.com/FranciscoMoretti/osbe",
+    "supportUrl": "https://github.com/FranciscoMoretti/osbe/issues",
+    "privacyPolicyUrl": "https://github.com/FranciscoMoretti/osbe/blob/main/extensions/youtube-shorts-remover/PRIVACY.md",
+    "matureContent": false,
+    "visibility": "public",
+    "pricing": "free",
+    "regions": "all",
+    "automaticPublish": true,
+    "screenshots": [
+      {
+        "file": "store-assets/screenshots/youtube-shorts-remover-1280x800.png",
+        "title": "YouTube search results with Shorts surfaces removed"
+      }
+    ],
+    "promoTiles": [],
+    "review": {
+      "loginRequired": false,
+      "instructions": "1. Open https://www.youtube.com/results?search_query=javascript without signing in. 2. Confirm the left navigation has no Shorts entry and the results contain no visible Shorts shelf or Shorts cards. 3. Open any https://www.youtube.com/shorts/<video-id> URL and confirm it redirects to the YouTube home page. The extension has no popup or settings."
+    }
+  },
+  "release": {
+    "workflow": "submit-youtube-shorts-remover.yml",
+    "secretName": "YOUTUBE_SHORTS_REMOVER_SUBMIT_KEYS"
+  },
+  "smoke": {
+    "activationSelector": "#osbe-youtube-shorts-filter",
+    "page": "https://www.youtube.com/results?search_query=javascript"
+  }
+}

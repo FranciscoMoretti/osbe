@@ -8,7 +8,7 @@
   "summary": "{{displayName}} browser extension.",
   "singlePurpose": "TODO: Describe the one narrow purpose of this extension.",
   "permissions": {{permissions}},
-  "hostPermissions": [],
+  "hostPermissions": {{hostPermissions}},
   "dataUsage": [],
   "remoteCode": {
     "used": false,
@@ -42,7 +42,5 @@
     "workflow": "submit-{{slug}}.yml",
     "secretName": "{{secretName}}"
   },
-  "smoke": {
-    "page": "{{smokePage}}"
-  }
+  "smoke": {{smoke}}
 }

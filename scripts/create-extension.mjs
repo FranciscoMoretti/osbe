@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -27,16 +27,25 @@ const workflowTemplate = path.join(
 const argumentsList = process.argv.slice(2)
 const slug = argumentsList[0]
 const surfaceFlagIndex = argumentsList.indexOf("--surface")
+const matchFlagIndex = argumentsList.indexOf("--match")
 const surface =
   surfaceFlagIndex === -1 ? "popup" : argumentsList[surfaceFlagIndex + 1]
+const contentMatch =
+  matchFlagIndex === -1 ? undefined : argumentsList[matchFlagIndex + 1]
+const firstFlagIndex = [surfaceFlagIndex, matchFlagIndex]
+  .filter((index) => index !== -1)
+  .sort((left, right) => left - right)[0]
 const displayName = argumentsList
-  .slice(1, surfaceFlagIndex === -1 ? undefined : surfaceFlagIndex)
+  .slice(1, firstFlagIndex ?? argumentsList.length)
   .join(" ")
-const surfaceDefinition = createSurfaceDefinition(surface, displayName)
+const surfaceDefinition = createSurfaceDefinition(surface, displayName, {
+  contentMatch,
+  slug
+})
 
 if (!slug || !displayName) {
   console.error(
-    'Usage: pnpm new:extension <kebab-name> "OSBE Display Name" [--surface popup|action-result|dashboard]'
+    'Usage: pnpm new:extension <kebab-name> "OSBE Display Name" [--surface popup|action-result|dashboard|content-only] [--match "https://example.com/*"]'
   )
   process.exit(1)
 }
@@ -52,7 +61,16 @@ if (!displayName.startsWith("OSBE ")) {
 }
 
 if (!surfaceDefinition) {
-  console.error("Surface must be popup, action-result, or dashboard")
+  console.error(
+    "Surface must be popup, action-result, dashboard, or content-only"
+  )
+  process.exit(1)
+}
+
+if (surface === "content-only" && !isHttpsMatchPattern(contentMatch)) {
+  console.error(
+    'Content-only extensions require an HTTPS match pattern, for example: --match "https://example.com/*"'
+  )
   process.exit(1)
 }
 
@@ -63,10 +81,12 @@ const secretName = `${slug.toUpperCase().replaceAll("-", "_")}_SUBMIT_KEYS`
 const values = {
   slug,
   displayName,
+  contentMatch: surfaceDefinition.contentMatch ?? "",
+  hostPermissions: JSON.stringify(surfaceDefinition.hostPermissions, null, 2),
   manifest: JSON.stringify(surfaceDefinition.manifest, null, 2),
   permissions: JSON.stringify(surfaceDefinition.permissions, null, 2),
   secretName,
-  smokePage: surfaceDefinition.smokePage,
+  smoke: JSON.stringify(surfaceDefinition.smoke, null, 2),
   surface
 }
 
@@ -112,6 +132,7 @@ try {
 
 await renderDirectory(templateRoot, extensionRoot)
 await renderDirectory(path.join(surfaceTemplatesRoot, surface), extensionRoot)
+await configureSurfaceFiles()
 await generateExtensionIcons(repoRoot, { slug })
 const extensionDefinition = JSON.parse(
   await readFile(path.join(extensionRoot, "extension.config.json"), "utf8")
@@ -126,3 +147,39 @@ console.log(`Surface: ${surface}`)
 console.log(`Registered .github/workflows/${workflowName}`)
 console.log(`Run: pnpm install`)
 console.log(`Then: pnpm extension dev ${slug}`)
+
+async function configureSurfaceFiles() {
+  if (
+    surfaceDefinition.policy.forbiddenFiles.length === 0 &&
+    surfaceDefinition.policy.generatedDependencyRemovals.length === 0
+  ) {
+    return
+  }
+
+  await Promise.all(
+    surfaceDefinition.policy.forbiddenFiles.map((relativePath) =>
+      rm(path.join(extensionRoot, relativePath), { force: true })
+    )
+  )
+
+  const packagePath = path.join(extensionRoot, "package.json")
+  const packageJson = JSON.parse(await readFile(packagePath, "utf8"))
+  for (const dependency of surfaceDefinition.policy
+    .generatedDependencyRemovals) {
+    delete packageJson.dependencies[dependency]
+    delete packageJson.devDependencies[dependency]
+  }
+  await writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`)
+
+  const tsconfigPath = path.join(extensionRoot, "tsconfig.json")
+  const tsconfig = JSON.parse(await readFile(tsconfigPath, "utf8"))
+  delete tsconfig.compilerOptions.paths["@osbe/ui/*"]
+  await writeFile(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`)
+}
+
+function isHttpsMatchPattern(value) {
+  return (
+    typeof value === "string" &&
+    /^https:\/\/(?:\*\.)?[a-z0-9.-]+\/\S*$/i.test(value)
+  )
+}
