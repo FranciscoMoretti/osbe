@@ -19,10 +19,9 @@ fi
 client_id="$(jq -r '.chrome.clientId' <<< "$SUBMIT_KEYS")"
 client_secret="$(jq -r '.chrome.clientSecret' <<< "$SUBMIT_KEYS")"
 refresh_token="$(jq -r '.chrome.refreshToken' <<< "$SUBMIT_KEYS")"
-extension_id="$(jq -r '.chrome.extId' <<< "$SUBMIT_KEYS")"
 expected_extension_id="$(jq -r '.store.storeId // empty' "$CONFIG_PATH")"
 
-for value_name in client_id client_secret refresh_token extension_id; do
+for value_name in client_id client_secret refresh_token; do
   value="${!value_name}"
   if [ -z "$value" ] || [ "$value" = "null" ]; then
     echo "SUBMIT_KEYS is missing chrome.${value_name}"
@@ -35,10 +34,8 @@ if [ -z "$expected_extension_id" ]; then
   exit 1
 fi
 
-if [ "$extension_id" != "$expected_extension_id" ]; then
-  echo "SUBMIT_KEYS chrome.extId does not match $CONFIG_PATH store.storeId"
-  exit 1
-fi
+extension_id="$expected_extension_id"
+publisher_id="${CHROME_WEB_STORE_PUBLISHER_ID:-cb34bb3b-8b83-4527-99df-ec17a12d952c}"
 
 token_response="$(mktemp)"
 token_status="$(
@@ -57,6 +54,26 @@ if [ "$token_status" != "200" ]; then
 fi
 
 access_token="$(jq -r '.access_token' "$token_response")"
+
+if [ "${CANCEL_PENDING_SUBMISSION:-false}" = "true" ]; then
+  cancel_response="$(mktemp)"
+  cancel_status="$(
+    curl -sS -o "$cancel_response" -w "%{http_code}" \
+      -X POST \
+      -H "Authorization: Bearer ${access_token}" \
+      -H "Content-Length: 0" \
+      "https://chromewebstore.googleapis.com/v2/publishers/${publisher_id}/items/${extension_id}:cancelSubmission"
+  )"
+
+  echo "Chrome Web Store cancel response (${cancel_status}):"
+  if [ -s "$cancel_response" ]; then
+    jq . "$cancel_response" || cat "$cancel_response"
+  fi
+
+  if [ "$cancel_status" != "200" ] && [ "$cancel_status" != "204" ]; then
+    exit 1
+  fi
+fi
 
 upload_response="$(mktemp)"
 upload_status="$(

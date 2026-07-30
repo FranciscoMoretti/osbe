@@ -11,6 +11,7 @@ jobs:
   submit:
     uses: ./.github/workflows/_submit-extension.yml
     with:
+      cancel_pending_submission: true
       extension: youtube-shorts-remover
     secrets:
-      submit_keys: ${{ secrets.YOUTUBE_SHORTS_REMOVER_SUBMIT_KEYS }}
+      submit_keys: ${{ secrets.SUBMIT_KEYS }}

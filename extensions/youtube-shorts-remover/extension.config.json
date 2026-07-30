@@ -49,7 +49,7 @@
   },
   "release": {
     "workflow": "submit-youtube-shorts-remover.yml",
-    "secretName": "YOUTUBE_SHORTS_REMOVER_SUBMIT_KEYS"
+    "secretName": "SUBMIT_KEYS"
   },
   "smoke": {
     "activationSelector": "#osbe-youtube-shorts-filter",

@@ -7,6 +7,11 @@ on:
         description: "Extension directory slug"
         required: true
         type: string
+      cancel_pending_submission:
+        description: "Cancel the current review before uploading this build"
+        required: false
+        default: false
+        type: boolean
     secrets:
       submit_keys:
         description: "Chrome Web Store submission credentials"
@@ -38,6 +43,7 @@ jobs:
         run: pnpm extension package "${{ inputs.extension }}"
       - name: Upload and submit extension
         env:
+          CANCEL_PENDING_SUBMISSION: ${{ inputs.cancel_pending_submission }}
           CONFIG_PATH: extensions/${{ inputs.extension }}/extension.config.json
           SUBMIT_KEYS: ${{ secrets.submit_keys }}
           ZIP_PATH: extensions/${{ inputs.extension }}/build/chrome-mv3-prod.zip
