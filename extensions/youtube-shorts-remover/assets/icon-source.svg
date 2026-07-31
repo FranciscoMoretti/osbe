@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="OSBE YouTube Shorts Remover icon">
-  <rect x="20" y="20" width="472" height="472" rx="96" fill="#e0f2fe"/>
-  <rect x="20" y="20" width="472" height="472" rx="96" fill="none" stroke="#bfdbfe" stroke-width="18"/>
-  <rect x="154" y="76" width="204" height="360" rx="76" fill="#ffffff" stroke="#0f172a" stroke-width="30"/>
-  <path d="m230 190 92 66-92 66Z" fill="#0f172a"/>
-  <path d="M132 382 380 134" fill="none" stroke="#ff4d3d" stroke-width="56" stroke-linecap="round"/>
+  <rect x="20" y="20" width="472" height="472" rx="96" fill="#111827"/>
+  <rect x="20" y="20" width="472" height="472" rx="96" fill="none" stroke="#020617" stroke-width="18"/>
+  <path d="M52 394c83 54 300 73 408-8" fill="none" stroke="#374151" stroke-width="16" stroke-linecap="round"/>
+  <path d="M186 132h140c38 0 68 30 68 68v112c0 38-30 68-68 68H186c-38 0-68-30-68-68V200c0-38 30-68 68-68Z" fill="#ff2f24"/>
+  <path d="m227 190 92 66-92 66Z" fill="#fff"/>
+  <path d="M132 384 380 136" fill="none" stroke="#fff" stroke-width="42" stroke-linecap="round"/>
 </svg>

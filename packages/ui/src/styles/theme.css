@@ -21,7 +21,7 @@
     --ring: 199 89% 48%;
     --radius: 0.5rem;
 
-    --brand-ink: 222.2 47.4% 11.2%;
+    --brand-ink: 219.3 60.8% 10%;
     --brand-paper: 210 40% 98%;
     --brand-blue: 215.4 100% 45.5%;
     --brand-cyan: 198.6 88.7% 48.4%;
@@ -31,6 +31,12 @@
     --brand-glass: 204 93.8% 93.7%;
     --brand-glass-border: 213.3 96.9% 87.3%;
     --brand-glow: 199 89% 72%;
+    --brand-markdown: 221.6 100% 52.5%;
+    --brand-blocker: 4.9 100% 62%;
+    --brand-capture: 36.2 100% 45.5%;
+    --brand-resizer: 262.3 61.5% 51.6%;
+    --brand-shorts: 221.2 39.3% 11%;
+    --brand-youtube: 3.1 100% 57.1%;
   }
 
   * {

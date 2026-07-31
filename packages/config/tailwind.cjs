@@ -17,8 +17,14 @@ const theme = {
         glow: "hsl(var(--brand-glow))",
         green: "hsl(var(--brand-green))",
         ink: "hsl(var(--brand-ink))",
+        blocker: "hsl(var(--brand-blocker))",
+        capture: "hsl(var(--brand-capture))",
+        markdown: "hsl(var(--brand-markdown))",
         paper: "hsl(var(--brand-paper))",
-        red: "hsl(var(--brand-red))"
+        red: "hsl(var(--brand-red))",
+        resizer: "hsl(var(--brand-resizer))",
+        shorts: "hsl(var(--brand-shorts))",
+        youtube: "hsl(var(--brand-youtube))"
       },
       primary: {
         DEFAULT: "hsl(var(--primary))",

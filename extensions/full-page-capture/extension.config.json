@@ -6,6 +6,13 @@
   "displayName": "OSBE Full Page Capture",
   "surface": "action-result",
   "summary": "Capture complete web pages as full-height PNG images or paginated PDF files.",
+  "website": {
+    "order": 3,
+    "description": "Capture entire pages as PNG or PDF.",
+    "trigger": "On click",
+    "data": "Captures are not retained",
+    "accent": "#e88c00"
+  },
   "singlePurpose": "Capture the full height of the current webpage and let the user download the result as PNG or PDF.",
   "permissions": [
     {

@@ -25,7 +25,7 @@
     --control-text: hsl(0 0% 100%);
     --header-surface: hsl(0 0% 100%);
     --header-text: hsl(var(--brand-ink));
-    --header-border: hsl(var(--brand-cyan));
+    --header-border: hsl(var(--brand-markdown));
     --shadow: 0 18px 42px hsl(222 47% 11% / 0.14);
     @apply w-[382px] overflow-hidden text-sm;
     background: var(--surface);
@@ -40,8 +40,8 @@
     --text: hsl(210 40% 96%);
     --text-muted: hsl(215 16% 58%);
     --border-soft: hsl(220 32% 17%);
-    --control: hsl(199 88% 36%);
-    --control-strong: hsl(199 88% 43%);
+    --control: hsl(var(--brand-markdown));
+    --control-strong: hsl(221.6 100% 60%);
     --control-text: hsl(0 0% 100%);
     --header-surface: hsl(225 48% 3%);
     --header-text: hsl(210 40% 98%);

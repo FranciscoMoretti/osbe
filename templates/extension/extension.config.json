@@ -6,6 +6,13 @@
   "displayName": "{{displayName}}",
   "surface": "{{surface}}",
   "summary": "{{displayName}} browser extension.",
+  "website": {
+    "order": 99,
+    "description": "TODO: Write a short, concrete catalogue description.",
+    "trigger": "On click",
+    "data": "TODO: State what is stored locally.",
+    "accent": "#0d5bff"
+  },
   "singlePurpose": "TODO: Describe the one narrow purpose of this extension.",
   "permissions": {{permissions}},
   "hostPermissions": {{hostPermissions}},

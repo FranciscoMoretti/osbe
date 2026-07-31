@@ -6,6 +6,13 @@
   "displayName": "OSBE Markdown Clipper",
   "surface": "popup",
   "summary": "One-click Markdown clipper. Save pages and selections as clean Markdown with images, frontmatter, preview, copy, and download.",
+  "website": {
+    "order": 1,
+    "description": "Save pages and selections as clean Markdown.",
+    "trigger": "On click",
+    "data": "Files + settings local",
+    "accent": "#0d5bff"
+  },
   "singlePurpose": "Convert the current webpage or selected content into Markdown and let the user preview, copy, or download the result.",
   "permissions": [
     {

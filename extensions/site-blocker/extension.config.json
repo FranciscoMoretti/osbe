@@ -6,6 +6,13 @@
   "displayName": "OSBE Site Blocker",
   "surface": "dashboard",
   "summary": "Block distracting websites and allow temporary access when you need it.",
+  "website": {
+    "order": 2,
+    "description": "Block distracting sites with rules that stay local.",
+    "trigger": "On navigation",
+    "data": "Rules stored locally",
+    "accent": "#ff4d3d"
+  },
   "singlePurpose": "Block websites chosen by the user and manage temporary access to those websites from a local dashboard.",
   "permissions": [
     {

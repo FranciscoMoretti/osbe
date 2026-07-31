@@ -1,342 +1,289 @@
-# OSBE Brand Brief
+# OSBE Brand System
 
-OSBE stands for Open Source Browser Extensions: small, transparent browser tools that users can inspect, reason about, clone, and adapt.
+OSBE stands for Open Source Browser Extensions: small browser tools with public source, clear permissions, and behaviour people can reason about.
 
-## Core Idea
+The brand should feel like an open workshop. Precise, useful, and visibly constructed. Never like security theatre.
 
-Browser extensions run close to private browsing activity. Many ask for invasive permissions, and users are often expected to trust an unknown developer or company without a practical way to verify what is installed.
+## Brand idea
 
-OSBE exists to make useful browser extensions feel understandable again. Each extension should be open source, narrowly scoped, and clear about what it can access and when it runs.
+### Primary line
+
+> Small tools. Open source. No mystery.
+
+This is the public-facing OSBE promise. It is specific enough to be memorable and broad enough to hold the full extension catalogue.
+
+### Supporting line
+
+> Focused browser extensions with public source, plain-language permissions, and no hidden business model.
+
+### Developer line
+
+> Fork one. Build your own.
+
+### Closing line
+
+> The code is the product.
 
 ## Positioning
 
-OSBE is an open-source collection of focused browser extensions for people who want useful tools without opaque permissions.
+OSBE is an open-source collection of focused browser extensions for people who want useful tools without opaque permissions or unnecessary product machinery.
 
-The brand should compete on trust, clarity, and restraint rather than on having the most features.
+OSBE does not claim that open source makes software automatically safe. It makes the product inspectable:
 
-## Tagline Options
+- the code is public;
+- permissions have plain-language justifications;
+- runtime behaviour is documented;
+- product data stays local unless explicitly stated otherwise;
+- builds and release inputs can be reproduced;
+- every extension is small enough to understand.
 
-- Browser extensions you can inspect.
-- Browser extensions you can trust.
-- Useful extensions. Open by default.
-- Small browser tools, transparent by design.
-- Know what your extension can do.
-- Open-source extensions with fewer leaps of faith.
+## Brand pillars
 
-Recommended primary tagline:
+### Inspectable
 
-```text
-Browser extensions you can trust.
-```
+Source, permissions, data use, and runtime triggers are part of the product experience—not legal text hidden after installation.
 
-It is short, memorable, and directly addresses the problem OSBE exists to solve. The surrounding copy should make the trust claim specific: open source, focused permissions, user-invoked behavior, and clear build instructions.
+### Focused
 
-## One-Liner
+One extension, one clear job. New features should deepen that job rather than turn an extension into a platform.
 
-OSBE builds open-source browser extensions with focused permissions, clear behavior, and code users can inspect or fork.
+### User-controlled
 
-## Short Description
-
-OSBE is a collection of open-source browser extensions built around transparency and restraint. Each extension is designed to do one useful job, request only the permissions it needs, and make its behavior inspectable through public source code.
-
-## Longer Description
-
-Browser extensions can be powerful, but that power often comes with broad access to pages, tabs, downloads, and browsing data. OSBE was created for users and developers who want useful browser tools without treating trust as a black box.
-
-Every OSBE extension is open source, focused in scope, and explicit about its permissions. You can install the published extension, review the code, build it yourself, or fork it for your own workflow.
-
-## Brand Pillars
-
-### Transparent
-
-The source code, permissions, and behavior should be easy to find and understand. Do not hide behind vague privacy language.
-
-### Minimal
-
-Each extension should solve one clear problem and avoid broad permissions unless they are truly required.
-
-### User-Controlled
-
-Prefer behavior the user invokes directly. Always-on behavior is appropriate
-only when continuous filtering is the extension's clearly described single
-purpose, access is limited to named sites, no data is transmitted, and users
-can stop the behavior by disabling or uninstalling the extension. In every
-case, users should understand when an extension reads page content, writes
-files, or changes browser state.
+Prefer explicit user action. When an extension must run automatically, name the exact navigation or site boundary.
 
 ### Forkable
 
-OSBE should feel like a set of useful products and a set of starting points. Developers should be able to clone, modify, and build their own versions.
+OSBE is a useful catalogue and a collection of working starting points. The foundation should make it easier to study, adapt, and ship an extension.
 
 ## Voice
 
-OSBE should sound calm, technical, and direct.
+OSBE sounds calm, direct, technically literate, and slightly editorial.
 
 Use:
 
-- "This extension runs when you click it."
-- "The source code is public."
-- "It requests `activeTab` instead of broad host permissions."
-- "Build it yourself or fork it."
+- “Runs when you click it.”
+- “Stores presets in `chrome.storage.local`.”
+- “Requests access only to `youtube.com`.”
+- “Read the source or build it yourself.”
+- “Every permission is explained.”
 
 Avoid:
 
-- "Military-grade security"
-- "Completely safe"
-- "Privacy guaranteed"
-- "The ultimate extension platform"
-- Fear-heavy language that makes the browser extension ecosystem sound universally hostile
+- “Military-grade security”
+- “Completely safe”
+- “Privacy guaranteed”
+- “The ultimate extension platform”
+- “Revolutionary”
+- fear-heavy claims about other extensions
+- vague verbs such as “optimise”, “streamline”, or “supercharge”
 
-## Message Hierarchy
+Write in short, active sentences. Prefer a concrete mechanism over a trust adjective.
 
-1. Extensions can be invasive, so trust matters.
-2. OSBE extensions are open source and inspectable.
-3. Each extension is narrowly scoped and permission-conscious.
-4. Users can install, review, self-build, clone, or fork.
-5. Each published extension demonstrates the same transparent, focused model.
+## Message hierarchy
 
-## Markdown Clipper Copy
+1. The extension does one useful job.
+2. The source is public.
+3. Permissions and runtime behaviour are explicit.
+4. Data handling is local-first and documented.
+5. People can install, inspect, build, or fork it.
 
-### Product One-Liner
-
-OSBE Markdown Clipper saves pages and selections as portable Markdown files.
-
-### Store Short Description
-
-Clip pages or selected content into Markdown with local image assets, user-invoked access, and no broad host permissions.
-
-### Store Positioning
-
-Markdown Clipper is the first OSBE extension: a focused, open-source tool for saving web content as Markdown. It runs only when you invoke it from the popup or context menu, and it uses `activeTab` rather than broad site access.
-
-## Trust Copy Pattern
-
-Every extension page should answer these questions plainly:
+Every product page should answer:
 
 - What does it do?
-- What permissions does it request?
 - When does it run?
-- What data does it read?
-- What data does it store or transmit?
-- Where is the source code?
-- How can I build it myself?
+- What can it access?
+- What does it store?
+- Does anything leave the browser?
+- Where is the source?
+- How can I build it?
 
-Suggested section title:
+## Visual idea
 
-```text
-What this extension can access
-```
+The visual system is an open-source field manual:
 
-## Naming System
+- true paper white;
+- deep navy ink;
+- expressive condensed display type;
+- readable humanist body type;
+- small monospace technical annotations;
+- thin rules and source-line gutters;
+- asymmetrical editorial grids;
+- real manifests, permissions, and product screenshots as visual content.
 
-Use OSBE as the umbrella brand and clear functional product names for extensions.
-
-Pattern:
-
-```text
-OSBE [Function]
-```
-
-Examples:
-
-- OSBE Markdown Clipper
-- OSBE Link Cleaner
-- OSBE Tab Notes
-- OSBE Page Archive
-- OSBE Form Filler
-
-For public pages, introduce the full name once:
-
-```text
-Open Source Browser Extensions (OSBE)
-```
-
-Then use:
-
-```text
-OSBE
-```
-
-## Visual Direction
-
-The visual system should feel open, precise, and utilitarian rather than cyber-security themed.
-
-Suggested attributes:
-
-- Clean UI screenshots
-- Source-code and permission details shown as first-class content
-- High contrast text
-- Simple line icons
-- Product screenshots over abstract illustration
-- Plain language privacy callouts
+The system should feel engineered but not cold. Product colour provides the energy.
 
 Avoid:
 
-- Padlock-heavy security cliches
-- Dark hacker aesthetics
-- Excessive gradients
-- Vague stock imagery
-- Claims that imply open source alone guarantees safety
+- cyber-security clichés;
+- shields, padlocks, and hacker terminals;
+- purple SaaS gradients;
+- neon glows and floating orbs;
+- bento-card repetition;
+- decorative dashboards or fake metrics;
+- excessive pills and badges;
+- stock imagery.
 
-## Color Direction
+## Colour
 
-Use a practical palette that supports documentation, extension UI, store artwork, and the minimal glass icon family. The palette should read as transparent and technical, with ink as the primary UI color, blue/cyan as restrained connective accents, and coral reserved for one high-attention functional or brand-completing accent.
+### Core
 
-- Ink: `#0f172a`
-- Paper: `#f8fafc`
-- Surface: `#ffffff`
-- Glass: `#e0f2fe`
-- Glass Border: `#bfdbfe`
-- Source Blue: `#005fe8`
-- Glass Cyan: `#0ea5e9`
-- Block Red: `#ff4d3d`
-- Verify Green: `#16a34a`
-- Caution Amber: `#d97706`
+| Role         | Value     | Use                                          |
+| ------------ | --------- | -------------------------------------------- |
+| Ink          | `#0b1528` | Text, rules, primary actions, dark bands     |
+| Paper        | `#ffffff` | Website and documentation background         |
+| Muted ink    | `#5f6877` | Supporting copy and metadata                 |
+| Soft rule    | `#dce1e7` | Table structure and quiet separators         |
+| Glass        | `#e0f2fe` | Master OSBE mark and neutral brand surfaces  |
+| Glass border | `#bfdbfe` | Master mark edge                             |
+| Signal coral | `#ff4d3d` | OSBE node and high-attention product meaning |
 
-Ink is the primary UI/action color, matching the high-contrast foreground marks in the icon system. Blue is the connective product accent, and cyan should appear as a focus color or small reflective detail rather than a heavy background treatment. Avoid top-edge accent strips in icons and product UI. Coral may complete the OSBE master mark or identify one essential product action; in UI, reserve it for destructive actions and explicit blocked states. Green and amber should be reserved for meaningful trust, permission, and warning states.
+### Product recognition colours
 
-## Theme Tokens
+| Product                | Colour                        | Recognition job          |
+| ---------------------- | ----------------------------- | ------------------------ |
+| Markdown Clipper       | Cobalt `#0d5bff`              | Capture text / Markdown  |
+| Site Blocker           | Coral `#ff4d3d`               | Stop / block             |
+| Full Page Capture      | Amber `#e88c00`               | Capture / output         |
+| Window Resizer         | Violet `#7138cf`              | Dimensions / layout      |
+| YouTube Shorts Remover | Ink `#111827` + red `#ff2f24` | YouTube-specific removal |
 
-OSBE UI should use shadcn-style CSS variables so extension popups, docs, and future apps can share the same semantic theme.
+Product colour is not decoration. It exists to create instant toolbar recognition and a stable wayfinding cue across the website, store, and extension UI.
 
-Recommended light theme tokens:
+Semantic success, warning, and error colours remain separate from product identity.
 
-```css
-:root {
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --primary: 222 47% 11%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
-  --accent: 199 100% 96%;
-  --accent-foreground: 222 47% 11%;
-  --destructive: 5 100% 62%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 199 89% 48%;
-  --radius: 0.5rem;
+## Typography
 
-  --brand-ink: 222.2 47.4% 11.2%;
-  --brand-paper: 210 40% 98%;
-  --brand-blue: 215.4 100% 45.5%;
-  --brand-cyan: 198.6 88.7% 48.4%;
-  --brand-red: 4.9 100% 62%;
-  --brand-green: 142.1 76.2% 36.3%;
-  --brand-amber: 32.1 94.6% 43.7%;
-  --brand-glass: 204 93.8% 93.7%;
-  --brand-glass-border: 213.3 96.9% 87.3%;
-}
+Website:
+
+- Display: Barlow Condensed, weights 500–700
+- Body: IBM Plex Sans, weights 400–600
+- Technical annotations: IBM Plex Mono, weights 400–500
+
+Extension UI may use platform fonts for performance and native density, but headings should remain strong, labels should remain plain, and technical values should use a deliberate monospace stack.
+
+Rules:
+
+- large display copy is short and uppercase;
+- body copy uses sentence case;
+- monospace is for facts, commands, paths, and metadata—not whole paragraphs;
+- buttons use specific actions such as “Add to Chrome”, “Inspect the source”, and “Copy command”;
+- avoid tiny uppercase labels unless they describe real structure.
+
+## Master mark
+
+The OSBE master mark is a pale glass tile with a thick open ink ring and one coral node.
+
+The ring represents a public shared core. The node represents one focused tool joining it.
+
+Canonical sources:
+
+- `docs/assets/osbe-icon-source.svg`
+- `docs/assets/osbe-logo-official.png`
+
+Do not use a shield, lock, puzzle piece, or angle brackets as the master symbol.
+
+## Extension icon system
+
+Extension icons are a family, not clones.
+
+Shared DNA:
+
+- `1:1` square;
+- the same rounded tile geometry;
+- transparent outer corners;
+- restrained lower-rim material cue;
+- one oversized white functional symbol;
+- strong contrast at `16px`;
+- no text, shadows, or tiny browser chrome.
+
+Differentiation:
+
+- each product owns one dominant colour;
+- each product owns one primary silhouette;
+- no two adjacent toolbar icons should depend on the same outer frame;
+- colour and silhouette must both work before detail is visible.
+
+Product symbols:
+
+- Markdown Clipper: Markdown `M` plus down arrow.
+- Site Blocker: block sign only.
+- Full Page Capture: down arrow plus two opposing capture corners.
+- Window Resizer: opposing diagonal arrows.
+- YouTube Shorts Remover: red short-video/play surface crossed by one white removal stroke.
+
+The pale master OSBE tile remains neutral. Product icons use saturated colour because toolbar recognition takes priority over literal material consistency.
+
+Canonical source and generation:
+
+```text
+extensions/<slug>/assets/icon-source.svg
+pnpm extension artwork <slug>
 ```
 
-Use semantic tokens first:
+The source SVG must generate both runtime and `128px` store icons through the repository artwork pipeline. Never maintain hand-edited PNG variants.
 
-- Primary actions: `primary`
-- Blue/cyan accents: `brand-blue`, `brand-cyan`, `accent`, and `ring`
-- Quiet panels and status backgrounds: `muted`, `secondary`, or `accent`
-- Blocking and errors: `destructive`
-- Focus outlines: `ring`
-- OSBE-specific art direction: `brand-*`
+Before approval, inspect every icon at:
 
-## Product UI Direction
+- `512px` for geometry;
+- `128px` for store presentation;
+- `32px` for extension menus;
+- `16px` against a dark toolbar.
 
-Extension menus should follow the minimal logo system rather than mimic the richer icon rendering.
+## Website system
 
-Use:
+The website is a catalogue and a trust document, not a generic marketing funnel.
 
-- Solid paper or white backgrounds
-- Ink primary buttons
-- Small cyan or blue accents in icons and focus rings
-- Simple borders over shadows
-- One clear action per popup
-- Small metadata text for trust details such as "Runs on click" and "Current tab only"
+Page rhythm:
 
-Avoid:
+1. Promise: “Small tools. Open source. No mystery.”
+2. Product signal: differentiated icons and a permission ledger.
+3. Catalogue: five tools and five clear jobs.
+4. Trust contract: source, permissions, data, and runtime.
+5. Developer invitation: fork one and build your own.
 
-- Decorative radial gradients in product UI
-- Top accent rules or top-edge highlight strips
-- Heavy glass panels, blur layers, or glow effects
-- Multiple bordered pills when plain metadata is enough
-- Bright blue primary buttons unless the product meaning specifically needs blue
-- Card-heavy layouts inside small extension popups
+Use open grids, rules, bands, and ledgers. Avoid wrapping every idea in a card.
 
-## Logo Direction
+All product facts should come from `extension.config.json` or another canonical repository source. Marketing copy must never contradict the manifest.
 
-The icon family should suggest transparency, small focused tools, and browser-native utility. Use a pale, translucent glass tile to communicate inspectability without leaning on security cliches, but keep toolbar icons simple enough to read at `16px`.
+## Extension UI
 
-Canonical icons:
+Extension interfaces should feel like focused instruments:
 
-![OSBE logo](assets/osbe-logo-official.png)
+- one obvious primary action;
+- plain white or paper surfaces;
+- deep ink controls;
+- product colour for selection, focus, and wayfinding;
+- simple borders over heavy shadows;
+- small trust metadata where it helps;
+- no decorative glass, glow, or repeated cards in compact popups.
 
-![OSBE Markdown Clipper icon](../extensions/markdown-clipper/assets/icon.png)
+Product colour must not replace semantic states. Destructive, warning, and success actions keep their normal meaning.
 
-![OSBE Site Blocker icon](../extensions/site-blocker/assets/icon.png)
+## Asset checklist
 
-![OSBE Full Page Capture icon](../extensions/full-page-capture/assets/icon.png)
+Before a brand change ships:
 
-![OSBE YouTube Shorts Remover icon](../extensions/youtube-shorts-remover/assets/icon.png)
+- toolbar icons remain distinct at `16px`;
+- SVG source and generated PNGs match;
+- Chrome Web Store icons are regenerated;
+- the website builds and passes responsive QA;
+- README images render on GitHub;
+- product names and permission facts match extension metadata;
+- light and dark surrounding surfaces preserve contrast;
+- focus states remain visible;
+- animation respects `prefers-reduced-motion`.
 
-Good concepts:
+## Product quality bar
 
-- A rounded-square liquid-glass app tile with one simple high-contrast symbol inside
-- A near-black foreground mark over a very light glass background
-- An inverted dark-ink tile with a white or pale-cyan symbol when the icon appears on a light product surface
-- A restrained cyan side or lower edge only when extra separation is needed
-- At most one large functional accent badge when a second concept is essential
-- The letters OSBE in a plain wordmark paired with the glass module icon
-- Extension variants that keep the same glass tile, blue lighting, and border radius while changing only the functional symbol
+Every OSBE extension should ship with:
 
-Avoid angle brackets, shields, locks, and puzzle-piece cliches. OSBE is about inspectability and user agency, not a promise of invulnerability.
-
-Brand and extension icon system:
-
-- OSBE base: glass tile plus a thick near-black open ring completed by one coral node. The ring represents an open shared core; the node represents a focused extension joining it.
-- Markdown Clipper: glass tile plus a large near-black Markdown mark (`M` with the down-arrow to its right) and one large coral paperclip badge overlapping the arrow.
-- Inverted OSBE base: dark ink tile plus a simple white open/source mark.
-- Inverted Markdown Clipper: dark ink tile plus a large white Markdown mark (`M` with the down-arrow to its right); use a light or coral paperclip badge only if it retains toolbar contrast.
-- Site Blocker: glass tile plus a simple browser/page shape with a large red block sign over the page.
-- Full Page Capture: glass tile plus one oversized coral downward arrow bracketed by two minimal navy capture corners; do not enclose it in a browser or page frame.
-- YouTube Shorts Remover: glass tile plus one vertical short-form video card crossed by a large coral removal slash.
-- Future extensions: same glass tile, same lighting, same border radius, unique inner symbol.
-
-Icon rules:
-
-- Keep icons square at `1:1`.
-- Optimize the inner symbol for browser-toolbar sizes first.
-- Prefer one strong primary symbol. If the product needs a secondary concept, express it as one simple badge that occupies at least one quarter of the tile height.
-- Use a light glass base with restrained cyan support only when it improves separation.
-- Keep accent badges semantically meaningful and draw them above the primary mark; do not use colored stroke underlays or decorative shadows.
-- Avoid top-edge color strips; they read as decoration rather than brand.
-- Keep toolbar foreground marks black or near-black unless color is essential to the product meaning.
-- Use inverted dark-tile icons on light popup/menu surfaces when the pale glass icon loses contrast.
-- Use coral red sparingly for one high-attention element: the OSBE node or a functional badge such as block/stop or clip/attach. Never use it as general decoration.
-- Keep `docs/assets/osbe-icon-source.svg` as the canonical OSBE master mark; generate raster brand assets from it rather than tracing generated PNGs independently.
-- Do not use a puzzle piece as the main symbol; it is too generic for OSBE extension products.
-- Maintain one canonical `assets/icon-source.svg` per extension and generate runtime and store icons from it with `pnpm extension assets <slug>`.
-- Treat browser-toolbar icons and store artwork separately: toolbar icons should be simpler, flatter, and higher contrast; store artwork can use richer liquid-glass rendering.
-
-## Extension Quality Principles
-
-Each OSBE extension should aim to satisfy these before release:
-
-- Public source code
-- Minimal declared permissions
-- User-invoked behavior where possible
-- Clear privacy explanation
-- Reproducible local build instructions
-- Store listing that names the sensitive permissions
-- README that explains what runs in background, popup, content scripts, and offscreen documents
-- Small enough scope that a developer can understand the core behavior quickly
-
-## First Brand Narrative
-
-OSBE started with Markdown Clipper because clipping a page should not require trusting a black box with broad browsing permissions. The extension does one job: it turns the current page or selected content into Markdown. Its permissions are limited, its behavior is user-invoked, and the source is available for anyone to inspect or fork.
-
-That same model should guide future OSBE extensions: simple browser tools, built in the open, with permissions users can reason about.
+- public source;
+- explicit permissions and host permissions;
+- plain-language privacy documentation;
+- a reproducible local build;
+- no remote code;
+- a focused scope;
+- tests at the product’s behavioural boundary;
+- a canonical icon source;
+- a store dossier and release workflow;
+- a README that explains popup, background, content-script, options, result-page, and offscreen surfaces where applicable.

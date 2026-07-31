@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+  <title id="title">OSBE — Small tools. Open source. No mystery.</title>
+  <desc id="desc">An editorial OSBE banner with five colour-coded browser extension icons.</desc>
+  <rect width="1200" height="440" fill="#fff"/>
+  <path d="M24 44V24h20M1176 44V24h-20M24 396v20h20M1176 396v20h-20" fill="none" stroke="#0b1528" stroke-width="1"/>
+  <path d="M52 82h1096M52 386h1096" stroke="#0b1528" stroke-width="1"/>
+  <text x="52" y="65" fill="#0b1528" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600" letter-spacing="1.2">OSBE // OPEN SOURCE BROWSER EXTENSIONS</text>
+  <text x="1086" y="65" fill="#5f6877" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="end">MANIFEST V3</text>
+  <circle cx="1106" cy="60" r="5" fill="#ff4d3d"/>
+  <path d="m1110 57 13-8m-13 14 13 8" stroke="#ff4d3d" stroke-width="2"/>
+  <circle cx="1127" cy="47" r="4" fill="#ff4d3d"/>
+  <circle cx="1127" cy="73" r="4" fill="#ff4d3d"/>
+
+  <text x="72" y="160" fill="#0b1528" font-family="Arial Narrow, IBM Plex Sans, sans-serif" font-size="68" font-weight="900" letter-spacing="-2">SMALL TOOLS.</text>
+  <text x="72" y="230" fill="#0b1528" font-family="Arial Narrow, IBM Plex Sans, sans-serif" font-size="68" font-weight="900" letter-spacing="-2">OPEN SOURCE.</text>
+  <text x="72" y="300" fill="#0b1528" font-family="Arial Narrow, IBM Plex Sans, sans-serif" font-size="68" font-weight="900" letter-spacing="-2">NO MYSTERY.</text>
+  <text x="75" y="340" fill="#5f6877" font-family="IBM Plex Sans, sans-serif" font-size="16">Focused browser extensions, built in the open.</text>
+
+  <g transform="translate(570 122)">
+    <g transform="rotate(-4 56 56)">
+      <rect width="112" height="112" rx="24" fill="#0d5bff" stroke="#0538b8" stroke-width="6"/>
+      <path d="M24 76V38l22 26 22-26v38M86 38v37m-11-11 11 12 12-12" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(116 -10) rotate(-2 56 56)">
+      <rect width="112" height="112" rx="24" fill="#ff4d3d" stroke="#c82720" stroke-width="6"/>
+      <circle cx="56" cy="56" r="32" fill="none" stroke="#fff" stroke-width="10"/>
+      <path d="M33 79 79 33" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(232 -14)">
+      <rect width="112" height="112" rx="24" fill="#e88c00" stroke="#a85700" stroke-width="6"/>
+      <path d="M35 28H25v10m52 46h10V74M56 28v47M39 59l17 18 17-18" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(348 -7) rotate(3 56 56)">
+      <rect width="112" height="112" rx="24" fill="#7138cf" stroke="#4c1d95" stroke-width="6"/>
+      <path d="M34 78 78 34M34 56v22h22M78 56V34H56" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(464 8) rotate(6 56 56)">
+      <rect width="112" height="112" rx="24" fill="#111827" stroke="#020617" stroke-width="6"/>
+      <rect x="24" y="31" width="64" height="50" rx="17" fill="#ff2f24"/>
+      <path d="m48 43 24 13-24 13Z" fill="#fff"/>
+      <path d="M29 84 84 29" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(600 286)">
+    <text x="0" y="0" fill="#5f6877" font-family="IBM Plex Mono, monospace" font-size="10">SOURCE &amp; PERMISSION LEDGER</text>
+    <path d="M0 14h548" stroke="#0b1528"/>
+    <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#0b1528">
+      <circle cx="5" cy="38" r="4" fill="#0d5bff"/><text x="16" y="42">MARKDOWN</text>
+      <circle cx="125" cy="38" r="4" fill="#ff4d3d"/><text x="136" y="42">BLOCK</text>
+      <circle cx="230" cy="38" r="4" fill="#e88c00"/><text x="241" y="42">CAPTURE</text>
+      <circle cx="345" cy="38" r="4" fill="#7138cf"/><text x="356" y="42">RESIZE</text>
+      <circle cx="448" cy="38" r="4" fill="#111827"/><text x="459" y="42">SHORTS</text>
+    </g>
+    <text x="0" y="76" fill="#5f6877" font-family="IBM Plex Mono, monospace" font-size="10">PUBLIC SOURCE  ·  EXPLAINED PERMISSIONS  ·  LOCAL-FIRST DATA</text>
+  </g>
+</svg>

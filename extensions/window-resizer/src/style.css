@@ -36,7 +36,7 @@
 
   .instrument-display::after,
   .dialog-measurement::after {
-    background: hsl(var(--brand-cyan) / 0.75);
+    background: hsl(var(--brand-resizer) / 0.75);
     bottom: 0;
     content: "";
     height: 2px;
@@ -76,7 +76,7 @@
   }
 
   .instrument-multiply {
-    @apply text-brand-cyan;
+    @apply text-brand-resizer;
     font-family: ui-monospace, monospace;
     font-size: 13px;
     font-weight: 700;
@@ -119,7 +119,7 @@
   }
 
   .preset-row::before {
-    @apply bg-brand-cyan;
+    @apply bg-brand-resizer;
     content: "";
     height: 0;
     left: 0;
@@ -155,7 +155,7 @@
   }
 
   .preset-dimension-mark {
-    @apply text-brand-cyan;
+    @apply text-brand-resizer;
     font-size: 9px;
   }
 
@@ -175,11 +175,11 @@
   }
 
   .viewport-glyph-active {
-    @apply border-brand-cyan/35 bg-accent;
+    @apply border-brand-resizer/35 bg-accent;
   }
 
   .viewport-glyph-active .viewport-glyph-frame {
-    @apply border-brand-blue;
+    @apply border-brand-resizer;
     transform: scale(1.04);
   }
 

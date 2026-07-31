@@ -6,6 +6,13 @@
   "displayName": "OSBE YouTube Shorts Remover",
   "surface": "content-only",
   "summary": "Remove YouTube Shorts from navigation, feeds, search results, recommendations, and direct viewing.",
+  "website": {
+    "order": 5,
+    "description": "Remove Shorts from YouTube automatically.",
+    "trigger": "On youtube.com",
+    "data": "Nothing stored",
+    "accent": "#111827"
+  },
   "singlePurpose": "Remove YouTube Shorts surfaces so people can browse longer-form YouTube content without short-form distractions.",
   "permissions": [],
   "hostPermissions": [
@@ -14,10 +21,7 @@
       "justification": "Required to hide Shorts navigation, shelves, cards, and recommendations on YouTube and redirect direct Shorts routes."
     }
   ],
-  "dataUsage": [
-    "webHistory",
-    "websiteContent"
-  ],
+  "dataUsage": ["webHistory", "websiteContent"],
   "remoteCode": {
     "used": false,
     "justification": "The extension does not use remote code. All executable JavaScript and CSS is included in the submitted package."

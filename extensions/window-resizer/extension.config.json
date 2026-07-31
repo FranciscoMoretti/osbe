@@ -6,6 +6,13 @@
   "displayName": "OSBE Window Resizer",
   "surface": "popup",
   "summary": "Resize the current Chrome window or page viewport from built-in presets or your own saved sizes.",
+  "website": {
+    "order": 4,
+    "description": "Resize browser windows and page viewports.",
+    "trigger": "On click",
+    "data": "Presets stored locally",
+    "accent": "#7138cf"
+  },
   "singlePurpose": "Resize the current Chrome browser window or active page viewport to a user-selected saved width and height.",
   "permissions": [
     {
