@@ -3,6 +3,12 @@ const YOUTUBE_HOSTS = new Set(["www.youtube.com", "youtube.com"])
 export const SHORTS_STYLE_ID = "osbe-youtube-shorts-filter"
 export const SHORTS_FILTERED_ATTRIBUTE = "data-osbe-shorts-filtered"
 
+export const SHORTS_NAVIGATION_ENTRY_SELECTOR = [
+  "ytd-guide-entry-renderer",
+  "ytd-mini-guide-entry-renderer",
+  "ytm-pivot-bar-item-renderer"
+].join(",\n")
+
 export const SHORTS_CONTAINER_SELECTORS = [
   "ytd-reel-shelf-renderer",
   "ytd-reel-item-renderer",
@@ -16,9 +22,9 @@ export const SHORTS_CONTAINER_SELECTORS = [
   "ytd-grid-video-renderer:has(a[href^='/shorts/'])",
   "ytd-compact-video-renderer:has(a[href^='/shorts/'])",
   "yt-lockup-view-model:has(a[href^='/shorts/'])",
-  "ytd-guide-entry-renderer:has(a[href='/shorts/'])",
-  "ytd-mini-guide-entry-renderer:has(a[href='/shorts/'])",
-  "ytm-pivot-bar-item-renderer:has(a[href='/shorts/'])",
+  "ytd-guide-entry-renderer:has(a[href^='/shorts'])",
+  "ytd-mini-guide-entry-renderer:has(a[href^='/shorts'])",
+  "ytm-pivot-bar-item-renderer:has(a[href^='/shorts'])",
   "yt-tab-shape:has(a[href$='/shorts'])",
   "tp-yt-paper-tab:has(a[href$='/shorts'])"
 ] as const
@@ -32,6 +38,10 @@ ${SHORTS_CONTAINER_SELECTORS.join(",\n")},
 
 export function isShortsFilterLabel(label: string | null | undefined) {
   return label?.trim().toLowerCase() === "shorts"
+}
+
+export function isShortsPath(path: string | null | undefined) {
+  return path === "/shorts" || path?.startsWith("/shorts/") === true
 }
 
 export function getShortsRedirect(href: string) {

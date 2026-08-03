@@ -3,8 +3,10 @@ import type { PlasmoCSConfig } from "plasmo"
 import {
   getShortsRedirect,
   isShortsFilterLabel,
+  isShortsPath,
   SHORTS_FILTERED_ATTRIBUTE,
   SHORTS_FILTER_CSS,
+  SHORTS_NAVIGATION_ENTRY_SELECTOR,
   SHORTS_STYLE_ID
 } from "../lib/shorts-filter"
 
@@ -41,6 +43,21 @@ type YouTubeFilterChip = HTMLElement & {
   }
 }
 
+type YouTubeNavigationEntry = HTMLElement & {
+  data?: {
+    navigationEndpoint?: {
+      browseEndpoint?: {
+        browseId?: string
+      }
+      commandMetadata?: {
+        webCommandMetadata?: {
+          url?: string
+        }
+      }
+    }
+  }
+}
+
 const FILTER_CHIP_SELECTOR = "yt-chip-cloud-chip-renderer"
 
 function getFilterChipLabel(chip: YouTubeFilterChip) {
@@ -69,16 +86,52 @@ function filterShortsChips(root: ParentNode) {
   }
 }
 
+function getNavigationEntryLabel(entry: YouTubeNavigationEntry) {
+  const title = entry.querySelector<HTMLElement>("a[title]")?.title
+  return title ?? entry.querySelector<HTMLElement>("#title")?.textContent
+}
+
+function isShortsNavigationEntry(entry: YouTubeNavigationEntry) {
+  const endpoint = entry.data?.navigationEndpoint
+  return (
+    endpoint?.browseEndpoint?.browseId === "FEshorts" ||
+    isShortsPath(endpoint?.commandMetadata?.webCommandMetadata?.url) ||
+    isShortsFilterLabel(getNavigationEntryLabel(entry))
+  )
+}
+
+function filterShortsNavigationEntry(entry: YouTubeNavigationEntry) {
+  if (isShortsNavigationEntry(entry)) {
+    entry.setAttribute(SHORTS_FILTERED_ATTRIBUTE, "")
+  }
+}
+
+function filterShortsNavigation(root: ParentNode) {
+  if (root instanceof Element && root.matches(SHORTS_NAVIGATION_ENTRY_SELECTOR)) {
+    filterShortsNavigationEntry(root as YouTubeNavigationEntry)
+  }
+
+  for (const entry of root.querySelectorAll<YouTubeNavigationEntry>(
+    SHORTS_NAVIGATION_ENTRY_SELECTOR
+  )) {
+    filterShortsNavigationEntry(entry)
+  }
+}
+
 function watchForShortsChips() {
   const root = document.documentElement
   if (!root) return false
 
   filterShortsChips(root)
+  filterShortsNavigation(root)
 
   const chipObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
-        if (node instanceof Element) filterShortsChips(node)
+        if (node instanceof Element) {
+          filterShortsChips(node)
+          filterShortsNavigation(node)
+        }
       }
     }
   })

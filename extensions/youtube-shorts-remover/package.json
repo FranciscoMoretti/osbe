@@ -1,7 +1,7 @@
 {
   "name": "@osbe/youtube-shorts-remover",
   "displayName": "OSBE YouTube Shorts Remover",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Remove YouTube Shorts from navigation, feeds, search results, recommendations, and direct viewing.",
   "author": "Fran",
   "scripts": {
